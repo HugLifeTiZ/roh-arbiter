@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arbiter", "Arbiter.csproj", "{8AE4FBEE-FED7-4D8A-90B9-62706411DC5A}"
+EndProject
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "Packages", "Packages\Packages.mdproj", "{4F218E21-72F7-4812-BA76-E22352F87810}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F218E21-72F7-4812-BA76-E22352F87810}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4F218E21-72F7-4812-BA76-E22352F87810}.Release|x86.ActiveCfg = Release|Any CPU
+		{8AE4FBEE-FED7-4D8A-90B9-62706411DC5A}.Debug|x86.ActiveCfg = Debug|x86
+		{8AE4FBEE-FED7-4D8A-90B9-62706411DC5A}.Debug|x86.Build.0 = Debug|x86
+		{8AE4FBEE-FED7-4D8A-90B9-62706411DC5A}.Release|x86.ActiveCfg = Release|x86
+		{8AE4FBEE-FED7-4D8A-90B9-62706411DC5A}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		description = A tool to assist Rings of Honor officials in calling duels.
+		version = 0.3
+		StartupItem = Arbiter.csproj
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = None
+		$1.ResourceNamePolicy = FileFormatDefault
+		$0.StandardHeader = $2
+		$2.inheritsSet = MITX11License
+		$0.VersionControlPolicy = $3
+		$3.inheritsSet = Mono
+		$0.ChangeLogPolicy = $4
+		$4.UpdateMode = None
+		$4.MessageStyle = $5
+		$5.LineAlign = 0
+		$4.inheritsSet = Mono
+	EndGlobalSection
+EndGlobal
