@@ -83,7 +83,7 @@
       <Properties>
         <Policies>
           <VersionControlPolicy inheritsSet="Mono" />
-          <ChangeLogPolicy UpdateMode="ProjectRoot" VcsIntegration="None" inheritsSet="Mono">
+          <ChangeLogPolicy UpdateMode="None" VcsIntegration="RequireEntry" inheritsSet="Mono">
             <MessageStyle LineAlign="0" />
           </ChangeLogPolicy>
         </Policies>

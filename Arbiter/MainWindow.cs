@@ -1,3 +1,29 @@
+// 
+// MainWindow.cs
+//  
+// Author:
+//       Trent McPheron <twilightinzero@gmail.com>
+// 
+// Copyright (c) 2009 Trent McPheron
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
 using System;
 using Gtk;
 using Glade;
@@ -24,14 +50,15 @@ namespace Arbiter
 		[Widget] private Image duelistBEditImage;
 		[Widget] private Image ringEditImage;
 		[Widget] private HBox newDuelTabBox;
+		[Widget] private TextView shiftReportTextView;
 		#endregion
 		
 		// Constructor.
 		public MainWindow()
 		{
-			//Load the Glade file.
+			// Load the Glade file.
 			XML xml = new XML("Arbiter.GUI.glade", "mainWin");
-			xml.Autoconnect(this);
+			xml.Autoconnect(this); 
 			
 			#region Settings
 			// Set default size.
@@ -100,6 +127,9 @@ namespace Arbiter
 				c[n].PopupSingleMatch = false;
 				e[n].Entry.Completion = c[n];
 			}
+			
+			// Prepare shift report displayer.
+			MainClass.ShiftReport = shiftReportTextView.Buffer;
 			
 			// For whatever reason, Glade doesn't automatically connect this one.
 			logDirectory.SelectionChanged += SaveLogDirectory;
@@ -276,18 +306,26 @@ namespace Arbiter
 		private void FightNightToggled (object sender, System.EventArgs e)
 			{ MainClass.FightNight = fightNight.Active; }
 		
+		// Make the expander fill the window when expanded.
+		private void ExpandExpander (object sender, System.EventArgs e)
+		{
+			Expander ex = (Expander)sender;
+			VBox box = (VBox)(ex.Parent);
+			box.SetChildPacking(ex, ex.Expanded, true, 0, PackType.Start);
+		}
+		
 		// Create a window to edit saved duelists.
 		private void EditDuelists (object sender, System.EventArgs e)
 		{
 			EditDialog ed = new EditDialog("Edit Duelists", MainClass.Duelists, false);
-			ed.Show();
+			ed.Run();
 		}
 		
 		// Create a window to edit saved ring names.
 		private void EditRings (object sender, System.EventArgs e)
 		{
 			EditDialog ed = new EditDialog("Edit Rings", MainClass.Rings, true);
-			ed.Show();
+			ed.Run();
 		}
 		#endregion
 	}

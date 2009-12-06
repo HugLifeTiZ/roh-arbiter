@@ -6,6 +6,9 @@ by Trent McPheron (twilightinzero@gmail.com)
 -v0.3-
  *Switched to MIT/X11 license. It's more permissive.
   Besides, I don't like GNU's fanaticism. :P
+ *Made the program look less foreign on Windows with
+  a special gtkrc that will be used only on Windows.
+ *Created a shift report viewer in the new duel tab.
 -v0.2.1-
  *First release with a proper name. I was incredibly
   indecisive with this. First, it was Cedran, named

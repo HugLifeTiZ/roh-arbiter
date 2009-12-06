@@ -34,7 +34,7 @@ namespace Arbiter
 	// Duelists and Rings. It's actually pretty simple.
 	public class EditDialog
 	{
-		[Widget] private Window editDialog;
+		[Widget] private Dialog editDialog;
 		[Widget] private ScrolledWindow listScroll;
 		private TreeView listView;
 		private ListStore list;
@@ -64,11 +64,14 @@ namespace Arbiter
 			
 			this.list = list;
 			listView.Model = list;
+			
+			// Appear!
+			editDialog.ShowAll();
 		}
 		
 		// Convenience.
-		public void Show ()
-			{ editDialog.ShowAll(); }
+		public void Run ()
+			{ editDialog.Run(); }
 		
 		// Closes the dialog.
 		private void OkClicked (object sender, System.EventArgs e)

@@ -29,11 +29,14 @@ Global
 		$0.StandardHeader = $2
 		$2.inheritsSet = MITX11License
 		$0.VersionControlPolicy = $3
+		$3.CommitMessageStyle = $4
+		$4.FileSeparator = ", "
+		$4.LastFilePostfix = "@:\n  "
 		$3.inheritsSet = Mono
-		$0.ChangeLogPolicy = $4
-		$4.UpdateMode = None
-		$4.MessageStyle = $5
-		$5.LineAlign = 0
-		$4.inheritsSet = Mono
+		$0.ChangeLogPolicy = $5
+		$5.UpdateMode = None
+		$5.MessageStyle = $6
+		$6.LineAlign = 0
+		$5.inheritsSet = Mono
 	EndGlobalSection
 EndGlobal
