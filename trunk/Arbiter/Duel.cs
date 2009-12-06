@@ -51,7 +51,7 @@ namespace Arbiter
 		private List<float> roundScoreA, roundScoreB;
 		private List<bool> advA, advB;
 		private List<string> log;
-		private string n = Environment.NewLine;
+		private static string n = Environment.NewLine;
 		private Venue venue;
 		#endregion
 		
@@ -108,7 +108,7 @@ namespace Arbiter
 					@"<span size='14336'>0  </span><span size='28672'><b>0</b></span>";
 			}
 			
-			// Assign
+			// Set widget properties.
 			duelistAMove.Model = venue.Moves;
 			duelistBMove.Model = venue.Moves;
 			duelistAFancy.Sensitive = venue.Fancies;

@@ -53,6 +53,9 @@ namespace Arbiter
 		public static ListStore Duelists  { get; set; }
 		public static ListStore Rings     { get; set; }
 		
+		// Shift report text buffer.
+		public static TextBuffer ShiftReport {get; set;}
+		
 		// Returns the current subdirectory for the night's duels.
 		public static string CurrentDir
 		{
@@ -90,6 +93,23 @@ namespace Arbiter
 		public static void Main (string[] args)
 		{
 			Application.Init();
+			
+			// Make the program look less out of place on Windows.
+			int p = (int) Environment.OSVersion.Platform;
+			if (p != 4 && p != 128)
+			{
+				Rc.ParseString(@"
+					gtk-icon-sizes = 'panel=16,16 : gtk-menu=16,16'
+					gtk-button-images = 0
+					gtk-menu-images = 0
+					style 'default'				{ GtkWidget::focus-line-width = 0 }
+					style 'tabs'  = 'default'	{ GtkWidget::focus-padding = 0 }
+					style 'lists' = 'default'	{ GtkWidget::focus-line-width = 1 }
+					class 'GtkWidget' style 'default'
+					class 'GtkNotebook' style 'tabs'
+					class 'GtkTreeView' style 'lists'
+					");
+			}
 			
 			#region Load Settings
 			// Create ListStores for the duelists and rings.
@@ -232,14 +252,16 @@ namespace Arbiter
 				Directory.CreateDirectory(CurrentDir);
 				
 			// Open the file.
-			StreamWriter shiftReport = new StreamWriter(
+			StreamWriter sr = new StreamWriter(
 					Path.Combine(CurrentDir, "00. Shift Report.txt"), false);
 			
 			// First lines.
-			shiftReport.WriteLine(today.ToLongDateString() + n + n
-						+ "[Insert comments here.]");
+			ShiftReport.Text = today.ToLongDateString() + n + n
+						+ "[Insert comments here.]";
+			sr.Write(ShiftReport.Text);
 			
-			shiftReport.Close();
+			// Close it.
+			sr.Close();
 		}
 		
 		// Write a duel result to the shift report.
@@ -248,12 +270,12 @@ namespace Arbiter
 		public static void UpdateShiftReport (string final, bool delete)
 		{
 			// Open the file.
-			StreamWriter shiftReport = new StreamWriter(
+			StreamWriter sr = new StreamWriter(
 					Path.Combine(CurrentDir, "00. Shift Report.txt"), false);
 			
 			// First lines.
-			shiftReport.WriteLine(today.ToLongDateString() + n + n
-						+ "[Insert comments here.]");
+			ShiftReport.Text = today.ToLongDateString() + n + n
+						+ "[Insert comments here.]";
 			
 			// Normal dueling.
 			if (!FightNight)
@@ -263,9 +285,9 @@ namespace Arbiter
 				if (delete) normalDuelList.Remove(final);
 				
 				// Write them to the report.
-				shiftReport.WriteLine();
+				ShiftReport.Text += n;
 				foreach (string s in normalDuelList)
-					shiftReport.WriteLine(s);
+					ShiftReport.Text += n + s;
 			}
 			// It's more complicated for Fight Night.
 			if (FightNight)
@@ -290,22 +312,25 @@ namespace Arbiter
 				
 				// This prevents duplicating code.
 				List<string>[] lists = new List<string>[3]
-				{fightNightSwords, fightNightFists, fightNightMagic};
+					{fightNightSwords, fightNightFists, fightNightMagic};
 				
 				foreach (List<string> l in lists)
 				{
 					if (l.Count > 0)
 					{
 						// Line break to separate each list.
-						shiftReport.WriteLine();
+						ShiftReport.Text += n;
 						foreach (string s in l)
-							shiftReport.WriteLine(s);
+							ShiftReport.Text += n + s;
 					}
 				}
 			}
 			
+			// Write the text in the buffer to the file.
+			sr.Write(ShiftReport.Text);
+			
 			// Now close it.
-			shiftReport.Close();
+			sr.Close();
 		}
 		
 		// Detect if a shift report already exists, and if so, ask what to do.
@@ -335,12 +360,13 @@ namespace Arbiter
 				{
 					StreamReader sr = new StreamReader(
 							Path.Combine(CurrentDir, "00. Shift Report.txt"));
-					sr.ReadLine(); // The first three
-					sr.ReadLine(); // lines don't matter.
-					sr.ReadLine();
+					ShiftReport.Text += sr.ReadLine(); // The first three
+					ShiftReport.Text += sr.ReadLine(); // lines don't matter.
+					ShiftReport.Text += sr.ReadLine();
 					while (!sr.EndOfStream)
 					{
 						string s = sr.ReadLine();
+						ShiftReport.Text += s;
 						if (s != "") // Can't do anything with blank lines.
 						{
 							switch (s.Substring(s.Length - 3, 3))
