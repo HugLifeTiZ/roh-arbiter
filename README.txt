@@ -8,7 +8,11 @@ by Trent McPheron (twilightinzero@gmail.com)
   Besides, I don't like GNU's fanaticism. :P
  *Made the program look less foreign on Windows with
   a special gtkrc that will be used only on Windows.
+ *Separated settings file into three files: One for
+  basic settings, one for the duelist list, and one
+  for the ring list.
  *Created a shift report viewer in the new duel tab.
+ *Rearranged the swords and fists moves a little.
  *Changed the swords icons.
  *This isn't anything an end user will notice, but
   it's important none the less: the icons for the
