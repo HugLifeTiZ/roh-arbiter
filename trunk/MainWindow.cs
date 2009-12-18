@@ -211,13 +211,21 @@ namespace Arbiter
 			
 			#region Tab Label
 			HBox label = new HBox();
+			label.Spacing = 2;
+			
+			// Close button.
 			EventBox closeButton = new EventBox();
 			Gdk.Pixbuf pb = IconTheme.Default.LoadIcon(Stock.Close, 16, 0);
 			closeButton.Add(new Image(pb.ScaleSimple(12, 12, Gdk.InterpType.Hyper)));
 			closeButton.VisibleWindow = false;
-			label.Spacing = 2;
-			label.PackStart(Image.LoadFromResource(
-					"Arbiter." + venue.ShortName + duelType.ActiveText + ".png"), false, false, 0);
+			
+			// Tab icon.
+			Gdk.Pixbuf icon = Gdk.Pixbuf.LoadFromResource(
+					"Arbiter." + venue.ShortName + duelType.ActiveText + ".png");
+			icon = icon.ScaleSimple(16, 16, Gdk.InterpType.Hyper);
+			
+			// Pack the hbox and show it.
+			label.PackStart(new Image(icon), false, false, 0);
 			label.PackStart(new Label(ringName.ActiveText), true, true, 0);
 			label.PackEnd(closeButton, false, false, 0);
 			label.ShowAll();

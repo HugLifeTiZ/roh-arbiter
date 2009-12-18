@@ -9,6 +9,15 @@ by Trent McPheron (twilightinzero@gmail.com)
  *Made the program look less foreign on Windows with
   a special gtkrc that will be used only on Windows.
  *Created a shift report viewer in the new duel tab.
+ *Changed the swords icons.
+ *This isn't anything an end user will notice, but
+  it's important none the less: the icons for the
+  duel tabs were formerly embedded pre-scaled. Now
+  the icons are embedded at original size and scaled
+  by the program. This is probably safer from a legal
+  standpoint, 'cos the icon pack says "free to use",
+  but not "free to modify". There is no visual
+  difference between the two methods.
 -v0.2.1-
  *First release with a proper name. I was incredibly
   indecisive with this. First, it was Cedran, named
@@ -153,7 +162,8 @@ put it into my version of the tool if I don't want it. Nothing's
 stopping you from releasing your own version. ;)
 
 The icons used for each duel type are resized from the icons in
-the pack here: http://www.pixeljoint.com/pixelart/37532.htm
-The icon for the new duel tab and the window icons is © 2004-2009 Rings of Honor.
+the pack here by Henrique Lazarini: http://www.pixeljoint.com/pixelart/37532.htm
+The icon for the new duel tab and the window icons is © 2004-2009
+Rings of Honor.
 
 With all that out of the way, enjoy using the Arbiter! :)
