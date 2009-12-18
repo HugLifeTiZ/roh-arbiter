@@ -3,22 +3,24 @@
   <MonoDevelop.Ide.DebuggingService>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Main.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="MainWindow.cs" ctype="Workbench">
     <Files>
       <File FileName="Venue.cs" Line="1" Column="1" />
       <File FileName="README.txt" Line="1" Column="1" />
       <File FileName="duelists.cfg" Line="1" Column="1" />
-      <File FileName="Main.cs" Line="114" Column="25" />
+      <File FileName="Main.cs" Line="105" Column="5" />
       <File FileName="AssemblyInfo.cs" Line="1" Column="1" />
       <File FileName="venue-swords.cfg" Line="1" Column="1" />
       <File FileName="Duel.cs" Line="1" Column="1" />
       <File FileName="EditDialog.cs" Line="1" Column="1" />
-      <File FileName="MainWindow.cs" Line="1" Column="1" />
+      <File FileName="MainWindow.cs" Line="227" Column="33" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Arbiter" expanded="True" selected="True" />
+          <Node name="Arbiter" expanded="True">
+            <Node name="MainWindow.cs" selected="True" />
+          </Node>
           <Node name="Packages" expanded="True" />
         </State>
       </Pad>
