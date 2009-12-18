@@ -26,7 +26,6 @@
 
 using System;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Collections.Generic;
 using System.Reflection;
 using Gtk;
@@ -117,41 +116,23 @@ namespace Arbiter
 			Rings = new ListStore(typeof(string));
 			Duelists.SetSortColumnId(0, SortType.Ascending);
 			
-			// Load settings.
+			// Load basic settings file.
 			try  // Settings file already exists.
 			{
-				// Basic settings.
-				//IsolatedStorageFileStream settings = new IsolatedStorageFileStream(
-			    //             "rohcallertool.cfg", FileMode.Open, FileAccess.Read);
+				// Open the file.
 				string path = Path.GetDirectoryName(
                      Assembly.GetExecutingAssembly().Location);
 				path = Path.Combine(path, "settings.cfg");
 				StreamReader sr = new StreamReader(path);
+				
+				// Load basic settings.
 				WindowWidth = Int32.Parse(sr.ReadLine());
 				WindowHeight = Int32.Parse(sr.ReadLine());
 				TabPosition = sr.ReadLine();
 				LogDirectory = sr.ReadLine();
 				
-				// Rings.
-				sr.ReadLine(); // Reads the ----- separator.;
-				string s = sr.ReadLine();
-				while (s != "-----")
-				{
-					Rings.AppendValues(s);
-					s = sr.ReadLine();
-				}
-				
-				// Duelists.
-				s = sr.ReadLine();
-				while (s != "-----")
-				{
-					Duelists.AppendValues(s);
-					s = sr.ReadLine();
-				}
-				
 				// Done.
 				sr.Close();
-				//settings.Close();
 			}
 			catch  // Settings file doesn't exist; set defaults.
 			{
@@ -172,7 +153,26 @@ namespace Arbiter
 				TabPosition = "Left";
 				WindowWidth = 360;
 				WindowHeight = 360;
+			}
+			
+			// Load duelist list.
+			try  // Duelist list already exists.
+			{
+				// Open the file.
+				string path = Path.GetDirectoryName(
+                     Assembly.GetExecutingAssembly().Location);
+				path = Path.Combine(path, "duelists.cfg");
+				StreamReader sr = new StreamReader(path);
 				
+				// Read 'em in.
+				while (!sr.EndOfStream)
+					Duelists.AppendValues(sr.ReadLine());
+				
+				// Done.
+				sr.Close();
+			}
+			catch  // Duelist list doesn't exist.
+			{
 				// Load embedded list of duelists.
 				StreamReader sr = new StreamReader(
 					Assembly.GetExecutingAssembly().GetManifestResourceStream(
@@ -180,9 +180,28 @@ namespace Arbiter
 				while (!sr.EndOfStream)
 					Duelists.AppendValues(sr.ReadLine());
 				sr.Close();
+			}
+			
+			// Load ring list.
+			try  // Ring list already exists.
+			{
+				// Open the file.
+				string path = Path.GetDirectoryName(
+                     Assembly.GetExecutingAssembly().Location);
+				path = Path.Combine(path, "rings.cfg");
+				StreamReader sr = new StreamReader(path);
 				
+				// Read 'em in.
+				while (!sr.EndOfStream)
+					Rings.AppendValues(sr.ReadLine());
+				
+				// Done.
+				sr.Close();
+			}
+			catch  // Ring list doesn't exist.
+			{
 				// Load embedded list of rings.
-				sr = new StreamReader(
+				StreamReader sr = new StreamReader(
 					Assembly.GetExecutingAssembly().GetManifestResourceStream(
 						"Arbiter.rings.cfg"));
 				while (!sr.EndOfStream)
@@ -196,6 +215,8 @@ namespace Arbiter
 			today = DateTime.Now;
 			// Further midnight-proofing.
 			if (today.Hour < 3) today = DateTime.Now.Subtract(TimeSpan.FromDays(1));
+			
+			// Save the date in string format.
 			currentDate = today.Year.ToString("0000") + "-" +
 				today.Month.ToString("00") + "-" + today.Day.ToString("00");
 			
@@ -225,23 +246,46 @@ namespace Arbiter
 		// Save settings to file.
 		public static void SaveSettings ()
 		{
+			// Open the basic settings file.
 			string path = Path.GetDirectoryName(
                      Assembly.GetExecutingAssembly().Location);
 			path = Path.Combine(path, "settings.cfg");
 			StreamWriter sw = new StreamWriter(path);
+			
+			// Write the basic settings.
 			sw.WriteLine(WindowWidth.ToString());
 			sw.WriteLine(WindowHeight.ToString());
 			sw.WriteLine(TabPosition);
 			sw.WriteLine(LogDirectory);
-			sw.WriteLine("-----");
-			foreach(object[] s in Rings)
-				sw.WriteLine((string)s[0]);
-			sw.WriteLine("-----");
+			
+			// Close that one.
+			sw.Close();
+			
+			// Now the duelist list.
+			path = Path.GetDirectoryName(
+                     Assembly.GetExecutingAssembly().Location);
+			path = Path.Combine(path, "duelists.cfg");
+			sw = new StreamWriter(path);
+			
+			// Loop through the list and write 'em.
 			foreach(object[] s in Duelists)
 				sw.WriteLine((string)s[0]);
-			sw.WriteLine("-----");
+			
+			// That one's done now too.
 			sw.Close();
-			//settings.Close();
+			
+			// Now the duelist list.
+			path = Path.GetDirectoryName(
+                     Assembly.GetExecutingAssembly().Location);
+			path = Path.Combine(path, "rings.cfg");
+			sw = new StreamWriter(path);
+			
+			// Loop through the list and write 'em.
+			foreach(object[] s in Rings)
+				sw.WriteLine((string)s[0]);
+			
+			// Now we're all done.
+			sw.Close();
 		}
 		
 		// Creates a bare-bones shift report and also makes sure the folder exists.
