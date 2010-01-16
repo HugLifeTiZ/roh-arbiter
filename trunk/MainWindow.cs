@@ -237,8 +237,8 @@ namespace Arbiter
 			Duel duel = new Duel(MainClass.NumDuels, ringName.ActiveText,
 								duelistAName.ActiveText, duelistBName.ActiveText,
 								venue, overtime, madness);
-			Widget duelWidget = duel.DuelWidget;
-			duels.InsertPage(duelWidget, label, duels.NPages - 1);
+			//Widget duelWidget = duel.DuelWidget;
+			duels.InsertPage(duel, label, duels.NPages - 1);
 			duels.ShowAll();
 			duels.CurrentPage = duels.NPages - 2;
 			duels.CurrentPageWidget.Name = duelistAName.ActiveText;
@@ -247,7 +247,7 @@ namespace Arbiter
 			duels.SetMenuLabelText(duels.CurrentPageWidget, ringName.ActiveText);
 			
 			// Make the close button work.
-			closeButton.ButtonReleaseEvent += delegate { duels.Remove(duelWidget); };
+			closeButton.ButtonReleaseEvent += delegate { duels.Remove(duel); };
 			#endregion
 			
 			#region List Update

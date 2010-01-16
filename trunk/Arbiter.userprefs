@@ -1,25 +1,25 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" ctype="Workspace" />
   <MonoDevelop.Ide.DebuggingService>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService>
-  <MonoDevelop.Ide.Workbench ActiveDocument="MainWindow.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Duel.cs" ctype="Workbench">
     <Files>
       <File FileName="Venue.cs" Line="1" Column="1" />
-      <File FileName="README.txt" Line="1" Column="1" />
+      <File FileName="README.txt" Line="11" Column="52" />
       <File FileName="duelists.cfg" Line="1" Column="1" />
-      <File FileName="Main.cs" Line="105" Column="5" />
+      <File FileName="Main.cs" Line="1" Column="1" />
       <File FileName="AssemblyInfo.cs" Line="1" Column="1" />
       <File FileName="venue-swords.cfg" Line="1" Column="1" />
-      <File FileName="Duel.cs" Line="1" Column="1" />
+      <File FileName="Duel.cs" Line="90" Column="26" />
       <File FileName="EditDialog.cs" Line="1" Column="1" />
-      <File FileName="MainWindow.cs" Line="227" Column="33" />
+      <File FileName="MainWindow.cs" Line="250" Column="18" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Arbiter" expanded="True">
-            <Node name="MainWindow.cs" selected="True" />
+            <Node name="GUI.glade" selected="True" />
           </Node>
           <Node name="Packages" expanded="True" />
         </State>
