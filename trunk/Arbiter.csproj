@@ -60,9 +60,9 @@
     <EmbeddedResource Include="GUI.glade" />
     <EmbeddedResource Include="duelists.cfg" />
     <EmbeddedResource Include="rings.cfg" />
-    <EmbeddedResource Include="venue-swords.cfg" />
-    <EmbeddedResource Include="venue-fists.cfg" />
-    <EmbeddedResource Include="venue-magic.cfg" />
+    <EmbeddedResource Include="sport-swords.cfg" />
+    <EmbeddedResource Include="sport-fists.cfg" />
+    <EmbeddedResource Include="sport-magic.cfg" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="Duel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="EditDialog.cs" />
-    <Compile Include="Venue.cs" />
+    <Compile Include="Sport.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="arbiter.desktop">

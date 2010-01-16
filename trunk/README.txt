@@ -22,6 +22,10 @@ by Trent McPheron (twilightinzero@gmail.com)
   standpoint, 'cos the icon pack says "free to use",
   but not "free to modify". There is no visual
   difference between the two methods.
+ *Replaced "venue" with "sport" throughout the entire
+  project. This is more correct terminology. "Sport"
+  refers to DoS, DoF, and DoM, and "venue" refers to
+  the primary settings of each.
 -v0.2.1-
  *First release with a proper name. I was incredibly
   indecisive with this. First, it was Cedran, named

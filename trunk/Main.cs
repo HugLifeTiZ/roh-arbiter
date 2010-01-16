@@ -37,10 +37,10 @@ namespace Arbiter
 	static class MainClass
 	{
 		#region Properties
-		// Venues.
-		public static Venue DuelOfSwords  { get; private set; }
-		public static Venue DuelOfFists   { get; private set; }
-		public static Venue DuelOfMagic   { get; private set; }
+		// Sports.
+		public static Sport DuelOfSwords  { get; private set; }
+		public static Sport DuelOfFists   { get; private set; }
+		public static Sport DuelOfMagic   { get; private set; }
 		
 		// Settings.
 		public static int WindowWidth     { get; set; }
@@ -62,7 +62,7 @@ namespace Arbiter
 		}
 		
 		// This determines if the duel type will be logged
-		// and sorted by venue.
+		// and sorted by sport.
 		public static bool FightNight { get; set; }
 		
 		// This is for logging. Its obvious purpose is to figure out
@@ -220,10 +220,10 @@ namespace Arbiter
 			currentDate = today.Year.ToString("0000") + "-" +
 				today.Month.ToString("00") + "-" + today.Day.ToString("00");
 			
-			// Load the venues.
-			DuelOfSwords = new Venue("swords");
-			DuelOfFists = new Venue("fists");
-			DuelOfMagic = new Venue("magic");
+			// Load the sports.
+			DuelOfSwords = new Sport("swords");
+			DuelOfFists = new Sport("fists");
+			DuelOfMagic = new Sport("magic");
 			
 			// Initialize Fight Night switch and duel lists.
 			FightNight = false;
