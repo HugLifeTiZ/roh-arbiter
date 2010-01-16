@@ -37,7 +37,7 @@ namespace Arbiter
 	// with the duel being called inside it, and to keep each duel
 	// separate from the others. It also allows us to create as
 	// many duels as we need. OOP at its best.
-	public class Duel
+	public class Duel : Bin
 	{
 		#region Fields
 		private string duelistA, duelistB;
@@ -83,11 +83,12 @@ namespace Arbiter
 		
 		// Constructor.
 		public Duel(int duelNum, string ringName, string duelistA, string duelistB,
-		            Venue venue, bool overtime, bool madness)
+		            Venue venue, bool overtime, bool madness) : base()
 		{
 			// Load the Glade file.
 			XML xml = new XML("Arbiter.GUI.glade", "duelWidget");
 			xml.Autoconnect(this);
+			this.Add(duelWidget);
 			
 			#region Copy Parameters
 			this.duelNum = duelNum;
@@ -187,6 +188,10 @@ namespace Arbiter
 			
 			// Write initial text to the log.
 			UpdateDuelLog();
+			
+			// Participate in size negotiation.
+			SizeRequested += new SizeRequestedHandler (OnSizeRequested);
+			SizeAllocated += new SizeAllocatedHandler (OnSizeAllocated);
 			#endregion
 		}
 		
@@ -575,6 +580,14 @@ namespace Arbiter
 			    && !(usedEFA && duelistAMove.Active == 14)
 			    && !(usedEFB && duelistBMove.Active == 14))
 				resolve.Sensitive = true; }
+		
+		// Size requisition.
+		private void OnSizeRequested (object o, SizeRequestedArgs args)
+			{ args.Requisition = duelWidget.SizeRequest(); }
+		
+		// Size allocation.
+		private void OnSizeAllocated (object o, SizeAllocatedArgs args)
+			{ duelWidget.Allocation = args.Allocation; }
 		#endregion
 	}
 }
