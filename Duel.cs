@@ -52,7 +52,7 @@ namespace Arbiter
 		private List<bool> advA, advB;
 		private List<string> log;
 		private static string n = Environment.NewLine;
-		private Venue venue;
+		private Sport sport;
 		#endregion
 		
 		#region Widgets
@@ -83,7 +83,7 @@ namespace Arbiter
 		
 		// Constructor.
 		public Duel(int duelNum, string ringName, string duelistA, string duelistB,
-		            Venue venue, bool overtime, bool madness) : base()
+		            Sport sport, bool overtime, bool madness) : base()
 		{
 			// Load the Glade file.
 			XML xml = new XML("Arbiter.GUI.glade", "duelWidget");
@@ -94,14 +94,14 @@ namespace Arbiter
 			this.duelNum = duelNum;
 			this.duelistA = duelistA;
 			this.duelistB = duelistB;
-			this.venue = venue;
+			this.sport = sport;
 			this.overtime = overtime;
 			this.madness = madness;
 			#endregion
 			
 			#region Duel Type
 			// Determine duel type.
-			if (venue.Advantages)
+			if (sport.Advantages)
 			{
 				duelistAScore.Markup =
 					@"<span size='28672'><b>0</b></span><span size='14336'>  0</span>";
@@ -110,12 +110,12 @@ namespace Arbiter
 			}
 			
 			// Set widget properties.
-			duelistAMove.Model = venue.Moves;
-			duelistBMove.Model = venue.Moves;
-			duelistAFancy.Sensitive = venue.Fancies;
-			duelistBFancy.Sensitive = venue.Fancies;
-			duelistAFeint.Sensitive = venue.Feints;
-			duelistBFeint.Sensitive = venue.Feints;
+			duelistAMove.Model = sport.Moves;
+			duelistBMove.Model = sport.Moves;
+			duelistAFancy.Sensitive = sport.Fancies;
+			duelistBFancy.Sensitive = sport.Fancies;
+			duelistAFeint.Sensitive = sport.Feints;
+			duelistBFeint.Sensitive = sport.Feints;
 			#endregion
 			
 			#region Short Names
@@ -178,7 +178,7 @@ namespace Arbiter
 			logHeader = this.duelistA + " .vs. " +
 				this.duelistB + n + "Ring " + ringName;
 			if (MainClass.FightNight) logHeader +=
-					" (" + venue.ShortName + ")";
+					" (" + sport.ShortName + ")";
 			logHeader += n + n +
 				"Rd. | " + shortNameA + " / "
 				+ shortNameB + " | Score" + n;
@@ -212,7 +212,7 @@ namespace Arbiter
 			
 			#region Resolve
 			// Act according to the result indicated on the matrix.
-			switch (venue.Matrix[moveA[round], moveB[round]])
+			switch (sport.Matrix[moveA[round], moveB[round]])
 			{
 			case 'A':  // A scores.
 				if (!duelistAFeint.Active) roundScoreA[round] = 1;
@@ -223,7 +223,7 @@ namespace Arbiter
 			case 'a':  // A gets advantage.
 				if (duelistBFeint.Active) roundScoreB[round] = 1;
 				else if (duelistAFancy.Active) roundScoreA[round] = 1;
-				else if (venue.Advantages)
+				else if (sport.Advantages)
 				{
 					if (advA[round - 1])
 						roundScoreA[round] = 1;
@@ -234,7 +234,7 @@ namespace Arbiter
 			case 'b':  // B gets advantage.
 				if (duelistAFeint.Active) roundScoreA[round] = 1;
 				else if (duelistBFancy.Active) roundScoreB[round] = 1;
-				else if (venue.Advantages)
+				else if (sport.Advantages)
 				{
 					if (advB[round - 1])
 						roundScoreB[round] = 1;
@@ -269,7 +269,7 @@ namespace Arbiter
 			
 			// Check for RFx2 and take care of it. It could probably be done
 			// without duplicating the above, but I don't care right now. :P
-			if (venue.Matrix[moveA[round], moveB[round]] == '!')
+			if (sport.Matrix[moveA[round], moveB[round]] == '!')
 			{
 				// Add stuff to the lists.
 				moveA.Add(15);
@@ -387,16 +387,16 @@ namespace Arbiter
 		private void UpdateLabels ()
 		{
 			// Create main score parts.
-			string scoreStringA = scoreA.ToString(venue.ScoreFormat);
-			string scoreStringB = scoreB.ToString(venue.ScoreFormat);
+			string scoreStringA = scoreA.ToString(sport.ScoreFormat);
+			string scoreStringB = scoreB.ToString(sport.ScoreFormat);
 			string scoreLabelA = @"<span size='28672'><b>" + scoreStringA + @"</b></span>";
 			string scoreLabelB = @"<span size='28672'><b>" + scoreStringB + @"</b></span>";
 			
 			// Create round score parts.
 			string roundScoreLabelA = @"<span size='14336'>  " +
-				roundScoreA[round].ToString(venue.ScoreFormat) + @"</span>";
+				roundScoreA[round].ToString(sport.ScoreFormat) + @"</span>";
 			string roundScoreLabelB = @"<span size='14336'>" +
-				roundScoreB[round].ToString(venue.ScoreFormat) + @"  </span>";
+				roundScoreB[round].ToString(sport.ScoreFormat) + @"  </span>";
 			if (advA[round]) roundScoreLabelA = @"<span size='14336'>  +</span>";
 			if (advB[round]) roundScoreLabelB = @"<span size='14336'>+  </span>";
 			
@@ -430,8 +430,8 @@ namespace Arbiter
 		private void UpdateDuelLog (int mA, int mB)
 		{
 			// Create score strings.
-			string scoreStringA = scoreA.ToString(venue.ScoreFormat);
-			string scoreStringB = scoreB.ToString(venue.ScoreFormat);
+			string scoreStringA = scoreA.ToString(sport.ScoreFormat);
+			string scoreStringB = scoreB.ToString(sport.ScoreFormat);
 			
 			// Adjust score strings to include advantages.
 			if (advA[round]) scoreStringA += "+";
@@ -439,12 +439,12 @@ namespace Arbiter
 			
 			// Create special abbreviations in case of fancy or feint.
 			string abbrevA, abbrevB;
-			if (duelistAFancy.Active == true)      abbrevA = "Fa" + venue.Abbrev[mA];
-			else if (duelistAFeint.Active == true) abbrevA = "Ft" + venue.Abbrev[mA];
-			else abbrevA = "  " + venue.Abbrev[mA];  // For consistent spacing.
-			if (duelistBFancy.Active == true)      abbrevB = "Fa" + venue.Abbrev[mB];
-			else if (duelistBFeint.Active == true) abbrevB = "Ft" + venue.Abbrev[mB];
-			else abbrevB = venue.Abbrev[mB] + "  ";  // For consistent spacing.
+			if (duelistAFancy.Active == true)      abbrevA = "Fa" + sport.Abbrev[mA];
+			else if (duelistAFeint.Active == true) abbrevA = "Ft" + sport.Abbrev[mA];
+			else abbrevA = "  " + sport.Abbrev[mA];  // For consistent spacing.
+			if (duelistBFancy.Active == true)      abbrevB = "Fa" + sport.Abbrev[mB];
+			else if (duelistBFeint.Active == true) abbrevB = "Ft" + sport.Abbrev[mB];
+			else abbrevB = sport.Abbrev[mB] + "  ";  // For consistent spacing.
 			
 			// Update log.
 			if ((scoreA > scoreB) || advA[round])  // A leads.
@@ -470,8 +470,8 @@ namespace Arbiter
 		private void CheckDuelEnd()
 		{
 			// Create score strings.
-			string scoreStringA = scoreA.ToString(venue.ScoreFormat);
-			string scoreStringB = scoreB.ToString(venue.ScoreFormat);
+			string scoreStringA = scoreA.ToString(sport.ScoreFormat);
+			string scoreStringB = scoreB.ToString(sport.ScoreFormat);
 			
 			// Check for the end of the duel. This is going to get really complicated.
 			// It could probably be done better, and any changes are welcome.
@@ -493,7 +493,7 @@ namespace Arbiter
 				string final = duelistA + " .def. " + duelistB + ", " +
 					scoreStringA + " - " + scoreStringB +
 					" in " + (round - 1).ToString();
-				if (MainClass.FightNight) final += ", " + venue.ShortName;
+				if (MainClass.FightNight) final += ", " + sport.ShortName;
 				log.Add(final);
 				MainClass.UpdateShiftReport(final, false);
 			}
@@ -504,7 +504,7 @@ namespace Arbiter
 				string final = duelistB + " .def. " + duelistA + ", " +
 					scoreStringB + " - " + scoreStringA +
 					" in " + (round - 1).ToString();
-				if (MainClass.FightNight) final += ", " + venue.ShortName;
+				if (MainClass.FightNight) final += ", " + sport.ShortName;
 				log.Add(final);
 				MainClass.UpdateShiftReport(final, false);
 			}
@@ -515,7 +515,7 @@ namespace Arbiter
 				string final = duelistA + " .ties. " + duelistB + ", " +
 					scoreStringA + " - " + scoreStringB +
 					" in " + (round - 1).ToString();
-				if (MainClass.FightNight) final += ", " + venue.ShortName;
+				if (MainClass.FightNight) final += ", " + sport.ShortName;
 				log.Add(final);
 				MainClass.UpdateShiftReport(final, false);
 			}
@@ -543,7 +543,7 @@ namespace Arbiter
 		{
 			// Figure out the file name.
 			string fileName = duelNum.ToString("00") + ". " + duelistA + " .vs. " + duelistB;
-			if (MainClass.FightNight) fileName += " (" + venue.ShortName + ")";
+			if (MainClass.FightNight) fileName += " (" + sport.ShortName + ")";
 			fileName += ".txt";
 			string path = System.IO.Path.Combine(MainClass.CurrentDir, fileName);
 			

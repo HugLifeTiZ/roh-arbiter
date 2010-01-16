@@ -40,7 +40,7 @@ namespace Arbiter
 		[Widget] private ComboBoxEntry duelistAName;
 		[Widget] private ComboBoxEntry duelistBName;
 		[Widget] private ComboBoxEntry ringName;
-		[Widget] private ComboBox duelVenue;
+		[Widget] private ComboBox duelSport;
 		[Widget] private ComboBox duelType;
 		[Widget] private CheckButton fightNight;
 		[Widget] private ComboBox tabPosition;
@@ -135,7 +135,7 @@ namespace Arbiter
 			logDirectory.SelectionChanged += SaveLogDirectory;
 			
 			// And for whatever reason, the comboboxes don't start at defaults.
-			duelVenue.Active = 0;
+			duelSport.Active = 0;
 			duelType.Active = 0;
 			
 			// We may have restored from a fight night shift report.
@@ -189,14 +189,14 @@ namespace Arbiter
 			}
 			#endregion
 			
-			#region Venue and Type
-			// For duel venue.
-			Venue venue = new Venue();
-			switch (duelVenue.ActiveText)
+			#region Sport and Type
+			// For duel sport.
+			Sport sport = new Sport();
+			switch (duelSport.ActiveText)
 			{
-				case "Swords": venue = MainClass.DuelOfSwords; break;
-				case "Fists":  venue = MainClass.DuelOfFists;  break;
-				case "Magic":  venue = MainClass.DuelOfMagic;  break;
+				case "Swords": sport = MainClass.DuelOfSwords; break;
+				case "Fists":  sport = MainClass.DuelOfFists;  break;
+				case "Magic":  sport = MainClass.DuelOfMagic;  break;
 			}
 			
 			// For duel type.
@@ -221,7 +221,7 @@ namespace Arbiter
 			
 			// Tab icon.
 			Gdk.Pixbuf icon = Gdk.Pixbuf.LoadFromResource(
-					"Arbiter." + venue.ShortName + duelType.ActiveText + ".png");
+					"Arbiter." + sport.ShortName + duelType.ActiveText + ".png");
 			icon = icon.ScaleSimple(16, 16, Gdk.InterpType.Hyper);
 			
 			// Pack the hbox and show it.
@@ -236,7 +236,7 @@ namespace Arbiter
 			MainClass.NumDuels++;
 			Duel duel = new Duel(MainClass.NumDuels, ringName.ActiveText,
 								duelistAName.ActiveText, duelistBName.ActiveText,
-								venue, overtime, madness);
+								sport, overtime, madness);
 			//Widget duelWidget = duel.DuelWidget;
 			duels.InsertPage(duel, label, duels.NPages - 1);
 			duels.ShowAll();
@@ -270,7 +270,7 @@ namespace Arbiter
 			duelistAName.Entry.Text = "";
 			duelistBName.Entry.Text = "";
 			ringName.Entry.Text = "";
-			if (MainClass.FightNight) duelVenue.Active = 0;
+			if (MainClass.FightNight) duelSport.Active = 0;
 			duelType.Active = 0;
 			#endregion
 		}

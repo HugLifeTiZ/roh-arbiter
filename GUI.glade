@@ -189,7 +189,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="tooltip">If checked, the shift report will be grouped by venue, and the venue will be included in the duel logs.</property>
+                <property name="tooltip">If checked, the shift report will be grouped by sport, and the sport will be included in the duel logs.</property>
                 <property name="use_underline">True</property>
                 <property name="draw_indicator">True</property>
                 <signal name="toggled" handler="FightNightToggled"/>
@@ -201,15 +201,15 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkHBox" id="duelVenueTypeBox">
+              <widget class="GtkHBox" id="duelSportTypeBox">
                 <property name="visible">True</property>
                 <property name="spacing">4</property>
                 <child>
-                  <widget class="GtkLabel" id="venueLabel">
+                  <widget class="GtkLabel" id="sportLabel">
                     <property name="visible">True</property>
-                    <property name="label">_Venue:</property>
+                    <property name="label">_Sport:</property>
                     <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">duelVenue</property>
+                    <property name="mnemonic_widget">duelSport</property>
                   </widget>
                   <packing>
                     <property name="expand">False</property>
@@ -218,9 +218,9 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkComboBox" id="duelVenue">
+                  <widget class="GtkComboBox" id="duelSport">
                     <property name="visible">True</property>
-                    <property name="tooltip">The venue in which the duel will be fought.
+                    <property name="tooltip">The sport in which the duel will be fought.
 Swords, Fists, or Magic.</property>
                     <property name="active">0</property>
                     <property name="items">Swords

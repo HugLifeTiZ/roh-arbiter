@@ -1,5 +1,5 @@
 // 
-// Venue.cs
+// Sport.cs
 //  
 // Author:
 //       Trent McPheron <twilightinzero@gmail.com>
@@ -31,8 +31,8 @@ using Gtk;
 
 namespace Arbiter
 {
-	// A simple data structure representing a venue.
-	public struct Venue
+	// A simple data structure representing a sport.
+	public struct Sport
 	{
 		#region Properties
 		public string ShortName   { get; set; }
@@ -45,13 +45,13 @@ namespace Arbiter
 		public ListStore Moves    { get; set; }
 		#endregion
 		
-		// Load a venue from an embedded config.
-		public Venue (string venueName)
+		// Load a sport from an embedded config.
+		public Sport (string sportName)
 		{
-			// Load the embedded config for the venue.
+			// Load the embedded config for the sport.
 			StreamReader sr = new StreamReader(
 					Assembly.GetExecutingAssembly().GetManifestResourceStream(
-						"Arbiter.venue-" + venueName + ".cfg"));
+						"Arbiter.sport-" + sportName + ".cfg"));
 			
 			// Load the comma separated header.
 			string[] header = sr.ReadLine().Split(',');
@@ -100,7 +100,7 @@ namespace Arbiter
 			                           new object[] {Stock.Ok, ResponseType.Ok});
 				dialog.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
 				Label dlabel = new Label();
-				dlabel.Text = "A consistency error was detected in the " + venueName +
+				dlabel.Text = "A consistency error was detected in the " + sportName +
 					" matrix\n at "+ errA.ToString() + "," + errB.ToString() + ". " +
 					"Please inform the author of this error immediately.";
 				dlabel.SetAlignment(0.5f, 0.5f);
