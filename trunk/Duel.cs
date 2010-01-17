@@ -71,15 +71,37 @@ namespace Arbiter
 		[Widget] private Button resolve;
 		[Widget] private Button undo;
 		[Widget] private TextView duelLogView;
+		// End duel window
+		[Widget] private Dialog endDuelWin;
+		[Widget] private RadioButton duelistAWinRadio;
+		[Widget] private RadioButton duelistBWinRadio;
+		[Widget] private RadioButton tieRadio;
+		[Widget] private Entry duelistAScoreEntry;
+		[Widget] private Entry duelistBScoreEntry;
+		[Widget] private Entry reasonEntry;
+		[Widget] private Button okButton;
 		#endregion
 		
-		// So that duels can be added to the notebook.
-		public VBox DuelWidget
-			{ get { return duelWidget; } }
-		
+		#region Properties
 		// Convenience property.
-		private TextBuffer DuelLog
+		public TextBuffer DuelLog
 			{ get { return duelLogView.Buffer; } }
+		
+		// Determines whether or not the round can be resolved.
+		public bool CanResolve {
+			get {
+				return ((duelistAMove.Active != moveA[round - 1] || duelistAMove.ActiveText == "Disengage")
+				&& (duelistBMove.Active != moveB[round - 1] || duelistBMove.ActiveText == "Disengage")
+			    && !(moveA[round - 1] == 15 && duelistAMove.ActiveText == "Reflection")
+			    && !(moveB[round - 1] == 15 && duelistBMove.ActiveText == "Reflection")
+			    && !(usedEFA && duelistAMove.Active == 14)
+			    && !(usedEFB && duelistBMove.Active == 14)
+				&& !end); } }
+		
+		// Determines whether or not the last round can be undoed.
+		public bool CanUndo {
+			get { return (round > 1); } }
+		#endregion
 		
 		// Constructor.
 		public Duel(int duelNum, string ringName, string duelistA, string duelistB,
@@ -195,8 +217,9 @@ namespace Arbiter
 			#endregion
 		}
 		
-		// Move resolver.
-		private void ResolveRound (object sender, System.EventArgs e)
+		// Move resolver. Public so that it can be called by
+		// the menu bar.
+		public void ResolveRound (object sender, EventArgs args)
 		{
 			#region Start of Resolve
 			// Set these now for convenience.
@@ -310,8 +333,9 @@ namespace Arbiter
 			#endregion
 		}
 		
-		// Undoes the round that just happened.
-		private void UndoRound (object sender, System.EventArgs e)
+		// Undoes the round that just happened. Public for
+		// the same reason as ResolveRound.
+		public void UndoRound (object sender, EventArgs args)
 		{
 			// Un-end the duel.
 			if (end)
@@ -379,7 +403,102 @@ namespace Arbiter
 			UpdateDuelLog();
 			
 			// Disable the undoer if it's round 1 now.
-			if (round == 1) undo.Sensitive = false;
+			undo.Sensitive = CanUndo;
+		}
+		
+		// Ends the duel prematurely, presenting a dialog
+		// that asks what to do.
+		public void EndDuel()
+		{
+			// Load the GUI.
+			XML xml = new XML("Arbiter.GUI.glade", "endDuelWin");
+			xml.Autoconnect(this);
+			endDuelWin.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			
+			// Set the labels and entries.
+			duelistAWinRadio.Label = duelistA;
+			duelistBWinRadio.Label = duelistB;
+			duelistAScoreEntry.Text = scoreA.ToString(sport.ScoreFormat);
+			duelistBScoreEntry.Text = scoreB.ToString(sport.ScoreFormat);
+			
+			// Pre-select the winner.
+			if (scoreA > scoreB) duelistAWinRadio.Active = true;
+			else if (scoreB > scoreA) duelistBWinRadio.Active = true;
+			else tieRadio.Active = true;
+			
+			// Create anonymous method to end the duel if OK is clicked.
+			okButton.Clicked += delegate { end = true; };
+			
+			// Run the dialog.
+			endDuelWin.Run();
+			endDuelWin.Destroy();
+			
+			// Abort if any button other than OK is pressed.
+			if (!end) return;
+			
+			if (duelistAWinRadio.Active)
+			{
+				//Add final line to log and shift report.
+				log.Add("");
+				string final = duelistA + " .def. " + duelistB + ", " +
+					duelistAScoreEntry.Text + " - " + duelistBScoreEntry.Text +
+					" in " + (round - 1).ToString();
+				if (MainClass.FightNight) final += ", " + sport.ShortName;
+				final += " (" + reasonEntry.Text + ")";
+				log.Add(final);
+				MainClass.UpdateShiftReport(final, false);
+			}
+			if (duelistBWinRadio.Active)
+			{
+				//Add final line to log.
+				log.Add("");
+				string final = duelistB + " .def. " + duelistA + ", " +
+					duelistBScoreEntry.Text + " - " + duelistAScoreEntry.Text +
+					" in " + (round - 1).ToString();
+				if (MainClass.FightNight) final += ", " + sport.ShortName;
+				final += " (" + reasonEntry.Text + ")";
+				log.Add(final);
+				MainClass.UpdateShiftReport(final, false);
+			}
+			if (tieRadio.Active)
+			{
+				if ( Single.Parse(duelistAScoreEntry.Text) >=
+				    	Single.Parse(duelistBScoreEntry.Text) )
+				{
+					//Add final line to log.
+					log.Add("");
+					string final = duelistA + " .ties. " + duelistB + ", " +
+						duelistAScoreEntry.Text + " - " + duelistBScoreEntry.Text +
+						" in " + (round - 1).ToString();
+					if (MainClass.FightNight) final += ", " + sport.ShortName;
+					final += " (" + reasonEntry.Text + ")";
+					log.Add(final);
+					MainClass.UpdateShiftReport(final, false);
+				}
+				else
+				{
+					//Add final line to log.
+					log.Add("");
+					string final = duelistB + " .ties. " + duelistA + ", " +
+						duelistBScoreEntry.Text + " - " + duelistAScoreEntry.Text +
+						" in " + (round - 1).ToString();
+					if (MainClass.FightNight) final += ", " + sport.ShortName;
+					final += " (" + reasonEntry.Text + ")";
+					log.Add(final);
+					MainClass.UpdateShiftReport(final, false);
+				}
+			}
+			
+			// Refresh the duel log.
+			UpdateDuelLog();
+			
+			// Disable all the widgets.
+			duelistAFancy.Sensitive = false;
+			duelistAFeint.Sensitive = false;
+			duelistAMove.Sensitive = false;
+			duelistBFancy.Sensitive = false;
+			duelistBFeint.Sensitive = false;
+			duelistBMove.Sensitive = false;
 		}
 		
 		#region Methods
@@ -556,37 +675,31 @@ namespace Arbiter
 		
 		#region Other Widgets
 		// Disables fancy when feint is enabled.
-		private void DuelistAFancyToggled (object sender, System.EventArgs e)
+		private void DuelistAFancyToggled (object sender, EventArgs args)
 			{ if (duelistAFancy.Active) duelistAFeint.Active = false; }
 		
 		// Disables feint when fancy is enabled.
-		private void DuelistAFeintToggled (object sender, System.EventArgs e)
+		private void DuelistAFeintToggled (object sender, EventArgs args)
 			{ if (duelistAFeint.Active) duelistAFancy.Active = false; }
 		
 		// Disables fancy when feint is enabled.
-		private void DuelistBFancyToggled (object sender, System.EventArgs e)
+		private void DuelistBFancyToggled (object sender, EventArgs args)
 			{ if (duelistBFancy.Active) duelistBFeint.Active = false; }
 		
 		// Disables feint when fancy is enabled.
-		private void DuelistBFeintToggled (object sender, System.EventArgs e)
+		private void DuelistBFeintToggled (object sender, EventArgs args)
 			{ if (duelistBFeint.Active) duelistBFancy.Active = false; }
 		
 		// Enables the resolver once new moves have been selected.
-		private void MoveChanged (object sender, System.EventArgs e)
-			{ if ((duelistAMove.Active != moveA[round - 1] || duelistAMove.ActiveText == "Disengage")
-				&& (duelistBMove.Active != moveB[round - 1] || duelistBMove.ActiveText == "Disengage")
-			    && !(moveA[round - 1] == 15 && duelistAMove.ActiveText == "Reflection")
-			    && !(moveB[round - 1] == 15 && duelistBMove.ActiveText == "Reflection")
-			    && !(usedEFA && duelistAMove.Active == 14)
-			    && !(usedEFB && duelistBMove.Active == 14))
-				resolve.Sensitive = true; }
+		private void MoveChanged (object sender, EventArgs args)
+			{ resolve.Sensitive = CanResolve; }
 		
 		// Size requisition.
-		private void OnSizeRequested (object o, SizeRequestedArgs args)
+		private void OnSizeRequested (object sender, SizeRequestedArgs args)
 			{ args.Requisition = duelWidget.SizeRequest(); }
 		
 		// Size allocation.
-		private void OnSizeAllocated (object o, SizeAllocatedArgs args)
+		private void OnSizeAllocated (object sender, SizeAllocatedArgs args)
 			{ duelWidget.Allocation = args.Allocation; }
 		#endregion
 	}

@@ -43,15 +43,24 @@ namespace Arbiter
 		[Widget] private ComboBox duelSport;
 		[Widget] private ComboBox duelType;
 		[Widget] private CheckButton fightNight;
-		[Widget] private ComboBox tabPosition;
-		[Widget] private FileChooserButton logDirectory;
 		[Widget] private Image newDuelTabIcon;
 		[Widget] private Image duelistAEditImage;
 		[Widget] private Image duelistBEditImage;
 		[Widget] private Image ringEditImage;
-		[Widget] private HBox newDuelTabBox;
+		[Widget] private HBox newDuelTab;
 		[Widget] private TextView shiftReportTextView;
+		[Widget] private RadioMenuItem leftTabMenuItem;
+		[Widget] private RadioMenuItem rightTabMenuItem;
+		[Widget] private RadioMenuItem topTabMenuItem;
+		[Widget] private RadioMenuItem bottomTabMenuItem;
+		[Widget] private MenuItem duelMenuItem;
+		[Widget] private ImageMenuItem resolveMenuItem;
+		[Widget] private ImageMenuItem undoMenuItem;
 		#endregion
+		
+		// Convenience property.
+		private Duel CurrentDuel
+			{ get { return (Duel)duels.CurrentPageWidget; } }
 		
 		// Constructor.
 		public MainWindow()
@@ -69,25 +78,22 @@ namespace Arbiter
 			switch (MainClass.TabPosition)
 			{
 			case "Left":
-				tabPosition.Active = 0;
+				leftTabMenuItem.Active = true;
 				duels.TabPos = PositionType.Left;
 				break;
 			case "Right":
-				tabPosition.Active = 1;
+				rightTabMenuItem.Active = true;
 				duels.TabPos = PositionType.Right;
 				break;
 			case "Top":
-				tabPosition.Active = 2;
+				topTabMenuItem.Active = true;
 				duels.TabPos = PositionType.Top;
 				break;
 			case "Bottom":
-				tabPosition.Active = 3;
+				bottomTabMenuItem.Active = true;
 				duels.TabPos = PositionType.Bottom;
 				break;
 			}
-			
-			// Set log directory path in the folder chooser.
-			logDirectory.SetCurrentFolder(MainClass.LogDirectory);
 			#endregion
 			
 			#region Widgets
@@ -131,9 +137,6 @@ namespace Arbiter
 			// Prepare shift report displayer.
 			MainClass.ShiftReport = shiftReportTextView.Buffer;
 			
-			// For whatever reason, Glade doesn't automatically connect this one.
-			logDirectory.SelectionChanged += SaveLogDirectory;
-			
 			// And for whatever reason, the comboboxes don't start at defaults.
 			duelSport.Active = 0;
 			duelType.Active = 0;
@@ -148,18 +151,18 @@ namespace Arbiter
 			{ mainWin.ShowAll(); }
 		
 		// Save settings then quit.
-		private void AppClose (object sender, DeleteEventArgs a)
+		private void AppClose (object sender, DeleteEventArgs args)
 		{
 			MainClass.SaveSettings();
 			Application.Quit ();
-			a.RetVal = true;
+			args.RetVal = true;
 		}
 		
 		// Starts a duel according to the provided settings.
-		private void StartDuel (object sender, System.EventArgs e)
+		private void StartDuel (object sender, EventArgs args)
 		{
 			// Make sure the directory exists.
-			MainClass.CreateShiftReport();
+			if (MainClass.NumDuels == 0) MainClass.CreateShiftReport();
 			
 			#region Failsafe
 			// First of all, we have to make sure the user
@@ -276,33 +279,26 @@ namespace Arbiter
 		}
 		
 		#region Other Widgets
-		// Update tab position and store the setting.
-		private void SetTabPosition (object sender, System.EventArgs e)
+		// Toggle the Fight Night switch.
+		private void FightNightToggled (object sender, EventArgs args)
+			{ MainClass.FightNight = fightNight.Active; }
+		
+		// Create a window to edit saved duelists.
+		private void EditDuelists (object sender, EventArgs args)
 		{
-			MainClass.TabPosition = tabPosition.ActiveText;
-			switch (tabPosition.ActiveText)
-			{
-			case "Left":
-				duels.TabPos = PositionType.Left;
-				break;
-			case "Right":
-				duels.TabPos = PositionType.Right;
-				break;
-			case "Top":
-				duels.TabPos = PositionType.Top;
-				break;
-			case "Bottom":
-				duels.TabPos = PositionType.Bottom;
-				break;
-			}
+			EditDialog ed = new EditDialog("Edit Duelists", MainClass.Duelists, false);
+			ed.Run();
 		}
 		
-		// Store the log directory setting.
-		private void SaveLogDirectory (object sender, System.EventArgs e)
-			{ MainClass.LogDirectory = logDirectory.Filename; }
+		// Create a window to edit saved ring names.
+		private void EditRings (object sender, EventArgs e)
+		{
+			EditDialog ed = new EditDialog("Edit Rings", MainClass.Rings, true);
+			ed.Run();
+		}
 
 		// Store the size setting.
-		private void SaveSize (object o, Gtk.SizeAllocatedArgs args)
+		private void SaveSize (object sender, SizeAllocatedArgs args)
 		{
 			int width, height;
 			mainWin.GetSize(out width, out height);
@@ -310,31 +306,72 @@ namespace Arbiter
 			MainClass.WindowHeight = height;
 		}
 		
-		// Toggle the Fight Night switch.
-		private void FightNightToggled (object sender, System.EventArgs e)
-			{ MainClass.FightNight = fightNight.Active; }
+		// Enable the Duel menu depending on selected tab.
+		private void ToggleDuelMenu (object sender, SwitchPageArgs args)
+			{ duelMenuItem.Sensitive = (duels.CurrentPage < duels.NPages); }
+		#endregion
 		
-		// Make the expander fill the window when expanded.
-		private void ExpandExpander (object sender, System.EventArgs e)
+		#region Menu Events
+		// Update tab position and store the setting.
+		private void SetTabPosition (object sender, EventArgs args)
 		{
-			Expander ex = (Expander)sender;
-			VBox box = (VBox)(ex.Parent);
-			box.SetChildPacking(ex, ex.Expanded, true, 0, PackType.Start);
+			if (leftTabMenuItem.Active)
+			{
+				MainClass.TabPosition = "Left";
+				duels.TabPos = PositionType.Left;
+			}
+			else if (rightTabMenuItem.Active)
+			{
+				MainClass.TabPosition = "Right";
+				duels.TabPos = PositionType.Right;
+			}
+			else if (topTabMenuItem.Active)
+			{
+				MainClass.TabPosition = "Top";
+				duels.TabPos = PositionType.Top;
+			}
+			else if (bottomTabMenuItem.Active)
+			{
+				MainClass.TabPosition = "Bottom";
+				duels.TabPos = PositionType.Bottom;
+			}
 		}
 		
-		// Create a window to edit saved duelists.
-		private void EditDuelists (object sender, System.EventArgs e)
+		// Set the log directory and store it.
+		private void SetLogDirectory (object sender, EventArgs args)
 		{
-			EditDialog ed = new EditDialog("Edit Duelists", MainClass.Duelists, false);
-			ed.Run();
+			// Prompt the user to pick a directory to store duels in.
+			FileChooserDialog fc = new FileChooserDialog(
+										"Select Log Directory",
+										null, FileChooserAction.SelectFolder,
+										new object[] {Stock.Open, ResponseType.Accept});
+			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			
+			// Keep running the dialog until we get OK.
+			int r = 0;
+			while (r != (int)ResponseType.Accept) r = fc.Run();
+			MainClass.LogDirectory = fc.Filename;
+			fc.Destroy();
 		}
 		
-		// Create a window to edit saved ring names.
-		private void EditRings (object sender, System.EventArgs e)
+		// Determine resolvability and undoability of the selected duel.
+		private void CheckResolveUndo (object sender, EventArgs args)
 		{
-			EditDialog ed = new EditDialog("Edit Rings", MainClass.Rings, true);
-			ed.Run();
+			resolveMenuItem.Sensitive = CurrentDuel.CanResolve;
+			undoMenuItem.Sensitive = CurrentDuel.CanUndo;
 		}
+		
+		// Tell the selected duel to resolve.
+		private void ResolveRound (object sender, EventArgs args)
+			{ CurrentDuel.ResolveRound(sender, args); }
+		
+		// Tell the selected duel to undo its last round.
+		private void UndoRound (object sender, EventArgs args)
+			{ CurrentDuel.UndoRound(sender, args); } 
+		
+		// Prematurely end a duel.
+		private void EndDuel (object sender, EventArgs args)
+			{ CurrentDuel.EndDuel(); }
 		#endregion
 	}
 }
