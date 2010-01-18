@@ -72,11 +72,11 @@ namespace Arbiter
 			
 			#region Settings
 			// Set default size.
-			mainWin.DefaultWidth = MainClass.WindowWidth;
-			mainWin.DefaultHeight = MainClass.WindowHeight;
+			mainWin.DefaultWidth = Arbiter.WindowWidth;
+			mainWin.DefaultHeight = Arbiter.WindowHeight;
 			
 			// Use settings to determine tab location.
-			switch (MainClass.TabPosition)
+			switch (Arbiter.TabPosition)
 			{
 			case "Left":
 				leftTabMenuItem.Active = true;
@@ -111,9 +111,9 @@ namespace Arbiter
 			ringEditImage.Pixbuf = IconTheme.Default.LoadIcon(Stock.Edit, 16, 0);
 			
 			// Connect the list stores to their comboboxes.
-			duelistAName.Model = MainClass.Duelists;
-			duelistBName.Model = MainClass.Duelists;
-			ringName.Model = MainClass.Rings;
+			duelistAName.Model = Arbiter.Duelists;
+			duelistBName.Model = Arbiter.Duelists;
+			ringName.Model = Arbiter.Rings;
 			duelistAName.TextColumn = 0;
 			duelistBName.TextColumn = 0;
 			ringName.TextColumn = 0;
@@ -121,7 +121,7 @@ namespace Arbiter
 			// Autocompletion for the comboboxes.
 			EntryCompletion[] c = new EntryCompletion[3];
 			ListStore[] l = new ListStore[]
-				{ MainClass.Duelists, MainClass.Duelists, MainClass.Rings };
+				{ Arbiter.Duelists, Arbiter.Duelists, Arbiter.Rings };
 			ComboBoxEntry[] e = new ComboBoxEntry[]
 				{ duelistAName, duelistBName, ringName };
 			for (int n = 0; n < 3; n++)
@@ -136,14 +136,14 @@ namespace Arbiter
 			}
 			
 			// Prepare shift report displayer.
-			MainClass.ShiftReport = shiftReportTextView.Buffer;
+			Arbiter.ShiftReport = shiftReportTextView.Buffer;
 			
 			// And for whatever reason, the comboboxes don't start at defaults.
 			duelSport.Active = 0;
 			duelType.Active = 0;
 			
 			// We may have restored from a fight night shift report.
-			fightNight.Active = MainClass.FightNight;
+			fightNight.Active = Arbiter.FightNight;
 			#endregion
 		}
 		
@@ -155,7 +155,7 @@ namespace Arbiter
 		private void StartDuel (object sender, EventArgs args)
 		{
 			// Make sure the directory exists.
-			if (MainClass.NumDuels == 0) MainClass.CreateShiftReport();
+			if (Arbiter.NumDuels == 0) Arbiter.CreateShiftReport();
 			
 			#region Failsafe
 			// First of all, we have to make sure the user
@@ -190,9 +190,9 @@ namespace Arbiter
 			Sport sport = new Sport();
 			switch (duelSport.ActiveText)
 			{
-				case "Swords": sport = MainClass.DuelOfSwords; break;
-				case "Fists":  sport = MainClass.DuelOfFists;  break;
-				case "Magic":  sport = MainClass.DuelOfMagic;  break;
+				case "Swords": sport = Arbiter.DuelOfSwords; break;
+				case "Fists":  sport = Arbiter.DuelOfFists;  break;
+				case "Magic":  sport = Arbiter.DuelOfMagic;  break;
 			}
 			
 			// For duel type.
@@ -229,8 +229,8 @@ namespace Arbiter
 			
 			#region Start Duel
 			// Make the tab.
-			MainClass.NumDuels++;
-			Duel duel = new Duel(MainClass.NumDuels, ringName.ActiveText,
+			Arbiter.NumDuels++;
+			Duel duel = new Duel(Arbiter.NumDuels, ringName.ActiveText,
 								duelistAName.ActiveText, duelistBName.ActiveText,
 								sport, overtime, madness);
 			//Widget duelWidget = duel.DuelWidget;
@@ -250,14 +250,14 @@ namespace Arbiter
 			// This will automatically add new duelists to the duelist list.
 			bool presentA = false;
 			bool presentB = false;
-			foreach(object[] s in MainClass.Duelists)
+			foreach(object[] s in Arbiter.Duelists)
 			{
 				presentA = presentA || (string)s[0] == duelistAName.ActiveText;
 				presentB = presentB || (string)s[0] == duelistBName.ActiveText;
 			}
-			if (!presentA) MainClass.Duelists.AppendValues(
+			if (!presentA) Arbiter.Duelists.AppendValues(
 										duelistAName.ActiveText);
-			if (!presentB) MainClass.Duelists.AppendValues(
+			if (!presentB) Arbiter.Duelists.AppendValues(
 										duelistBName.ActiveText);
 			#endregion
 			
@@ -266,7 +266,7 @@ namespace Arbiter
 			duelistAName.Entry.Text = "";
 			duelistBName.Entry.Text = "";
 			ringName.Entry.Text = "";
-			if (MainClass.FightNight) duelSport.Active = 0;
+			if (Arbiter.FightNight) duelSport.Active = 0;
 			duelType.Active = 0;
 			#endregion
 		}
@@ -274,19 +274,19 @@ namespace Arbiter
 		#region Other Widgets
 		// Toggle the Fight Night switch.
 		private void FightNightToggled (object sender, EventArgs args)
-			{ MainClass.FightNight = fightNight.Active; }
+			{ Arbiter.FightNight = fightNight.Active; }
 		
 		// Create a window to edit saved duelists.
 		private void EditDuelists (object sender, EventArgs args)
 		{
-			EditDialog ed = new EditDialog("Edit Duelists", MainClass.Duelists, false);
+			EditDialog ed = new EditDialog("Edit Duelists", Arbiter.Duelists, false);
 			ed.Run();
 		}
 		
 		// Create a window to edit saved ring names.
 		private void EditRings (object sender, EventArgs e)
 		{
-			EditDialog ed = new EditDialog("Edit Rings", MainClass.Rings, true);
+			EditDialog ed = new EditDialog("Edit Rings", Arbiter.Rings, true);
 			ed.Run();
 		}
 
@@ -295,8 +295,8 @@ namespace Arbiter
 		{
 			int width, height;
 			mainWin.GetSize(out width, out height);
-			MainClass.WindowWidth = width;
-			MainClass.WindowHeight = height;
+			Arbiter.WindowWidth = width;
+			Arbiter.WindowHeight = height;
 		}
 		
 		// Enable the Duel menu depending on selected tab.
@@ -323,19 +323,19 @@ namespace Arbiter
 			
 			// Open the file and write the contents of the buffer to it.
 			StreamWriter sw = new StreamWriter(path, false);
-			sw.Write(MainClass.ShiftReport.Text);
+			sw.Write(Arbiter.ShiftReport.Text);
 			sw.Close();
 		}
 		
 		// Save settings then quit.
 		private void QuitArbiter (object sender, EventArgs args)
 		{
-			MainClass.SaveSettings();
+			Arbiter.SaveSettings();
 			Application.Quit();
 		}
 		private void QuitArbiter (object sender, DeleteEventArgs args)
 		{
-			MainClass.SaveSettings();
+			Arbiter.SaveSettings();
 			Application.Quit();
 			args.RetVal = true;
 		}
@@ -384,7 +384,7 @@ namespace Arbiter
 			// Keep running the dialog until we get OK.
 			int r = 0;
 			while (r != (int)ResponseType.Accept) r = fc.Run();
-			MainClass.LogDirectory = fc.Filename;
+			Arbiter.LogDirectory = fc.Filename;
 			fc.Destroy();
 		}
 		
@@ -393,22 +393,22 @@ namespace Arbiter
 		{
 			if (leftTabMenuItem.Active)
 			{
-				MainClass.TabPosition = "Left";
+				Arbiter.TabPosition = "Left";
 				duels.TabPos = PositionType.Left;
 			}
 			else if (rightTabMenuItem.Active)
 			{
-				MainClass.TabPosition = "Right";
+				Arbiter.TabPosition = "Right";
 				duels.TabPos = PositionType.Right;
 			}
 			else if (topTabMenuItem.Active)
 			{
-				MainClass.TabPosition = "Top";
+				Arbiter.TabPosition = "Top";
 				duels.TabPos = PositionType.Top;
 			}
 			else if (bottomTabMenuItem.Active)
 			{
-				MainClass.TabPosition = "Bottom";
+				Arbiter.TabPosition = "Bottom";
 				duels.TabPos = PositionType.Bottom;
 			}
 		}
