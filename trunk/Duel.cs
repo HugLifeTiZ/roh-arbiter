@@ -671,6 +671,28 @@ namespace Arbiter
 			sw.Write(DuelLog.Text);
 			sw.Close();
 		}
+		
+		// Saves the duel log to a specific file.
+		public void SaveDuelAs()
+		{
+			// Prompt the user to pick a file.
+			FileChooserDialog fc = new FileChooserDialog(
+										"Save Duel Log As...",
+										null, FileChooserAction.Save,
+										new object[] {Stock.Save, ResponseType.Accept});
+			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			
+			// Keep running the dialog until we get OK.
+			int r = 0;
+			while (r != (int)ResponseType.Accept) r = fc.Run();
+			string path = fc.Filename;
+			fc.Destroy();
+			
+			// Open the file and write the contents of the buffer to it.
+			StreamWriter sw = new StreamWriter(path, false);
+			sw.Write(DuelLog.Text);
+			sw.Close();
+		}
 		#endregion
 		
 		#region Other Widgets

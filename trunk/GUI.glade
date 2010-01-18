@@ -6,7 +6,7 @@
     <property name="title">Arbiter</property>
     <property name="window_position">center</property>
     <signal name="size_allocate" handler="SaveSize"/>
-    <signal name="delete_event" handler="AppClose"/>
+    <signal name="delete_event" handler="QuitArbiter"/>
     <child>
       <widget class="GtkVBox" id="mainBox">
         <property name="visible">True</property>
@@ -29,6 +29,7 @@
                         <property name="tooltip">Saves the shift report to a file of your choice.</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
+                        <signal name="activate" handler="SaveShiftReport"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="saveReportImage">
                             <property name="visible">True</property>
@@ -45,6 +46,7 @@
                         <property name="tooltip">Press N for guts and glory, press Y for work and worry.</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
+                        <signal name="activate" handler="QuitArbiter"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="quitImage">
                             <property name="visible">True</property>
@@ -112,6 +114,7 @@
                         <property name="tooltip">Save the duel log to a file of your choice.</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
+                        <signal name="activate" handler="SaveDuelLog"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="saveLogImage">
                             <property name="visible">True</property>
@@ -145,6 +148,7 @@
                         <property name="tooltip">Closes the current duel tab.</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
+                        <signal name="activate" handler="CloseDuel"/>
                         <child internal-child="image">
                           <widget class="GtkImage" id="closeImage">
                             <property name="visible">True</property>
@@ -1290,6 +1294,7 @@ Ring ThisRing</property>
   <widget class="GtkDialog" id="endDuelWin">
     <property name="border_width">5</property>
     <property name="title">End Duel</property>
+    <property name="modal">True</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
