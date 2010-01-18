@@ -199,7 +199,7 @@ namespace Arbiter
 			// Create log header.
 			logHeader = this.duelistA + " .vs. " +
 				this.duelistB + n + "Ring " + ringName;
-			if (MainClass.FightNight) logHeader +=
+			if (Arbiter.FightNight) logHeader +=
 					" (" + sport.ShortName + ")";
 			logHeader += n + n +
 				"Rd. | " + shortNameA + " / "
@@ -342,7 +342,7 @@ namespace Arbiter
 			{
 				// Remove the final line.
 				string final = log[log.Count - 1];
-				MainClass.UpdateShiftReport(final, true);
+				Arbiter.UpdateShiftReport(final, true);
 				log.RemoveAt(log.Count - 1);
 				log.RemoveAt(log.Count - 1);
 				
@@ -443,10 +443,10 @@ namespace Arbiter
 				string final = duelistA + " .def. " + duelistB + ", " +
 					duelistAScoreEntry.Text + " - " + duelistBScoreEntry.Text +
 					" in " + (round - 1).ToString();
-				if (MainClass.FightNight) final += ", " + sport.ShortName;
+				if (Arbiter.FightNight) final += ", " + sport.ShortName;
 				final += " (" + reasonEntry.Text + ")";
 				log.Add(final);
-				MainClass.UpdateShiftReport(final, false);
+				Arbiter.UpdateShiftReport(final, false);
 			}
 			if (duelistBWinRadio.Active)
 			{
@@ -455,10 +455,10 @@ namespace Arbiter
 				string final = duelistB + " .def. " + duelistA + ", " +
 					duelistBScoreEntry.Text + " - " + duelistAScoreEntry.Text +
 					" in " + (round - 1).ToString();
-				if (MainClass.FightNight) final += ", " + sport.ShortName;
+				if (Arbiter.FightNight) final += ", " + sport.ShortName;
 				final += " (" + reasonEntry.Text + ")";
 				log.Add(final);
-				MainClass.UpdateShiftReport(final, false);
+				Arbiter.UpdateShiftReport(final, false);
 			}
 			if (tieRadio.Active)
 			{
@@ -470,10 +470,10 @@ namespace Arbiter
 					string final = duelistA + " .ties. " + duelistB + ", " +
 						duelistAScoreEntry.Text + " - " + duelistBScoreEntry.Text +
 						" in " + (round - 1).ToString();
-					if (MainClass.FightNight) final += ", " + sport.ShortName;
+					if (Arbiter.FightNight) final += ", " + sport.ShortName;
 					final += " (" + reasonEntry.Text + ")";
 					log.Add(final);
-					MainClass.UpdateShiftReport(final, false);
+					Arbiter.UpdateShiftReport(final, false);
 				}
 				else
 				{
@@ -482,10 +482,10 @@ namespace Arbiter
 					string final = duelistB + " .ties. " + duelistA + ", " +
 						duelistBScoreEntry.Text + " - " + duelistAScoreEntry.Text +
 						" in " + (round - 1).ToString();
-					if (MainClass.FightNight) final += ", " + sport.ShortName;
+					if (Arbiter.FightNight) final += ", " + sport.ShortName;
 					final += " (" + reasonEntry.Text + ")";
 					log.Add(final);
-					MainClass.UpdateShiftReport(final, false);
+					Arbiter.UpdateShiftReport(final, false);
 				}
 			}
 			
@@ -612,9 +612,9 @@ namespace Arbiter
 				string final = duelistA + " .def. " + duelistB + ", " +
 					scoreStringA + " - " + scoreStringB +
 					" in " + (round - 1).ToString();
-				if (MainClass.FightNight) final += ", " + sport.ShortName;
+				if (Arbiter.FightNight) final += ", " + sport.ShortName;
 				log.Add(final);
-				MainClass.UpdateShiftReport(final, false);
+				Arbiter.UpdateShiftReport(final, false);
 			}
 			if (duelistBwin)
 			{
@@ -623,9 +623,9 @@ namespace Arbiter
 				string final = duelistB + " .def. " + duelistA + ", " +
 					scoreStringB + " - " + scoreStringA +
 					" in " + (round - 1).ToString();
-				if (MainClass.FightNight) final += ", " + sport.ShortName;
+				if (Arbiter.FightNight) final += ", " + sport.ShortName;
 				log.Add(final);
-				MainClass.UpdateShiftReport(final, false);
+				Arbiter.UpdateShiftReport(final, false);
 			}
 			if (tie)
 			{
@@ -634,9 +634,9 @@ namespace Arbiter
 				string final = duelistA + " .ties. " + duelistB + ", " +
 					scoreStringA + " - " + scoreStringB +
 					" in " + (round - 1).ToString();
-				if (MainClass.FightNight) final += ", " + sport.ShortName;
+				if (Arbiter.FightNight) final += ", " + sport.ShortName;
 				log.Add(final);
-				MainClass.UpdateShiftReport(final, false);
+				Arbiter.UpdateShiftReport(final, false);
 			}
 			if (end)
 			{
@@ -662,9 +662,9 @@ namespace Arbiter
 		{
 			// Figure out the file name.
 			string fileName = duelNum.ToString("00") + ". " + duelistA + " .vs. " + duelistB;
-			if (MainClass.FightNight) fileName += " (" + sport.ShortName + ")";
+			if (Arbiter.FightNight) fileName += " (" + sport.ShortName + ")";
 			fileName += ".txt";
-			string path = System.IO.Path.Combine(MainClass.CurrentDir, fileName);
+			string path = System.IO.Path.Combine(Arbiter.CurrentDir, fileName);
 			
 			// Open the file and write the contents of the buffer to it.
 			StreamWriter sw = new StreamWriter(path, false);

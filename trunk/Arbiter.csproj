@@ -10,7 +10,7 @@
     <RootNamespace>Arbiter</RootNamespace>
     <AssemblyName>arbiter</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <StartupObject>Arbiter.MainClass</StartupObject>
+    <StartupObject>Arbiter.Arbiter</StartupObject>
     <CodePage>65001</CodePage>
     <ReleaseVersion>0.3</ReleaseVersion>
   </PropertyGroup>
@@ -65,12 +65,12 @@
     <EmbeddedResource Include="sport-magic.cfg" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Duel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="EditDialog.cs" />
     <Compile Include="Sport.cs" />
+    <Compile Include="Arbiter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="arbiter.desktop">

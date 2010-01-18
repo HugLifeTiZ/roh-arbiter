@@ -1,5 +1,5 @@
 // 
-// Main.cs
+// Arbiter.cs
 //  
 // Author:
 //       Trent McPheron <twilightinzero@gmail.com>
@@ -34,7 +34,7 @@ namespace Arbiter
 {
 	// This class stores properties and methods that are used
 	// throughout the entire program.
-	static class MainClass
+	static class Arbiter
 	{
 		#region Properties
 		// Sports.
