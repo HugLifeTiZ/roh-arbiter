@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.IO;
 using Gtk;
 using Glade;
 
@@ -149,14 +150,6 @@ namespace Arbiter
 		// Just for convenience.
 		public void Show ()
 			{ mainWin.ShowAll(); }
-		
-		// Save settings then quit.
-		private void AppClose (object sender, DeleteEventArgs args)
-		{
-			MainClass.SaveSettings();
-			Application.Quit ();
-			args.RetVal = true;
-		}
 		
 		// Starts a duel according to the provided settings.
 		private void StartDuel (object sender, EventArgs args)
@@ -308,10 +301,93 @@ namespace Arbiter
 		
 		// Enable the Duel menu depending on selected tab.
 		private void ToggleDuelMenu (object sender, SwitchPageArgs args)
-			{ duelMenuItem.Sensitive = (duels.CurrentPage < duels.NPages); }
+			{ duelMenuItem.Sensitive = (duels.CurrentPage < duels.NPages - 1); }
 		#endregion
 		
-		#region Menu Events
+		#region Shift Menu
+		// Save the shift report to a file.
+		private void SaveShiftReport (object sender, EventArgs args)
+		{
+			// Prompt the user to pick a file.
+			FileChooserDialog fc = new FileChooserDialog(
+										"Save Shift Report As...",
+										null, FileChooserAction.Save,
+										new object[] {Stock.SaveAs, ResponseType.Accept});
+			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			
+			// Keep running the dialog until we get OK.
+			int r = 0;
+			while (r != (int)ResponseType.Accept) r = fc.Run();
+			string path = fc.Filename;
+			fc.Destroy();
+			
+			// Open the file and write the contents of the buffer to it.
+			StreamWriter sw = new StreamWriter(path, false);
+			sw.Write(MainClass.ShiftReport.Text);
+			sw.Close();
+		}
+		
+		// Save settings then quit.
+		private void QuitArbiter (object sender, EventArgs args)
+		{
+			MainClass.SaveSettings();
+			Application.Quit();
+		}
+		private void QuitArbiter (object sender, DeleteEventArgs args)
+		{
+			MainClass.SaveSettings();
+			Application.Quit();
+			args.RetVal = true;
+		}
+		#endregion
+		
+		#region Duel Menu
+		// Determine resolvability and undoability of the selected duel.
+		private void CheckResolveUndo (object sender, EventArgs args)
+		{
+			resolveMenuItem.Sensitive = CurrentDuel.CanResolve;
+			undoMenuItem.Sensitive = CurrentDuel.CanUndo;
+		}
+		
+		// Tell the selected duel to resolve.
+		private void ResolveRound (object sender, EventArgs args)
+			{ CurrentDuel.ResolveRound(sender, args); }
+		
+		// Tell the selected duel to undo its last round.
+		private void UndoRound (object sender, EventArgs args)
+			{ CurrentDuel.UndoRound(sender, args); }
+		
+		// Saves the duel log to a file of the user's choice.
+		private void SaveDuelLog (object sender, EventArgs args)
+			{ CurrentDuel.SaveDuelAs(); }
+		
+		// Prematurely end a duel.
+		private void EndDuel (object sender, EventArgs args)
+			{ CurrentDuel.EndDuel(); }
+		
+		// Close the duel tab.
+		private void CloseDuel (object sender, EventArgs args)
+			{ duels.Remove(duels.CurrentPageWidget); }
+		#endregion
+		
+		#region Options Menu
+		// Set the log directory and store it.
+		private void SetLogDirectory (object sender, EventArgs args)
+		{
+			// Prompt the user to pick a directory to store duels in.
+			FileChooserDialog fc = new FileChooserDialog(
+										"Select Log Directory",
+										null, FileChooserAction.SelectFolder,
+										new object[] {Stock.Save, ResponseType.Accept});
+			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			
+			// Keep running the dialog until we get OK.
+			int r = 0;
+			while (r != (int)ResponseType.Accept) r = fc.Run();
+			MainClass.LogDirectory = fc.Filename;
+			fc.Destroy();
+		}
+		
 		// Update tab position and store the setting.
 		private void SetTabPosition (object sender, EventArgs args)
 		{
@@ -336,42 +412,6 @@ namespace Arbiter
 				duels.TabPos = PositionType.Bottom;
 			}
 		}
-		
-		// Set the log directory and store it.
-		private void SetLogDirectory (object sender, EventArgs args)
-		{
-			// Prompt the user to pick a directory to store duels in.
-			FileChooserDialog fc = new FileChooserDialog(
-										"Select Log Directory",
-										null, FileChooserAction.SelectFolder,
-										new object[] {Stock.Open, ResponseType.Accept});
-			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
-			
-			// Keep running the dialog until we get OK.
-			int r = 0;
-			while (r != (int)ResponseType.Accept) r = fc.Run();
-			MainClass.LogDirectory = fc.Filename;
-			fc.Destroy();
-		}
-		
-		// Determine resolvability and undoability of the selected duel.
-		private void CheckResolveUndo (object sender, EventArgs args)
-		{
-			resolveMenuItem.Sensitive = CurrentDuel.CanResolve;
-			undoMenuItem.Sensitive = CurrentDuel.CanUndo;
-		}
-		
-		// Tell the selected duel to resolve.
-		private void ResolveRound (object sender, EventArgs args)
-			{ CurrentDuel.ResolveRound(sender, args); }
-		
-		// Tell the selected duel to undo its last round.
-		private void UndoRound (object sender, EventArgs args)
-			{ CurrentDuel.UndoRound(sender, args); } 
-		
-		// Prematurely end a duel.
-		private void EndDuel (object sender, EventArgs args)
-			{ CurrentDuel.EndDuel(); }
 		#endregion
 	}
 }
