@@ -26,6 +26,25 @@ by Trent McPheron (twilightinzero@gmail.com)
   project. This is more correct terminology. "Sport"
   refers to DoS, DoF, and DoM, and "venue" refers to
   the primary settings of each.
+ *Added a menu bar, complete with accelerators
+  (shortcut keys). Its functions all work completely
+  as expected. It also includes new functions,
+  detailed below.
+ *The shift report can now be saved to its own file,
+  as well as duel logs.
+ *Duels can be ended prematurely, in case of punts or
+  other things.
+ *There is a "Manual Mode", which always enables the
+  resolver, and prevents the duel from ending. It can
+  be toggled on a per-duel basis.
+ *There are various "Compact Mode" options to save up
+  on screen space. You can hide the sport icons, the
+  close buttons, the resolve and undo buttons, and
+  reduce the font size for the scoreboards. Due to
+  GTK's eccentrities and general lack of planning,
+  the last option doesn't actually help that much.
+  A better replacement for that option will be added
+  later.
 -v0.2.1-
  *First release with a proper name. I was incredibly
   indecisive with this. First, it was Cedran, named
