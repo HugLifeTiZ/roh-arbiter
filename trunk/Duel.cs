@@ -43,7 +43,7 @@ namespace Arbiter
 		private string duelistA, duelistB;
 		private string shortNameA, shortNameB;
 		private string logHeader;
-		private bool overtime, madness, end;
+		private bool overtime, madness;
 		private bool usedEFA, usedEFB;
 		private float scoreA, scoreB;
 		private int duelNum, round;
@@ -68,6 +68,7 @@ namespace Arbiter
 		[Widget] private CheckButton duelistBFancy;
 		[Widget] private ComboBox duelistAMove;
 		[Widget] private ComboBox duelistBMove;
+		[Widget] private HButtonBox actionBox;
 		[Widget] private Button resolve;
 		[Widget] private Button undo;
 		[Widget] private TextView duelLogView;
@@ -87,16 +88,46 @@ namespace Arbiter
 		public TextBuffer DuelLog
 			{ get { return duelLogView.Buffer; } }
 		
+		// Used to hide the button box.
+		public bool HideButtons
+		{
+			get { return !actionBox.Visible; }
+			set
+			{
+				actionBox.Visible = !value;
+				actionBox.NoShowAll = value;
+			}
+		}
+		
+		// Used to override automatic ending of the duel,
+		// and always enables the resolver. A manual property
+		// is used so that this property can enable the
+		// resolver.
+		private bool manual;
+		public bool Manual
+		{
+			get  { return manual; }
+			set
+			{
+				manual = value;
+				resolve.Sensitive = CanResolve;
+			}
+		}
+		
+		// Used to determine if the duel can be ended.
+		public bool End  { get; private set; }
+		
 		// Determines whether or not the round can be resolved.
 		public bool CanResolve {
 			get {
-				return ((duelistAMove.Active != moveA[round - 1] || duelistAMove.ActiveText == "Disengage")
+				return manual ||
+				((duelistAMove.Active != moveA[round - 1] || duelistAMove.ActiveText == "Disengage")
 				&& (duelistBMove.Active != moveB[round - 1] || duelistBMove.ActiveText == "Disengage")
 			    && !(moveA[round - 1] == 15 && duelistAMove.ActiveText == "Reflection")
 			    && !(moveB[round - 1] == 15 && duelistBMove.ActiveText == "Reflection")
 			    && !(usedEFA && duelistAMove.Active == 14)
 			    && !(usedEFB && duelistBMove.Active == 14)
-				&& !end); } }
+				&& !End); } }
 		
 		// Determines whether or not the last round can be undoed.
 		public bool CanUndo {
@@ -121,16 +152,7 @@ namespace Arbiter
 			this.madness = madness;
 			#endregion
 			
-			#region Duel Type
-			// Determine duel type.
-			if (sport.Advantages)
-			{
-				duelistAScore.Markup =
-					@"<span size='28672'><b>0</b></span><span size='14336'>  0</span>";
-				duelistBScore.Markup =
-					@"<span size='14336'>0  </span><span size='28672'><b>0</b></span>";
-			}
-			
+			#region Widget Properties	
 			// Set widget properties.
 			duelistAMove.Model = sport.Moves;
 			duelistBMove.Model = sport.Moves;
@@ -138,6 +160,7 @@ namespace Arbiter
 			duelistBFancy.Sensitive = sport.Fancies;
 			duelistAFeint.Sensitive = sport.Feints;
 			duelistBFeint.Sensitive = sport.Feints;
+			HideButtons = Arbiter.HideButtons;
 			#endregion
 			
 			#region Short Names
@@ -177,7 +200,7 @@ namespace Arbiter
 			scoreB = 0;
 			usedEFA = false;
 			usedEFB = false;
-			end = false;
+			End = false;
 			roundScoreA = new List<float>();
 			roundScoreB = new List<float>();
 			advA = new List<bool>();
@@ -193,6 +216,7 @@ namespace Arbiter
 			advB.Add(false);
 			roundScoreA.Add(0);
 			roundScoreB.Add(0);
+			UpdateLabels(0);
 			#endregion
 			
 			#region Start duel log
@@ -210,6 +234,9 @@ namespace Arbiter
 			
 			// Write initial text to the log.
 			UpdateDuelLog();
+			
+			// Disable Manual Mode by default.
+			manual = false;
 			
 			// Participate in size negotiation.
 			SizeRequested += new SizeRequestedHandler (OnSizeRequested);
@@ -310,13 +337,13 @@ namespace Arbiter
 			}
 			
 			// Self-explanatory.
-			UpdateLabels();
+			UpdateLabels(round);
 			
 			// Increment round.
 			round++;
 			
 			// Also self-explanatory.
-			CheckDuelEnd();
+			if (!manual) CheckDuelEnd();
 			
 			#region End of Resolve
 			// Uncheck fancy / feint boxes.
@@ -325,11 +352,15 @@ namespace Arbiter
 			duelistBFancy.Active = false;
 			duelistBFeint.Active = false;
 			
-			// Disable the resolver until new moves are picked.
-			resolve.Sensitive = false;
+			// Disable the resolver until new moves are picked,
+			// unless Manual Mode is enabled.
+			resolve.Sensitive = Manual || false;
 			
 			// Enable the undoer.
 			undo.Sensitive = true;
+			
+			// Tell the main window to check its menu items.
+			Arbiter.MainWin.CheckDuelMenu();
 			#endregion
 		}
 		
@@ -338,7 +369,7 @@ namespace Arbiter
 		public void UndoRound (object sender, EventArgs args)
 		{
 			// Un-end the duel.
-			if (end)
+			if (End)
 			{
 				// Remove the final line.
 				string final = log[log.Count - 1];
@@ -355,7 +386,7 @@ namespace Arbiter
 				duelistBMove.Sensitive = true;
 				
 				// Set end switch to false.
-				end = false;
+				End = false;
 			}
 			
 			// Check for RFx2
@@ -397,13 +428,12 @@ namespace Arbiter
 			duelistBMove.Active = moveB[round - 1];
 			
 			// Update labels and logs.
-			round--; // The method needs the previous round.
-			UpdateLabels();
-			round++;
+			UpdateLabels(round - 1);
 			UpdateDuelLog();
 			
 			// Disable the undoer if it's round 1 now.
 			undo.Sensitive = CanUndo;
+			Arbiter.MainWin.CheckDuelMenu();
 		}
 		
 		// Ends the duel prematurely, presenting a dialog
@@ -427,14 +457,14 @@ namespace Arbiter
 			else tieRadio.Active = true;
 			
 			// Create anonymous method to end the duel if OK is clicked.
-			okButton.Clicked += delegate { end = true; };
+			okButton.Clicked += delegate { End = true; };
 			
 			// Run the dialog.
 			endDuelWin.Run();
 			endDuelWin.Destroy();
 			
 			// Abort if any button other than OK is pressed.
-			if (!end) return;
+			if (!End) return;
 			
 			if (duelistAWinRadio.Active)
 			{
@@ -503,21 +533,34 @@ namespace Arbiter
 		
 		#region Methods
 		// Updates the labels.
-		private void UpdateLabels ()
+		private void UpdateLabels (int r)
 		{
+			// Determine scoreboard size.
+			string mainSize = "28672";
+			string roundSize = "14336";
+			if (Arbiter.SmallScore)
+			{
+				mainSize = "18432";
+				roundSize = "9216";
+			}
+			
 			// Create main score parts.
 			string scoreStringA = scoreA.ToString(sport.ScoreFormat);
 			string scoreStringB = scoreB.ToString(sport.ScoreFormat);
-			string scoreLabelA = @"<span size='28672'><b>" + scoreStringA + @"</b></span>";
-			string scoreLabelB = @"<span size='28672'><b>" + scoreStringB + @"</b></span>";
+			string scoreLabelA = @"<span size='" + mainSize +
+				@"'><b>" + scoreStringA + @"</b></span>";
+			string scoreLabelB = @"<span size='" + mainSize +
+				@"'><b>" + scoreStringB + @"</b></span>";
 			
 			// Create round score parts.
-			string roundScoreLabelA = @"<span size='14336'>  " +
-				roundScoreA[round].ToString(sport.ScoreFormat) + @"</span>";
-			string roundScoreLabelB = @"<span size='14336'>" +
-				roundScoreB[round].ToString(sport.ScoreFormat) + @"  </span>";
-			if (advA[round]) roundScoreLabelA = @"<span size='14336'>  +</span>";
-			if (advB[round]) roundScoreLabelB = @"<span size='14336'>+  </span>";
+			string roundScoreLabelA = @"<span size='" + roundSize + @"'>  " +
+				roundScoreA[r].ToString(sport.ScoreFormat) + @"</span>";
+			string roundScoreLabelB = @"<span size='" + roundSize + @"'>" +
+				roundScoreB[r].ToString(sport.ScoreFormat) + @"  </span>";
+			if (advA[r])
+				roundScoreLabelA = @"<span size='" + roundSize + @"'>  +</span>";
+			if (advB[r])
+				roundScoreLabelB = @"<span size='" + roundSize + @"'>+  </span>";
 			
 			// Combine them into the label.
 			duelistAScore.Markup = scoreLabelA + roundScoreLabelA;
@@ -525,8 +568,12 @@ namespace Arbiter
 			
 			// Update the round label.
 			roundLabel.Markup =
-				@"<span size='x-large'><b>Round " + (round + 1).ToString() + @"</b></span>";
+				@"<span size='x-large'><b>Round " + (r + 1).ToString() + @"</b></span>";
 		}
+		
+		// Public overload for the scoreboard size toggler.
+		public void UpdateLabels ()
+			{ UpdateLabels(round - 1); }
 		
 		// Updates the duel log.
 		private void UpdateDuelLog ()
@@ -603,7 +650,7 @@ namespace Arbiter
 				((overtime ? false : round > 15) && madness &&
 				 scoreB > scoreA && scoreB - scoreA >= 1.0f);
 			bool tie = (overtime ? false : round > 15) && !duelistAwin && !duelistBwin;
-			end = duelistAwin || duelistBwin || tie;
+			End = duelistAwin || duelistBwin || tie;
 			
 			if (duelistAwin)
 			{
@@ -638,7 +685,7 @@ namespace Arbiter
 				log.Add(final);
 				Arbiter.UpdateShiftReport(final, false);
 			}
-			if (end)
+			if (End)
 			{
 				// Refresh the duel log.
 				UpdateDuelLog();
@@ -714,7 +761,10 @@ namespace Arbiter
 		
 		// Enables the resolver once new moves have been selected.
 		private void MoveChanged (object sender, EventArgs args)
-			{ resolve.Sensitive = CanResolve; }
+		{
+			resolve.Sensitive = CanResolve;
+			Arbiter.MainWin.CheckDuelMenu();
+		}
 		
 		// Size requisition.
 		private void OnSizeRequested (object sender, SizeRequestedArgs args)

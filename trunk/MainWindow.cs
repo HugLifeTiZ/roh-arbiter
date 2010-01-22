@@ -50,13 +50,21 @@ namespace Arbiter
 		[Widget] private Image ringEditImage;
 		[Widget] private HBox newDuelTab;
 		[Widget] private TextView shiftReportTextView;
+		[Widget] private MenuItem duelMenuItem;
+		[Widget] private ImageMenuItem quitMenuItem;
+		[Widget] private ImageMenuItem resolveMenuItem;
+		[Widget] private ImageMenuItem undoMenuItem;
+		[Widget] private CheckMenuItem manualMenuItem;
+		[Widget] private ImageMenuItem endDuelMenuItem;
+		[Widget] private ImageMenuItem closeMenuItem;
 		[Widget] private RadioMenuItem leftTabMenuItem;
 		[Widget] private RadioMenuItem rightTabMenuItem;
 		[Widget] private RadioMenuItem topTabMenuItem;
 		[Widget] private RadioMenuItem bottomTabMenuItem;
-		[Widget] private MenuItem duelMenuItem;
-		[Widget] private ImageMenuItem resolveMenuItem;
-		[Widget] private ImageMenuItem undoMenuItem;
+		[Widget] private CheckMenuItem hideIconsMenuItem;
+		[Widget] private CheckMenuItem hideCloseMenuItem;
+		[Widget] private CheckMenuItem hideButtonsMenuItem;
+		[Widget] private CheckMenuItem smallScoreMenuItem;
 		#endregion
 		
 		// Convenience property.
@@ -95,12 +103,24 @@ namespace Arbiter
 				duels.TabPos = PositionType.Bottom;
 				break;
 			}
+			
+			// Toggle checkboxes in compact mode menu.
+			hideIconsMenuItem.Active = Arbiter.HideIcons;
+			hideCloseMenuItem.Active = Arbiter.HideClose;
+			hideButtonsMenuItem.Active = Arbiter.HideButtons;
+			smallScoreMenuItem.Active = Arbiter.SmallScore;
 			#endregion
 			
 			#region Widgets
 			// Set the window and new duel tab icon.
 			mainWin.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
 			newDuelTabIcon.Pixbuf = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			
+			// Hide parts of the new duel tab label depending on settings.
+			newDuelTab.Children[0].Visible = !Arbiter.HideIcons;
+			newDuelTab.Children[0].NoShowAll = Arbiter.HideIcons;
+			newDuelTab.Children[2].Visible = !Arbiter.HideClose;
+			newDuelTab.Children[2].NoShowAll = Arbiter.HideClose;
 			
 			// For the popup menu.
 			duels.SetMenuLabelText(duels.CurrentPageWidget, "New Duel");
@@ -144,6 +164,21 @@ namespace Arbiter
 			
 			// We may have restored from a fight night shift report.
 			fightNight.Active = Arbiter.FightNight;
+			
+			// Create accelerators for the menu items.
+			AccelGroup ag = new AccelGroup();
+			mainWin.AddAccelGroup(ag);
+			quitMenuItem.AddAccelerator("activate", ag,
+					(uint)Gdk.Key.Q, Gdk.ModifierType.ControlMask, AccelFlags.Visible);
+			resolveMenuItem.AddAccelerator("activate", ag,
+					(uint)Gdk.Key.R, Gdk.ModifierType.ControlMask, AccelFlags.Visible);
+			undoMenuItem.AddAccelerator("activate", ag,
+					(uint)Gdk.Key.Z, Gdk.ModifierType.ControlMask, AccelFlags.Visible);
+			closeMenuItem.AddAccelerator("activate", ag,
+					(uint)Gdk.Key.Escape, Gdk.ModifierType.None, AccelFlags.Visible);
+			
+			// Toggle sensitivity of duel menu and its items.
+			CheckDuelMenu();
 			#endregion
 		}
 		
@@ -225,6 +260,12 @@ namespace Arbiter
 			label.PackStart(new Label(ringName.ActiveText), true, true, 0);
 			label.PackEnd(closeButton, false, false, 0);
 			label.ShowAll();
+			
+			// Hide parts of the label depending on settings.
+			label.Children[0].Visible = !Arbiter.HideIcons;
+			label.Children[0].NoShowAll = Arbiter.HideIcons;
+			label.Children[2].Visible = !Arbiter.HideClose;
+			label.Children[2].NoShowAll = Arbiter.HideClose;
 			#endregion
 			
 			#region Start Duel
@@ -233,7 +274,6 @@ namespace Arbiter
 			Duel duel = new Duel(Arbiter.NumDuels, ringName.ActiveText,
 								duelistAName.ActiveText, duelistBName.ActiveText,
 								sport, overtime, madness);
-			//Widget duelWidget = duel.DuelWidget;
 			duels.InsertPage(duel, label, duels.NPages - 1);
 			duels.ShowAll();
 			duels.CurrentPage = duels.NPages - 2;
@@ -298,10 +338,6 @@ namespace Arbiter
 			Arbiter.WindowWidth = width;
 			Arbiter.WindowHeight = height;
 		}
-		
-		// Enable the Duel menu depending on selected tab.
-		private void ToggleDuelMenu (object sender, SwitchPageArgs args)
-			{ duelMenuItem.Sensitive = (duels.CurrentPage < duels.NPages - 1); }
 		#endregion
 		
 		#region Shift Menu
@@ -342,12 +378,26 @@ namespace Arbiter
 		#endregion
 		
 		#region Duel Menu
-		// Determine resolvability and undoability of the selected duel.
-		private void CheckResolveUndo (object sender, EventArgs args)
+		// Toggles sensitivity of certain items in the menu.
+		public void CheckDuelMenu ()
 		{
-			resolveMenuItem.Sensitive = CurrentDuel.CanResolve;
-			undoMenuItem.Sensitive = CurrentDuel.CanUndo;
+			duelMenuItem.Sensitive = (duels.CurrentPage < duels.NPages - 1);
+			resolveMenuItem.Sensitive = false;
+			undoMenuItem.Sensitive = false;
+			endDuelMenuItem.Sensitive = false;
+			if (duelMenuItem.Sensitive)
+			{
+				resolveMenuItem.Sensitive = CurrentDuel.CanResolve;
+				undoMenuItem.Sensitive = CurrentDuel.CanUndo;
+				endDuelMenuItem.Sensitive = !CurrentDuel.End;
+				manualMenuItem.Active = CurrentDuel.Manual;
+			}
+			closeMenuItem.Sensitive = duelMenuItem.Sensitive;
 		}
+		private void CheckDuelMenu (object sender, EventArgs args)
+			{ CheckDuelMenu(); }
+		private void CheckDuelMenu (object sender, SwitchPageArgs args)
+			{ CheckDuelMenu(); }
 		
 		// Tell the selected duel to resolve.
 		private void ResolveRound (object sender, EventArgs args)
@@ -356,6 +406,10 @@ namespace Arbiter
 		// Tell the selected duel to undo its last round.
 		private void UndoRound (object sender, EventArgs args)
 			{ CurrentDuel.UndoRound(sender, args); }
+		
+		// Toggles Manual Mode on the selected duel.
+		private void ToggleManual (object sender, EventArgs args)
+			{ CurrentDuel.Manual = manualMenuItem.Active; }
 		
 		// Saves the duel log to a file of the user's choice.
 		private void SaveDuelLog (object sender, EventArgs args)
@@ -367,7 +421,8 @@ namespace Arbiter
 		
 		// Close the duel tab.
 		private void CloseDuel (object sender, EventArgs args)
-			{ duels.Remove(duels.CurrentPageWidget); }
+		{ if (duels.CurrentPage < duels.NPages - 1)
+			duels.Remove(duels.CurrentPageWidget); }
 		#endregion
 		
 		#region Options Menu
@@ -411,6 +466,63 @@ namespace Arbiter
 				Arbiter.TabPosition = "Bottom";
 				duels.TabPos = PositionType.Bottom;
 			}
+		}
+		
+		// Toggle the icon hiding option, and loop through
+		// all tab labels to hide the icons.
+		private void ToggleHideIcons (object sender, EventArgs args)
+		{
+			// Toggle the option.
+			Arbiter.HideIcons = hideIconsMenuItem.Active;
+			
+			// Loop through each tab and hide the icon.
+			foreach (Widget tab in duels.Children)
+			{
+				HBox box = (HBox)duels.GetTabLabel(tab);
+				box.Children[0].Visible = !Arbiter.HideIcons;
+				box.Children[0].NoShowAll = Arbiter.HideIcons;
+			}
+		}
+		
+		// Toggle the close button hiding option, and loop through
+		// all tab labels to hide the close buttons.
+		private void ToggleHideClose (object sender, EventArgs args)
+		{
+			// Toggle the option.
+			Arbiter.HideClose = hideCloseMenuItem.Active;
+			
+			// Loop through each tab and hide the icon.
+			foreach (Widget tab in duels.Children)
+			{
+				HBox box = (HBox)duels.GetTabLabel(tab);
+				box.Children[2].Visible = !Arbiter.HideClose;
+				box.Children[2].NoShowAll = Arbiter.HideIcons;
+			}
+		}
+		
+		// Toggle the duel button hiding option, and loop through
+		// all duel tabs to hide the duel buttons.
+		private void ToggleHideButtons (object sender, EventArgs args)
+		{
+			// Toggle the option.
+			Arbiter.HideButtons = hideButtonsMenuItem.Active;
+			
+			// Loop through each tab and hide the icon.
+			for (int i = 0; i < duels.NPages - 1; i++)
+				((Duel)duels.Children[i]).HideButtons =
+					Arbiter.HideButtons;
+		}
+		
+		// Toggle the small scoreboard option, and loop through
+		// all duel tabs to reset the scoreboard.
+		private void ToggleSmallScore (object sender, EventArgs args)
+		{
+			// Toggle the option.
+			Arbiter.SmallScore = smallScoreMenuItem.Active;
+			
+			// Loop through each tab and hide the icon.
+			for (int i = 0; i < duels.NPages - 1; i++)
+				((Duel)duels.Children[i]).UpdateLabels();
 		}
 		#endregion
 	}

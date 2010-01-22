@@ -47,6 +47,10 @@ namespace Arbiter
 		public static int WindowHeight    { get; set; }
 		public static string TabPosition  { get; set; }
 		public static string LogDirectory { get; set; }
+		public static bool HideIcons      { get; set; }
+		public static bool HideClose      { get; set; }
+		public static bool HideButtons    { get; set; }
+		public static bool SmallScore     { get; set; }
 		
 		// Lists of duelists and rings.
 		public static ListStore Duelists  { get; set; }
@@ -70,6 +74,11 @@ namespace Arbiter
 		// in case two duelists fight multiple times in a night, e.g.
 		// challenges.
 		public static int NumDuels { get; set; }
+		
+		// The main window. This is so that duels can tell the main
+		// window to check sensitivity of menu items whenever stuff
+		// happens.
+		public static MainWindow MainWin { get; private set; }
 		#endregion
 		
 		#region Fields
@@ -130,6 +139,10 @@ namespace Arbiter
 				WindowHeight = Int32.Parse(sr.ReadLine());
 				TabPosition = sr.ReadLine();
 				LogDirectory = sr.ReadLine();
+				HideIcons = Boolean.Parse(sr.ReadLine());
+				HideClose = Boolean.Parse(sr.ReadLine());
+				HideButtons = Boolean.Parse(sr.ReadLine());
+				SmallScore = Boolean.Parse(sr.ReadLine());
 				
 				// Done.
 				sr.Close();
@@ -238,7 +251,7 @@ namespace Arbiter
 			DetectShiftReport();
 			
 			// Create the main window and go.
-			MainWindow MainWin = new MainWindow();
+			MainWin = new MainWindow();
 			MainWin.Show();
 			Application.Run();
 		}
@@ -257,6 +270,10 @@ namespace Arbiter
 			sw.WriteLine(WindowHeight.ToString());
 			sw.WriteLine(TabPosition);
 			sw.WriteLine(LogDirectory);
+			sw.WriteLine(HideIcons.ToString());
+			sw.WriteLine(HideClose.ToString());
+			sw.WriteLine(HideButtons.ToString());
+			sw.WriteLine(SmallScore.ToString());
 			
 			// Close that one.
 			sw.Close();
