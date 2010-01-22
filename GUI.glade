@@ -66,7 +66,7 @@
                 <property name="sensitive">False</property>
                 <property name="label">_Duel</property>
                 <property name="use_underline">True</property>
-                <signal name="activate" handler="CheckResolveUndo"/>
+                <signal name="activate" handler="CheckDuelMenu"/>
                 <child>
                   <widget class="GtkMenu" id="duelMenu">
                     <property name="visible">True</property>
@@ -74,6 +74,7 @@
                       <widget class="GtkImageMenuItem" id="resolveMenuItem">
                         <property name="label">_Resolve</property>
                         <property name="visible">True</property>
+                        <property name="tooltip">Compare the two selected moves and modifiers, and assign scores. The menu item will be disabled until new moves are selected.</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="ResolveRound"/>
@@ -90,6 +91,7 @@
                       <widget class="GtkImageMenuItem" id="undoMenuItem">
                         <property name="label">_Undo</property>
                         <property name="visible">True</property>
+                        <property name="tooltip">Reverses the previous round. You can undo up to the beginning of the duel.</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="UndoRound"/>
@@ -103,7 +105,21 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkSeparatorMenuItem" id="duelMenuSeparator">
+                      <widget class="GtkSeparatorMenuItem" id="duelMenuSeparator1">
+                        <property name="visible">True</property>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkCheckMenuItem" id="manualMenuItem">
+                        <property name="visible">True</property>
+                        <property name="tooltip">Disables automatic ending of the duel, and always enables the resolver.</property>
+                        <property name="label">_Manual Mode</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="ToggleManual"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkSeparatorMenuItem" id="duelMenuSeparator2">
                         <property name="visible">True</property>
                       </widget>
                     </child>
@@ -253,22 +269,25 @@
                                 <property name="tooltip">Hides the sport icons on each tab.</property>
                                 <property name="label">Hide _Sport Icons</property>
                                 <property name="use_underline">True</property>
+                                <signal name="toggled" handler="ToggleHideIcons"/>
                               </widget>
                             </child>
                             <child>
                               <widget class="GtkCheckMenuItem" id="hideCloseMenuItem">
                                 <property name="visible">True</property>
-                                <property name="tooltip">Hides the close buttons on each tab. The tabs can still be closed with the Escape key, or with Duel -&gt; Close in the menu bar.</property>
+                                <property name="tooltip">Hides the close buttons on each tab. The tabs can still be closed with the menu or the Escape key.</property>
                                 <property name="label">Hide _Close Button</property>
                                 <property name="use_underline">True</property>
+                                <signal name="toggled" handler="ToggleHideClose"/>
                               </widget>
                             </child>
                             <child>
                               <widget class="GtkCheckMenuItem" id="hideButtonsMenuItem">
                                 <property name="visible">True</property>
-                                <property name="tooltip">Hides the Resolve and Undo buttons on the duel tab. The menu can be used, or Ctrl+R and Ctrl+U.</property>
+                                <property name="tooltip">Hides the Resolve and Undo buttons on the duel tab. The menu can be used, or Ctrl+R and Ctrl+Z.</property>
                                 <property name="label">Hide _Resolve &amp; Undo</property>
                                 <property name="use_underline">True</property>
+                                <signal name="toggled" handler="ToggleHideButtons"/>
                               </widget>
                             </child>
                             <child>
@@ -277,6 +296,7 @@
                                 <property name="tooltip">If enabled, the scoreboard will be displayed with a smaller font size.</property>
                                 <property name="label">S_mall Scoreboard</property>
                                 <property name="use_underline">True</property>
+                                <signal name="toggled" handler="ToggleSmallScore"/>
                               </widget>
                             </child>
                           </widget>
@@ -299,7 +319,7 @@
             <property name="can_focus">True</property>
             <property name="tab_pos">left</property>
             <property name="scrollable">True</property>
-            <signal name="switch_page" handler="ToggleDuelMenu"/>
+            <signal name="switch_page" handler="CheckDuelMenu"/>
             <child>
               <widget class="GtkVBox" id="newDuelBox">
                 <property name="visible">True</property>
@@ -360,7 +380,7 @@
                       <widget class="GtkComboBoxEntry" id="duelistAName">
                         <property name="visible">True</property>
                         <property name="has_tooltip">True</property>
-                        <property name="tooltip">Duelist A's name.</property>
+                        <property name="tooltip">Duelist A's screen name.</property>
                       </widget>
                       <packing>
                         <property name="left_attach">1</property>
@@ -372,7 +392,7 @@
                       <widget class="GtkComboBoxEntry" id="duelistBName">
                         <property name="visible">True</property>
                         <property name="has_tooltip">True</property>
-                        <property name="tooltip">Duelist B's name.</property>
+                        <property name="tooltip">Duelist B's screen name.</property>
                       </widget>
                       <packing>
                         <property name="left_attach">1</property>
@@ -626,6 +646,7 @@ Madness</property>
                   <widget class="GtkScrolledWindow" id="shiftReportScroll">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="tooltip">Yup, it's a scrollbar. Don't you have some work to do?</property>
                     <property name="hscrollbar_policy">never</property>
                     <property name="shadow_type">etched-in</property>
                     <child>
@@ -726,6 +747,7 @@ Madness</property>
                 <child>
                   <widget class="GtkLabel" id="duelistAName">
                     <property name="visible">True</property>
+                    <property name="tooltip">Duelist A's short name.</property>
                     <property name="label">&lt;b&gt;Duelist A&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                   </widget>
@@ -777,6 +799,7 @@ Madness</property>
                 <child>
                   <widget class="GtkLabel" id="duelistBName">
                     <property name="visible">True</property>
+                    <property name="tooltip">Duelist B's short name.</property>
                     <property name="label">&lt;b&gt;Duelist B&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                   </widget>
@@ -1148,6 +1171,7 @@ Disengage</property>
           <widget class="GtkScrolledWindow" id="duelLogScroll">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="tooltip">I hope you don't think this scrollbar's any different from the one in the New Duel tab. Because it's not.</property>
             <property name="hscrollbar_policy">never</property>
             <property name="window_placement">bottom-left</property>
             <property name="shadow_type">etched-in</property>
