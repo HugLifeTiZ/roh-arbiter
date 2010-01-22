@@ -156,9 +156,9 @@ namespace Arbiter
 			}
 			
 			// Prepare shift report displayer.
-			Arbiter.ShiftReport = shiftReportTextView.Buffer;
+			shiftReportTextView.Buffer = Arbiter.ShiftReport;
 			
-			// And for whatever reason, the comboboxes don't start at defaults.
+			// For whatever reason, the comboboxes don't start at defaults.
 			duelSport.Active = 0;
 			duelType.Active = 0;
 			
@@ -179,6 +179,9 @@ namespace Arbiter
 			
 			// Toggle sensitivity of duel menu and its items.
 			CheckDuelMenu();
+			
+			// Initialize shift report.
+			if (Arbiter.NumDuels == 0) Arbiter.CreateShiftReport();
 			#endregion
 		}
 		
@@ -188,10 +191,7 @@ namespace Arbiter
 		
 		// Starts a duel according to the provided settings.
 		private void StartDuel (object sender, EventArgs args)
-		{
-			// Make sure the directory exists.
-			if (Arbiter.NumDuels == 0) Arbiter.CreateShiftReport();
-			
+		{	
 			#region Failsafe
 			// First of all, we have to make sure the user
 			// didn't mess up.
@@ -348,12 +348,16 @@ namespace Arbiter
 			FileChooserDialog fc = new FileChooserDialog(
 										"Save Shift Report As...",
 										null, FileChooserAction.Save,
-										new object[] {Stock.SaveAs, ResponseType.Accept});
+										new object[] {Stock.Cancel, ResponseType.Cancel,
+													Stock.SaveAs, ResponseType.Accept});
 			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
-			
-			// Keep running the dialog until we get OK.
-			int r = 0;
-			while (r != (int)ResponseType.Accept) r = fc.Run();
+			fc.Modal = true;
+			int r = fc.Run();
+			if (r != (int)ResponseType.Accept)
+			{
+				fc.Destroy();
+				return;
+			}
 			string path = fc.Filename;
 			fc.Destroy();
 			
@@ -426,20 +430,35 @@ namespace Arbiter
 		#endregion
 		
 		#region Options Menu
-		// Set the log directory and store it.
+		// Set the log directory and store it. Also moves the current date
+		// directory to the new location.
 		private void SetLogDirectory (object sender, EventArgs args)
 		{
 			// Prompt the user to pick a directory to store duels in.
 			FileChooserDialog fc = new FileChooserDialog(
 										"Select Log Directory",
 										null, FileChooserAction.SelectFolder,
-										new object[] {Stock.Save, ResponseType.Accept});
+										new object[] {Stock.Cancel, ResponseType.Cancel,
+													Stock.Save, ResponseType.Accept});
 			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			fc.Modal = true;
+			int r = fc.Run();
+			if (r != (int)ResponseType.Accept)
+			{
+				fc.Destroy();
+				return;
+			}
 			
-			// Keep running the dialog until we get OK.
-			int r = 0;
-			while (r != (int)ResponseType.Accept) r = fc.Run();
+			// Save the old current dir.
+			string oldDir = Arbiter.CurrentDir;
+			
+			// Save the new log dir.
 			Arbiter.LogDirectory = fc.Filename;
+			
+			// Move the current date directory to the new location.
+			Directory.Move(oldDir, Arbiter.CurrentDir);
+			
+			// Bye, dialog.
 			fc.Destroy();
 		}
 		

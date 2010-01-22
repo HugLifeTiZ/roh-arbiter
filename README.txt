@@ -29,7 +29,8 @@ by Trent McPheron (twilightinzero@gmail.com)
  *Added a menu bar, complete with accelerators
   (shortcut keys). Its functions all work completely
   as expected. It also includes new functions,
-  detailed below.
+  detailed below. The options section has been moved
+  from the new duel tab into the menu bar.
  *The shift report can now be saved to its own file,
   as well as duel logs.
  *Duels can be ended prematurely, in case of punts or
@@ -45,6 +46,9 @@ by Trent McPheron (twilightinzero@gmail.com)
   the last option doesn't actually help that much.
   A better replacement for that option will be added
   later.
+ *When the log directory is changed, Arbiter will
+  move the current subdirectory from the old one to
+  the new one.
 -v0.2.1-
  *First release with a proper name. I was incredibly
   indecisive with this. First, it was Cedran, named
