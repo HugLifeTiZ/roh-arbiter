@@ -57,7 +57,7 @@ namespace Arbiter
 		public static ListStore Rings     { get; set; }
 		
 		// Shift report text buffer.
-		public static TextBuffer ShiftReport {get; set;}
+		public static TextBuffer ShiftReport { get; set;}
 		
 		// Returns the current subdirectory for the night's duels.
 		public static string CurrentDir
@@ -248,6 +248,7 @@ namespace Arbiter
 			#endregion
 			
 			// Detect if a shift report already exists, and if so, load it.
+			ShiftReport = new TextBuffer(null);
 			DetectShiftReport();
 			
 			// Create the main window and go.
@@ -395,6 +396,8 @@ namespace Arbiter
 		}
 		
 		// Detect if a shift report already exists, and if so, ask what to do.
+		// Returns a string because the shift report text buffer doesn't exist
+		// at the point in the program at which this runs.
 		public static void DetectShiftReport ()
 		{
 			// Check if the shift report exists.
@@ -421,13 +424,13 @@ namespace Arbiter
 				{
 					StreamReader sr = new StreamReader(
 							Path.Combine(CurrentDir, "00. Shift Report.txt"));
-					ShiftReport.Text += sr.ReadLine(); // The first three
-					ShiftReport.Text += sr.ReadLine(); // lines don't matter.
-					ShiftReport.Text += sr.ReadLine();
+					ShiftReport.Text += sr.ReadLine() + n; // The first three
+					ShiftReport.Text += sr.ReadLine() + n; // lines don't matter.
+					ShiftReport.Text += sr.ReadLine() + n;
 					while (!sr.EndOfStream)
 					{
 						string s = sr.ReadLine();
-						ShiftReport.Text += s;
+						ShiftReport.Text += s + n;
 						if (s != "") // Can't do anything with blank lines.
 						{
 							switch (s.Substring(s.Length - 3, 3))

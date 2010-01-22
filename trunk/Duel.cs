@@ -728,10 +728,13 @@ namespace Arbiter
 										null, FileChooserAction.Save,
 										new object[] {Stock.Save, ResponseType.Accept});
 			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
-			
-			// Keep running the dialog until we get OK.
-			int r = 0;
-			while (r != (int)ResponseType.Accept) r = fc.Run();
+			fc.Modal = true;
+			int r = fc.Run();
+			if (r != (int)ResponseType.Accept)
+			{
+				fc.Destroy();
+				return;
+			}
 			string path = fc.Filename;
 			fc.Destroy();
 			
