@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8AE4FBEE-FED7-4D8A-90B9-62706411DC5A}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Arbiter</RootNamespace>
+    <AssemblyName>arbiter</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <StartupObject>Arbiter.Arbiter</StartupObject>
+    <CodePage>65001</CodePage>
+    <ReleaseVersion>0.3</ReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RoH.png">
+      <DeployService-Deploy>true</DeployService-Deploy>
+      <DeployService-RelativeDeployPath>roh.png</DeployService-RelativeDeployPath>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DoFChallenge.png" />
+    <EmbeddedResource Include="DoFMadness.png" />
+    <EmbeddedResource Include="DoFNormal.png" />
+    <EmbeddedResource Include="DoMChallenge.png" />
+    <EmbeddedResource Include="DoMMadness.png" />
+    <EmbeddedResource Include="DoMNormal.png" />
+    <EmbeddedResource Include="DoSChallenge.png" />
+    <EmbeddedResource Include="DoSMadness.png" />
+    <EmbeddedResource Include="DoSNormal.png" />
+    <EmbeddedResource Include="GUI.glade" />
+    <EmbeddedResource Include="duelists.cfg" />
+    <EmbeddedResource Include="rings.cfg" />
+    <EmbeddedResource Include="sport-swords.cfg" />
+    <EmbeddedResource Include="sport-fists.cfg" />
+    <EmbeddedResource Include="sport-magic.cfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Duel.cs" />
+    <Compile Include="MainWindow.cs" />
+    <Compile Include="EditDialog.cs" />
+    <Compile Include="Sport.cs" />
+    <Compile Include="Arbiter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="arbiter.desktop">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <VersionControlPolicy inheritsSet="Mono" />
+          <ChangeLogPolicy UpdateMode="None" VcsIntegration="RequireEntry" inheritsSet="Mono">
+            <MessageStyle LineAlign="0" />
+          </ChangeLogPolicy>
+        </Policies>
+        <GtkDesignInfo generateGettext="false" />
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <None Include="README.txt">
+      <DeployService-Deploy>true</DeployService-Deploy>
+    </None>
+  </ItemGroup>
+</Project>
