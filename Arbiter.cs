@@ -125,6 +125,16 @@ namespace Arbiter
 			Rings = new ListStore(typeof(string));
 			Duelists.SetSortColumnId(0, SortType.Ascending);
 			
+			// Defaults.
+			TabPosition = "Left";
+			LogDirectory = "";
+			WindowWidth = 360;
+			WindowHeight = 360;
+			HideIcons = false;
+			HideClose = false;
+			HideButtons = false;
+			SmallScore = false;
+			
 			// Load basic settings file.
 			try  // Settings file already exists.
 			{
@@ -132,28 +142,31 @@ namespace Arbiter
 				string path = Path.GetDirectoryName(
                      Assembly.GetExecutingAssembly().Location);
 				path = Path.Combine(path, "settings.cfg");
-				StreamReader sr = new StreamReader(path);
 				
-				// Load basic settings.
-				WindowWidth = Int32.Parse(sr.ReadLine());
-				WindowHeight = Int32.Parse(sr.ReadLine());
-				TabPosition = sr.ReadLine();
-				LogDirectory = sr.ReadLine();
-				HideIcons = Boolean.Parse(sr.ReadLine());
-				HideClose = Boolean.Parse(sr.ReadLine());
-				HideButtons = Boolean.Parse(sr.ReadLine());
-				SmallScore = Boolean.Parse(sr.ReadLine());
-				
-				// Done.
-				sr.Close();
+				// The using block will close the stream reader
+				// if an exception occurs.
+				using (StreamReader sr = new StreamReader(path))
+				{
+					// Load basic settings.
+					WindowWidth = Int32.Parse(sr.ReadLine());
+					WindowHeight = Int32.Parse(sr.ReadLine());
+					TabPosition = String.Copy(sr.ReadLine());
+					LogDirectory = String.Copy(sr.ReadLine());
+					HideIcons = Boolean.Parse(sr.ReadLine());
+					HideClose = Boolean.Parse(sr.ReadLine());
+					HideButtons = Boolean.Parse(sr.ReadLine());
+					SmallScore = Boolean.Parse(sr.ReadLine());
+				}
 			}
-			catch  // Settings file doesn't exist; set defaults.
+			catch {}
+			
+			if (LogDirectory == "")
 			{
 				// Prompt the user to pick a directory to store duels in.
 				FileChooserDialog fc = new FileChooserDialog(
-											"Select Log Directory",
-											null, FileChooserAction.SelectFolder,
-											new object[] {Stock.Open, ResponseType.Accept});
+										"Select Log Directory",
+										null, FileChooserAction.SelectFolder,
+										new object[] {Stock.Open, ResponseType.Accept});
 				fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
 				
 				// Keep running the dialog until we get OK.
@@ -161,11 +174,6 @@ namespace Arbiter
 				while (r != (int)ResponseType.Accept) r = fc.Run();
 				LogDirectory = fc.Filename;
 				fc.Destroy();
-				
-				// Set other defaults.
-				TabPosition = "Left";
-				WindowWidth = 360;
-				WindowHeight = 360;
 			}
 			
 			// Load duelist list.
