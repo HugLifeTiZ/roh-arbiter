@@ -724,9 +724,10 @@ namespace Arbiter
 		{
 			// Prompt the user to pick a file.
 			FileChooserDialog fc = new FileChooserDialog(
-										"Save Duel Log As...",
-										null, FileChooserAction.Save,
-										new object[] {Stock.Save, ResponseType.Accept});
+									"Save Duel Log As...",
+									null, FileChooserAction.Save,
+									new object[] {Stock.Cancel, ResponseType.Cancel,
+									Stock.Save, ResponseType.Accept});
 			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
 			fc.Modal = true;
 			int r = fc.Run();

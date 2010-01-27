@@ -51,12 +51,15 @@ namespace Arbiter
 		[Widget] private HBox newDuelTab;
 		[Widget] private TextView shiftReportTextView;
 		[Widget] private MenuItem duelMenuItem;
+		[Widget] private ImageMenuItem saveReportMenuItem;
 		[Widget] private ImageMenuItem quitMenuItem;
 		[Widget] private ImageMenuItem resolveMenuItem;
 		[Widget] private ImageMenuItem undoMenuItem;
 		[Widget] private CheckMenuItem manualMenuItem;
+		[Widget] private ImageMenuItem saveLogMenuItem;
 		[Widget] private ImageMenuItem endDuelMenuItem;
 		[Widget] private ImageMenuItem closeMenuItem;
+		[Widget] private ImageMenuItem logDirectoryMenuItem;
 		[Widget] private RadioMenuItem leftTabMenuItem;
 		[Widget] private RadioMenuItem rightTabMenuItem;
 		[Widget] private RadioMenuItem topTabMenuItem;
@@ -168,14 +171,23 @@ namespace Arbiter
 			// Create accelerators for the menu items.
 			AccelGroup ag = new AccelGroup();
 			mainWin.AddAccelGroup(ag);
+			saveReportMenuItem.AddAccelerator("activate", ag,
+					(uint)Gdk.Key.S, Gdk.ModifierType.ControlMask |
+							Gdk.ModifierType.ShiftMask, AccelFlags.Visible);
 			quitMenuItem.AddAccelerator("activate", ag,
 					(uint)Gdk.Key.Q, Gdk.ModifierType.ControlMask, AccelFlags.Visible);
 			resolveMenuItem.AddAccelerator("activate", ag,
 					(uint)Gdk.Key.R, Gdk.ModifierType.ControlMask, AccelFlags.Visible);
 			undoMenuItem.AddAccelerator("activate", ag,
 					(uint)Gdk.Key.Z, Gdk.ModifierType.ControlMask, AccelFlags.Visible);
+			saveLogMenuItem.AddAccelerator("activate", ag,
+					(uint)Gdk.Key.S, Gdk.ModifierType.ControlMask, AccelFlags.Visible);
+			endDuelMenuItem.AddAccelerator("activate", ag,
+					(uint)Gdk.Key.E, Gdk.ModifierType.ControlMask, AccelFlags.Visible);
 			closeMenuItem.AddAccelerator("activate", ag,
 					(uint)Gdk.Key.Escape, Gdk.ModifierType.None, AccelFlags.Visible);
+			logDirectoryMenuItem.AddAccelerator("activate", ag,
+					(uint)Gdk.Key.L, Gdk.ModifierType.ControlMask, AccelFlags.Visible);
 			
 			// Toggle sensitivity of duel menu and its items.
 			CheckDuelMenu();
@@ -397,6 +409,7 @@ namespace Arbiter
 				manualMenuItem.Active = CurrentDuel.Manual;
 			}
 			closeMenuItem.Sensitive = duelMenuItem.Sensitive;
+			saveLogMenuItem.Sensitive = duelMenuItem.Sensitive;
 		}
 		private void CheckDuelMenu (object sender, EventArgs args)
 			{ CheckDuelMenu(); }
