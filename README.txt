@@ -49,6 +49,10 @@ by Trent McPheron (twilightinzero@gmail.com)
  *When the log directory is changed, Arbiter will
   move the current subdirectory from the old one to
   the new one.
+ *Updated duelist list, except for Yejix alts and
+  Jewell (deceased character). Note that Scotty and
+  MontgomeryScott are indeed two different characters,
+  even though they're fandoms for the same character.
 -v0.2.1-
  *First release with a proper name. I was incredibly
   indecisive with this. First, it was Cedran, named
