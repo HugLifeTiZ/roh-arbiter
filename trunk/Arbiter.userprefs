@@ -3,14 +3,15 @@
   <MonoDevelop.Ide.DebuggingService>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Arbiter.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="README.txt" ctype="Workbench">
     <Files>
-      <File FileName="Arbiter.cs" Line="147" Column="31" />
-      <File FileName="MainWindow.cs" Line="1" Column="1" />
-      <File FileName="Duel.cs" Line="1" Column="1" />
+      <File FileName="Arbiter.cs" Line="1" Column="1" />
+      <File FileName="MainWindow.cs" Line="45" Column="36" />
+      <File FileName="Duel.cs" Line="101" Column="27" />
       <File FileName="EditDialog.cs" Line="1" Column="1" />
       <File FileName="Sport.cs" Line="1" Column="1" />
-      <File FileName="README.txt" Line="1" Column="1" />
+      <File FileName="README.txt" Line="11" Column="38" />
+      <File FileName="duelists.cfg" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">

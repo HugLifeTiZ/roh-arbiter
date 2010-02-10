@@ -19,8 +19,6 @@ Global
 		{8AE4FBEE-FED7-4D8A-90B9-62706411DC5A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		description = A tool to assist Rings of Honor officials in calling duels.
-		version = 0.3
 		StartupItem = Arbiter.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
@@ -38,5 +36,7 @@ Global
 		$5.MessageStyle = $6
 		$6.LineAlign = 0
 		$5.inheritsSet = Mono
+		description = A tool to assist Rings of Honor officials in calling duels.
+		version = 0.4
 	EndGlobalSection
 EndGlobal
