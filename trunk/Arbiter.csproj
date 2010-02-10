@@ -71,6 +71,8 @@
     <Compile Include="EditDialog.cs" />
     <Compile Include="Sport.cs" />
     <Compile Include="Arbiter.cs" />
+    <Compile Include="Combatant.cs" />
+    <Compile Include="BrawlSetup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="arbiter.desktop">

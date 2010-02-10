@@ -4,6 +4,9 @@ by Trent McPheron (twilightinzero@gmail.com)
 
 == Changelog ==
 -v0.4-
+ *A brawl tool has been added! A new section in the
+  readme has been added for how to use it. Do note
+  that Fists is NOT properly implemented yet.
  *The fancy and feint checks have been merged. The
   correct modifier is determined according to how
   the modified move scores. For sports without
