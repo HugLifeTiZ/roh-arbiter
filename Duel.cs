@@ -57,20 +57,24 @@ namespace Arbiter
 		
 		#region Widgets
 		[Widget] private VBox duelWidget;
-		[Widget] private Label duelistAName;
-		[Widget] private Label duelistBName;
-		[Widget] private Label duelistAScore;
-		[Widget] private Label duelistBScore;
+		[Widget] private Label duelistANameLabel;
+		[Widget] private Label duelistBNameLabel;
+		[Widget] private Label duelistAScoreLabel;
+		[Widget] private Label duelistBScoreLabel;
+		[Widget] private Label duelistARoundScoreLabel;
+		[Widget] private Label duelistBRoundScoreLabel;
 		[Widget] private Label roundLabel;
 		[Widget] private CheckButton duelistAFeint;
 		[Widget] private CheckButton duelistBFeint;
-		[Widget] private CheckButton duelistAFancy;
-		[Widget] private CheckButton duelistBFancy;
-		[Widget] private ComboBox duelistAMove;
-		[Widget] private ComboBox duelistBMove;
+		[Widget] private HBox duelistAModBox;
+		[Widget] private HBox duelistBModBox;
+		[Widget] private CheckButton duelistAModCheck;
+		[Widget] private CheckButton duelistBModCheck;
+		[Widget] private ComboBox duelistAMoveCombo;
+		[Widget] private ComboBox duelistBMoveCombo;
 		[Widget] private HButtonBox actionBox;
-		[Widget] private Button resolve;
-		[Widget] private Button undo;
+		[Widget] private Button resolveButton;
+		[Widget] private Button undoButton;
 		[Widget] private TextView duelLogView;
 		// End duel window
 		[Widget] private Dialog endDuelWin;
@@ -84,9 +88,17 @@ namespace Arbiter
 		#endregion
 		
 		#region Properties
-		// Convenience property.
+		// Convenience properties.
 		public TextBuffer DuelLog
 			{ get { return duelLogView.Buffer; } }
+		public bool DuelistAFancy
+			{ get { return duelistAModCheck.Active && sport.Fancies; } }
+		public bool DuelistBFancy
+			{ get { return duelistBModCheck.Active && sport.Fancies; } }
+		public bool DuelistAFeint
+			{ get { return duelistAModCheck.Active && sport.Feints; } }
+		public bool DuelistBFeint
+			{ get { return duelistBModCheck.Active && sport.Feints; } }
 		
 		// Used to hide the button box.
 		public bool HideButtons
@@ -110,7 +122,7 @@ namespace Arbiter
 			set
 			{
 				manual = value;
-				resolve.Sensitive = CanResolve;
+				resolveButton.Sensitive = CanResolve;
 			}
 		}
 		
@@ -121,12 +133,12 @@ namespace Arbiter
 		public bool CanResolve {
 			get {
 				return manual ||
-				((duelistAMove.Active != moveA[round - 1] || duelistAMove.ActiveText == "Disengage")
-				&& (duelistBMove.Active != moveB[round - 1] || duelistBMove.ActiveText == "Disengage")
-			    && !(moveA[round - 1] == 15 && duelistAMove.ActiveText == "Reflection")
-			    && !(moveB[round - 1] == 15 && duelistBMove.ActiveText == "Reflection")
-			    && !(usedEFA && duelistAMove.Active == 14)
-			    && !(usedEFB && duelistBMove.Active == 14)
+				((duelistAMoveCombo.Active != moveA[round - 1] || duelistAMoveCombo.ActiveText == "Disengage")
+				&& (duelistBMoveCombo.Active != moveB[round - 1] || duelistBMoveCombo.ActiveText == "Disengage")
+			    && !(moveA[round - 1] == 15 && duelistAMoveCombo.ActiveText == "Reflection")
+			    && !(moveB[round - 1] == 15 && duelistBMoveCombo.ActiveText == "Reflection")
+			    && !(usedEFA && duelistAMoveCombo.Active == 14)
+			    && !(usedEFB && duelistBMoveCombo.Active == 14)
 				&& !End); } }
 		
 		// Determines whether or not the last round can be undoed.
@@ -154,12 +166,30 @@ namespace Arbiter
 			
 			#region Widget Properties	
 			// Set widget properties.
-			duelistAMove.Model = sport.Moves;
-			duelistBMove.Model = sport.Moves;
-			duelistAFancy.Sensitive = sport.Fancies;
-			duelistBFancy.Sensitive = sport.Fancies;
-			duelistAFeint.Sensitive = sport.Feints;
-			duelistBFeint.Sensitive = sport.Feints;
+			duelistAMoveCombo.Model = sport.Moves;
+			duelistBMoveCombo.Model = sport.Moves;
+			if (sport.Fancies && sport.Feints)
+			{
+				duelistAModCheck.Label = "Fancy / Feint";
+				duelistBModCheck.Label = "Fancy / Feint";
+			}
+			else if (sport.Fancies)
+			{
+				duelistAModCheck.Label = "Fancy";
+				duelistBModCheck.Label = "Fancy";
+			}
+			else if (sport.Feints)
+			{
+				duelistAModCheck.Label = "Feint";
+				duelistBModCheck.Label = "Feint";
+			}
+			else
+			{
+				duelistAModBox.Visible = false;
+				duelistAModBox.NoShowAll = true;
+				duelistBModBox.Visible = false;
+				duelistBModBox.NoShowAll = true;
+			}
 			HideButtons = Arbiter.HideButtons;
 			#endregion
 			
@@ -193,8 +223,8 @@ namespace Arbiter
 			
 			#region Initialization
 			// Set all the variables.
-			duelistAName.Markup = @"<b>" + shortNameA + @"</b>";
-			duelistBName.Markup = @"<b>" + shortNameB + @"</b>";
+			duelistANameLabel.Markup = @"<b>" + shortNameA + @"</b>";
+			duelistBNameLabel.Markup = @"<b>" + shortNameB + @"</b>";
 			round = 1;
 			scoreA = 0;
 			scoreB = 0;
@@ -250,8 +280,8 @@ namespace Arbiter
 		{
 			#region Start of Resolve
 			// Set these now for convenience.
-			moveA.Add(duelistAMove.Active);
-			moveB.Add(duelistBMove.Active);
+			moveA.Add(duelistAMoveCombo.Active);
+			moveB.Add(duelistBMoveCombo.Active);
 			
 			// Reset the round scores.
 			roundScoreA.Add(0);
@@ -265,14 +295,14 @@ namespace Arbiter
 			switch (sport.Matrix[moveA[round], moveB[round]])
 			{
 			case 'A':  // A scores.
-				if (!duelistAFeint.Active) roundScoreA[round] = 1;
+				if (!DuelistAFeint) roundScoreA[round] = 1;
 				break;
 			case 'B':  // B scores.
-				if (!duelistBFeint.Active) roundScoreB[round] = 1;
+				if (!DuelistBFeint) roundScoreB[round] = 1;
 				break;
 			case 'a':  // A gets advantage.
-				if (duelistBFeint.Active) roundScoreB[round] = 1;
-				else if (duelistAFancy.Active) roundScoreA[round] = 1;
+				if (DuelistBFeint) roundScoreB[round] = 1;
+				else if (DuelistAFancy) roundScoreA[round] = 1;
 				else if (sport.Advantages)
 				{
 					if (advA[round - 1])
@@ -282,8 +312,8 @@ namespace Arbiter
 				else roundScoreA[round] = 0.5f;
 				break;
 			case 'b':  // B gets advantage.
-				if (duelistAFeint.Active) roundScoreA[round] = 1;
-				else if (duelistBFancy.Active) roundScoreB[round] = 1;
+				if (DuelistAFeint) roundScoreA[round] = 1;
+				else if (DuelistBFancy) roundScoreB[round] = 1;
 				else if (sport.Advantages)
 				{
 					if (advB[round - 1])
@@ -294,8 +324,8 @@ namespace Arbiter
 				break;
 			case '!':  // Dual RF, Magic only. Yay for C-style switch.
 			case '1':  // Both score.
-				if (!duelistAFeint.Active) roundScoreA[round] = 1;
-				if (!duelistBFeint.Active) roundScoreB[round] = 1;
+				if (!DuelistAFeint) roundScoreA[round] = 1;
+				if (!DuelistBFeint) roundScoreB[round] = 1;
 				break;
 			case '+':  // Magic only: dual advantage.
 				roundScoreA[round] = 0.5f;
@@ -346,18 +376,16 @@ namespace Arbiter
 			if (!manual) CheckDuelEnd();
 			
 			#region End of Resolve
-			// Uncheck fancy / feint boxes.
-			duelistAFancy.Active = false;
-			duelistAFeint.Active = false;
-			duelistBFancy.Active = false;
-			duelistBFeint.Active = false;
+			// Uncheck mod boxes.
+			duelistAModCheck.Active = false;
+			duelistBModCheck.Active = false;
 			
 			// Disable the resolver until new moves are picked,
 			// unless Manual Mode is enabled.
-			resolve.Sensitive = Manual || false;
+			resolveButton.Sensitive = Manual || false;
 			
 			// Enable the undoer.
-			undo.Sensitive = true;
+			undoButton.Sensitive = true;
 			
 			// Tell the main window to check its menu items.
 			Arbiter.MainWin.CheckDuelMenu();
@@ -378,12 +406,10 @@ namespace Arbiter
 				log.RemoveAt(log.Count - 1);
 				
 				// Re-enable all the widgets.
-				duelistAFancy.Sensitive = true;
-				duelistAFeint.Sensitive = true;
-				duelistAMove.Sensitive = true;
-				duelistBFancy.Sensitive = true;
-				duelistBFeint.Sensitive = true;
-				duelistBMove.Sensitive = true;
+				duelistAModCheck.Sensitive = true;
+				duelistAMoveCombo.Sensitive = true;
+				duelistBModCheck.Sensitive = true;
+				duelistBMoveCombo.Sensitive = true;
 				
 				// Set end switch to false.
 				End = false;
@@ -424,15 +450,15 @@ namespace Arbiter
 			log.RemoveAt(log.Count - 1);
 			
 			// Set the comboboxes back one round.
-			duelistAMove.Active = moveA[round - 1];
-			duelistBMove.Active = moveB[round - 1];
+			duelistAMoveCombo.Active = moveA[round - 1];
+			duelistBMoveCombo.Active = moveB[round - 1];
 			
 			// Update labels and logs.
 			UpdateLabels(round - 1);
 			UpdateDuelLog();
 			
 			// Disable the undoer if it's round 1 now.
-			undo.Sensitive = CanUndo;
+			undoButton.Sensitive = CanUndo;
 			Arbiter.MainWin.CheckDuelMenu();
 		}
 		
@@ -523,12 +549,10 @@ namespace Arbiter
 			UpdateDuelLog();
 			
 			// Disable all the widgets.
-			duelistAFancy.Sensitive = false;
-			duelistAFeint.Sensitive = false;
-			duelistAMove.Sensitive = false;
-			duelistBFancy.Sensitive = false;
-			duelistBFeint.Sensitive = false;
-			duelistBMove.Sensitive = false;
+			duelistAModCheck.Sensitive = false;
+			duelistAMoveCombo.Sensitive = false;
+			duelistBModCheck.Sensitive = false;
+			duelistBMoveCombo.Sensitive = false;
 		}
 		
 		#region Methods
@@ -545,26 +569,20 @@ namespace Arbiter
 			}
 			
 			// Create main score parts.
-			string scoreStringA = scoreA.ToString(sport.ScoreFormat);
-			string scoreStringB = scoreB.ToString(sport.ScoreFormat);
-			string scoreLabelA = @"<span size='" + mainSize +
-				@"'><b>" + scoreStringA + @"</b></span>";
-			string scoreLabelB = @"<span size='" + mainSize +
-				@"'><b>" + scoreStringB + @"</b></span>";
+			duelistAScoreLabel.Markup = @"<span size='" + mainSize +
+				@"'><b>" + scoreA.ToString(sport.ScoreFormat) + @"</b></span>";
+			duelistBScoreLabel.Markup = @"<span size='" + mainSize +
+				@"'><b>" + scoreB.ToString(sport.ScoreFormat) + @"</b></span>";
 			
 			// Create round score parts.
-			string roundScoreLabelA = @"<span size='" + roundSize + @"'>  " +
+			duelistARoundScoreLabel.Markup = @"<span size='" + roundSize + @"'>" +
 				roundScoreA[r].ToString(sport.ScoreFormat) + @"</span>";
-			string roundScoreLabelB = @"<span size='" + roundSize + @"'>" +
-				roundScoreB[r].ToString(sport.ScoreFormat) + @"  </span>";
+			duelistBRoundScoreLabel.Markup = @"<span size='" + roundSize + @"'>" +
+				roundScoreB[r].ToString(sport.ScoreFormat) + @"</span>";
 			if (advA[r])
-				roundScoreLabelA = @"<span size='" + roundSize + @"'>  +</span>";
+				duelistARoundScoreLabel.Markup = @"<span size='" + roundSize + @"'>+</span>";
 			if (advB[r])
-				roundScoreLabelB = @"<span size='" + roundSize + @"'>+  </span>";
-			
-			// Combine them into the label.
-			duelistAScore.Markup = scoreLabelA + roundScoreLabelA;
-			duelistBScore.Markup = roundScoreLabelB + scoreLabelB;
+				duelistBRoundScoreLabel.Markup = @"<span size='" + roundSize + @"'>+</span>";
 			
 			// Update the round label.
 			roundLabel.Markup =
@@ -605,12 +623,10 @@ namespace Arbiter
 			
 			// Create special abbreviations in case of fancy or feint.
 			string abbrevA, abbrevB;
-			if (duelistAFancy.Active == true)      abbrevA = "Fa" + sport.Abbrev[mA];
-			else if (duelistAFeint.Active == true) abbrevA = "Ft" + sport.Abbrev[mA];
-			else abbrevA = "  " + sport.Abbrev[mA];  // For consistent spacing.
-			if (duelistBFancy.Active == true)      abbrevB = "Fa" + sport.Abbrev[mB];
-			else if (duelistBFeint.Active == true) abbrevB = "Ft" + sport.Abbrev[mB];
-			else abbrevB = sport.Abbrev[mB] + "  ";  // For consistent spacing.
+			if (duelistAModCheck.Active == true)      abbrevA = "F" + sport.Abbrev[mA];
+			else abbrevA = " " + sport.Abbrev[mA];  // For consistent spacing.
+			if (duelistBModCheck.Active == true)      abbrevB = "F" + sport.Abbrev[mB];
+			else abbrevB = sport.Abbrev[mB] + " ";  // For consistent spacing.
 			
 			// Update log.
 			if ((scoreA > scoreB) || advA[round])  // A leads.
@@ -695,12 +711,10 @@ namespace Arbiter
 					@"<span size='x-large'><b>Round " + (round - 1).ToString() + @"</b></span>";
 				
 				// Disable all the widgets.
-				duelistAFancy.Sensitive = false;
-				duelistAFeint.Sensitive = false;
-				duelistAMove.Sensitive = false;
-				duelistBFancy.Sensitive = false;
-				duelistBFeint.Sensitive = false;
-				duelistBMove.Sensitive = false;
+				duelistAModCheck.Sensitive = false;
+				duelistAMoveCombo.Sensitive = false;
+				duelistBModCheck.Sensitive = false;
+				duelistBMoveCombo.Sensitive = false;
 			}
 		}
 		
@@ -747,26 +761,10 @@ namespace Arbiter
 		#endregion
 		
 		#region Other Widgets
-		// Disables fancy when feint is enabled.
-		private void DuelistAFancyToggled (object sender, EventArgs args)
-			{ if (duelistAFancy.Active) duelistAFeint.Active = false; }
-		
-		// Disables feint when fancy is enabled.
-		private void DuelistAFeintToggled (object sender, EventArgs args)
-			{ if (duelistAFeint.Active) duelistAFancy.Active = false; }
-		
-		// Disables fancy when feint is enabled.
-		private void DuelistBFancyToggled (object sender, EventArgs args)
-			{ if (duelistBFancy.Active) duelistBFeint.Active = false; }
-		
-		// Disables feint when fancy is enabled.
-		private void DuelistBFeintToggled (object sender, EventArgs args)
-			{ if (duelistBFeint.Active) duelistBFancy.Active = false; }
-		
 		// Enables the resolver once new moves have been selected.
 		private void MoveChanged (object sender, EventArgs args)
 		{
-			resolve.Sensitive = CanResolve;
+			resolveButton.Sensitive = CanResolve;
 			Arbiter.MainWin.CheckDuelMenu();
 		}
 		

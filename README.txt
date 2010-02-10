@@ -3,6 +3,12 @@ by Trent McPheron (twilightinzero@gmail.com)
 =======================
 
 == Changelog ==
+-v0.4-
+ *The fancy and feint checks have been merged. The
+  correct modifier is determined according to how
+  the modified move scores. For sports without
+  feints, modifying attack will do nothing. And for
+  DoM, the checkboxes are now hidden.
 -v0.3-
  *Switched to MIT/X11 license. It's more permissive.
   Besides, I don't like GNU's fanaticism. :P

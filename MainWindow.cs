@@ -37,19 +37,19 @@ namespace Arbiter
 		#region Widgets
 		// Widgets to be attached by Glade#.
 		[Widget] private Window mainWin;
-		[Widget] private Notebook duels;
-		[Widget] private ComboBoxEntry duelistAName;
-		[Widget] private ComboBoxEntry duelistBName;
-		[Widget] private ComboBoxEntry ringName;
-		[Widget] private ComboBox duelSport;
-		[Widget] private ComboBox duelType;
-		[Widget] private CheckButton fightNight;
+		[Widget] private Notebook duelNotebook;
+		[Widget] private ComboBoxEntry duelistANameCEntry;
+		[Widget] private ComboBoxEntry duelistBNameCEntry;
+		[Widget] private ComboBoxEntry ringNameCEntry;
+		[Widget] private ComboBox sportCombo;
+		[Widget] private ComboBox typeCombo;
+		[Widget] private CheckButton fightNightCheck;
 		[Widget] private Image newDuelTabIcon;
 		[Widget] private Image duelistAEditImage;
 		[Widget] private Image duelistBEditImage;
 		[Widget] private Image ringEditImage;
 		[Widget] private HBox newDuelTab;
-		[Widget] private TextView shiftReportTextView;
+		[Widget] private TextView shiftReportView;
 		[Widget] private MenuItem duelMenuItem;
 		[Widget] private ImageMenuItem saveReportMenuItem;
 		[Widget] private ImageMenuItem quitMenuItem;
@@ -72,7 +72,7 @@ namespace Arbiter
 		
 		// Convenience property.
 		private Duel CurrentDuel
-			{ get { return (Duel)duels.CurrentPageWidget; } }
+			{ get { return (Duel)duelNotebook.CurrentPageWidget; } }
 		
 		// Constructor.
 		public MainWindow()
@@ -91,19 +91,19 @@ namespace Arbiter
 			{
 			case "Left":
 				leftTabMenuItem.Active = true;
-				duels.TabPos = PositionType.Left;
+				duelNotebook.TabPos = PositionType.Left;
 				break;
 			case "Right":
 				rightTabMenuItem.Active = true;
-				duels.TabPos = PositionType.Right;
+				duelNotebook.TabPos = PositionType.Right;
 				break;
 			case "Top":
 				topTabMenuItem.Active = true;
-				duels.TabPos = PositionType.Top;
+				duelNotebook.TabPos = PositionType.Top;
 				break;
 			case "Bottom":
 				bottomTabMenuItem.Active = true;
-				duels.TabPos = PositionType.Bottom;
+				duelNotebook.TabPos = PositionType.Bottom;
 				break;
 			}
 			
@@ -126,7 +126,7 @@ namespace Arbiter
 			newDuelTab.Children[2].NoShowAll = Arbiter.HideClose;
 			
 			// For the popup menu.
-			duels.SetMenuLabelText(duels.CurrentPageWidget, "New Duel");
+			duelNotebook.SetMenuLabelText(duelNotebook.CurrentPageWidget, "New Duel");
 			
 			// Set the icons for the three edit buttons. Necessary on Windows.
 			duelistAEditImage.Pixbuf = IconTheme.Default.LoadIcon(Stock.Edit, 16, 0);
@@ -134,19 +134,19 @@ namespace Arbiter
 			ringEditImage.Pixbuf = IconTheme.Default.LoadIcon(Stock.Edit, 16, 0);
 			
 			// Connect the list stores to their comboboxes.
-			duelistAName.Model = Arbiter.Duelists;
-			duelistBName.Model = Arbiter.Duelists;
-			ringName.Model = Arbiter.Rings;
-			duelistAName.TextColumn = 0;
-			duelistBName.TextColumn = 0;
-			ringName.TextColumn = 0;
+			duelistANameCEntry.Model = Arbiter.Duelists;
+			duelistBNameCEntry.Model = Arbiter.Duelists;
+			ringNameCEntry.Model = Arbiter.Rings;
+			duelistANameCEntry.TextColumn = 0;
+			duelistBNameCEntry.TextColumn = 0;
+			ringNameCEntry.TextColumn = 0;
 			
 			// Autocompletion for the comboboxes.
 			EntryCompletion[] c = new EntryCompletion[3];
 			ListStore[] l = new ListStore[]
 				{ Arbiter.Duelists, Arbiter.Duelists, Arbiter.Rings };
 			ComboBoxEntry[] e = new ComboBoxEntry[]
-				{ duelistAName, duelistBName, ringName };
+				{ duelistANameCEntry, duelistBNameCEntry, ringNameCEntry };
 			for (int n = 0; n < 3; n++)
 			{
 				c[n] = new EntryCompletion();
@@ -159,14 +159,14 @@ namespace Arbiter
 			}
 			
 			// Prepare shift report displayer.
-			shiftReportTextView.Buffer = Arbiter.ShiftReport;
+			shiftReportView.Buffer = Arbiter.ShiftReport;
 			
 			// For whatever reason, the comboboxes don't start at defaults.
-			duelSport.Active = 0;
-			duelType.Active = 0;
+			sportCombo.Active = 0;
+			typeCombo.Active = 0;
 			
 			// We may have restored from a fight night shift report.
-			fightNight.Active = Arbiter.FightNight;
+			fightNightCheck.Active = Arbiter.FightNight;
 			
 			// Create accelerators for the menu items.
 			AccelGroup ag = new AccelGroup();
@@ -207,10 +207,10 @@ namespace Arbiter
 			#region Failsafe
 			// First of all, we have to make sure the user
 			// didn't mess up.
-			if(duelistAName.ActiveText == duelistBName.ActiveText ||
-			   duelistAName.ActiveText == "" ||
-			   duelistBName.ActiveText == "" ||
-			   ringName.ActiveText == "")
+			if(duelistANameCEntry.ActiveText == duelistBNameCEntry.ActiveText ||
+			   duelistANameCEntry.ActiveText == "" ||
+			   duelistBNameCEntry.ActiveText == "" ||
+			   ringNameCEntry.ActiveText == "")
 			{
 				// Let the user know they messed up.
 				Dialog dialog = new Dialog("Superman will--", mainWin,
@@ -235,7 +235,7 @@ namespace Arbiter
 			#region Sport and Type
 			// For duel sport.
 			Sport sport = new Sport();
-			switch (duelSport.ActiveText)
+			switch (sportCombo.ActiveText)
 			{
 				case "Swords": sport = Arbiter.DuelOfSwords; break;
 				case "Fists":  sport = Arbiter.DuelOfFists;  break;
@@ -245,7 +245,7 @@ namespace Arbiter
 			// For duel type.
 			bool overtime = false;
 			bool madness = false;
-			switch (duelType.ActiveText)
+			switch (typeCombo.ActiveText)
 			{
 				case "Challenge": overtime = true; madness = false; break;
 				case "Madness":   overtime = true; madness = true; break;
@@ -264,12 +264,12 @@ namespace Arbiter
 			
 			// Tab icon.
 			Gdk.Pixbuf icon = Gdk.Pixbuf.LoadFromResource(
-					"Arbiter." + sport.ShortName + duelType.ActiveText + ".png");
+					"Arbiter." + sport.ShortName + typeCombo.ActiveText + ".png");
 			icon = icon.ScaleSimple(16, 16, Gdk.InterpType.Hyper);
 			
 			// Pack the hbox and show it.
 			label.PackStart(new Image(icon), false, false, 0);
-			label.PackStart(new Label(ringName.ActiveText), true, true, 0);
+			label.PackStart(new Label(ringNameCEntry.ActiveText), true, true, 0);
 			label.PackEnd(closeButton, false, false, 0);
 			label.ShowAll();
 			
@@ -283,19 +283,19 @@ namespace Arbiter
 			#region Start Duel
 			// Make the tab.
 			Arbiter.NumDuels++;
-			Duel duel = new Duel(Arbiter.NumDuels, ringName.ActiveText,
-								duelistAName.ActiveText, duelistBName.ActiveText,
+			Duel duel = new Duel(Arbiter.NumDuels, ringNameCEntry.ActiveText,
+								duelistANameCEntry.ActiveText, duelistBNameCEntry.ActiveText,
 								sport, overtime, madness);
-			duels.InsertPage(duel, label, duels.NPages - 1);
-			duels.ShowAll();
-			duels.CurrentPage = duels.NPages - 2;
-			duels.CurrentPageWidget.Name = duelistAName.ActiveText;
+			duelNotebook.InsertPage(duel, label, duelNotebook.NPages - 1);
+			duelNotebook.ShowAll();
+			duelNotebook.CurrentPage = duelNotebook.NPages - 2;
+			duelNotebook.CurrentPageWidget.Name = duelistANameCEntry.ActiveText;
 			
 			// For the popup menu.
-			duels.SetMenuLabelText(duels.CurrentPageWidget, ringName.ActiveText);
+			duelNotebook.SetMenuLabelText(duelNotebook.CurrentPageWidget, ringNameCEntry.ActiveText);
 			
 			// Make the close button work.
-			closeButton.ButtonReleaseEvent += delegate { duels.Remove(duel); };
+			closeButton.ButtonReleaseEvent += delegate { duelNotebook.Remove(duel); };
 			#endregion
 			
 			#region List Update
@@ -304,29 +304,29 @@ namespace Arbiter
 			bool presentB = false;
 			foreach(object[] s in Arbiter.Duelists)
 			{
-				presentA = presentA || (string)s[0] == duelistAName.ActiveText;
-				presentB = presentB || (string)s[0] == duelistBName.ActiveText;
+				presentA = presentA || (string)s[0] == duelistANameCEntry.ActiveText;
+				presentB = presentB || (string)s[0] == duelistBNameCEntry.ActiveText;
 			}
 			if (!presentA) Arbiter.Duelists.AppendValues(
-										duelistAName.ActiveText);
+										duelistANameCEntry.ActiveText);
 			if (!presentB) Arbiter.Duelists.AppendValues(
-										duelistBName.ActiveText);
+										duelistBNameCEntry.ActiveText);
 			#endregion
 			
 			#region Cleanup
 			// Clear the widgets.
-			duelistAName.Entry.Text = "";
-			duelistBName.Entry.Text = "";
-			ringName.Entry.Text = "";
-			if (Arbiter.FightNight) duelSport.Active = 0;
-			duelType.Active = 0;
+			duelistANameCEntry.Entry.Text = "";
+			duelistBNameCEntry.Entry.Text = "";
+			ringNameCEntry.Entry.Text = "";
+			if (Arbiter.FightNight) sportCombo.Active = 0;
+			typeCombo.Active = 0;
 			#endregion
 		}
 		
 		#region Other Widgets
 		// Toggle the Fight Night switch.
 		private void FightNightToggled (object sender, EventArgs args)
-			{ Arbiter.FightNight = fightNight.Active; }
+			{ Arbiter.FightNight = fightNightCheck.Active; }
 		
 		// Create a window to edit saved duelists.
 		private void EditDuelists (object sender, EventArgs args)
@@ -397,7 +397,7 @@ namespace Arbiter
 		// Toggles sensitivity of certain items in the menu.
 		public void CheckDuelMenu ()
 		{
-			duelMenuItem.Sensitive = (duels.CurrentPage < duels.NPages - 1);
+			duelMenuItem.Sensitive = (duelNotebook.CurrentPage < duelNotebook.NPages - 1);
 			resolveMenuItem.Sensitive = false;
 			undoMenuItem.Sensitive = false;
 			endDuelMenuItem.Sensitive = false;
@@ -438,8 +438,8 @@ namespace Arbiter
 		
 		// Close the duel tab.
 		private void CloseDuel (object sender, EventArgs args)
-		{ if (duels.CurrentPage < duels.NPages - 1)
-			duels.Remove(duels.CurrentPageWidget); }
+		{ if (duelNotebook.CurrentPage < duelNotebook.NPages - 1)
+			duelNotebook.Remove(duelNotebook.CurrentPageWidget); }
 		#endregion
 		
 		#region Options Menu
@@ -481,22 +481,22 @@ namespace Arbiter
 			if (leftTabMenuItem.Active)
 			{
 				Arbiter.TabPosition = "Left";
-				duels.TabPos = PositionType.Left;
+				duelNotebook.TabPos = PositionType.Left;
 			}
 			else if (rightTabMenuItem.Active)
 			{
 				Arbiter.TabPosition = "Right";
-				duels.TabPos = PositionType.Right;
+				duelNotebook.TabPos = PositionType.Right;
 			}
 			else if (topTabMenuItem.Active)
 			{
 				Arbiter.TabPosition = "Top";
-				duels.TabPos = PositionType.Top;
+				duelNotebook.TabPos = PositionType.Top;
 			}
 			else if (bottomTabMenuItem.Active)
 			{
 				Arbiter.TabPosition = "Bottom";
-				duels.TabPos = PositionType.Bottom;
+				duelNotebook.TabPos = PositionType.Bottom;
 			}
 		}
 		
@@ -508,9 +508,9 @@ namespace Arbiter
 			Arbiter.HideIcons = hideIconsMenuItem.Active;
 			
 			// Loop through each tab and hide the icon.
-			foreach (Widget tab in duels.Children)
+			foreach (Widget tab in duelNotebook.Children)
 			{
-				HBox box = (HBox)duels.GetTabLabel(tab);
+				HBox box = (HBox)duelNotebook.GetTabLabel(tab);
 				box.Children[0].Visible = !Arbiter.HideIcons;
 				box.Children[0].NoShowAll = Arbiter.HideIcons;
 			}
@@ -524,9 +524,9 @@ namespace Arbiter
 			Arbiter.HideClose = hideCloseMenuItem.Active;
 			
 			// Loop through each tab and hide the icon.
-			foreach (Widget tab in duels.Children)
+			foreach (Widget tab in duelNotebook.Children)
 			{
-				HBox box = (HBox)duels.GetTabLabel(tab);
+				HBox box = (HBox)duelNotebook.GetTabLabel(tab);
 				box.Children[2].Visible = !Arbiter.HideClose;
 				box.Children[2].NoShowAll = Arbiter.HideIcons;
 			}
@@ -540,8 +540,8 @@ namespace Arbiter
 			Arbiter.HideButtons = hideButtonsMenuItem.Active;
 			
 			// Loop through each tab and hide the icon.
-			for (int i = 0; i < duels.NPages - 1; i++)
-				((Duel)duels.Children[i]).HideButtons =
+			for (int i = 0; i < duelNotebook.NPages - 1; i++)
+				((Duel)duelNotebook.Children[i]).HideButtons =
 					Arbiter.HideButtons;
 		}
 		
@@ -553,8 +553,8 @@ namespace Arbiter
 			Arbiter.SmallScore = smallScoreMenuItem.Active;
 			
 			// Loop through each tab and hide the icon.
-			for (int i = 0; i < duels.NPages - 1; i++)
-				((Duel)duels.Children[i]).UpdateLabels();
+			for (int i = 0; i < duelNotebook.NPages - 1; i++)
+				((Duel)duelNotebook.Children[i]).UpdateLabels();
 		}
 		#endregion
 	}
