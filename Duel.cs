@@ -269,8 +269,10 @@ namespace Arbiter
 			manual = false;
 			
 			// Participate in size negotiation.
-			SizeRequested += new SizeRequestedHandler (OnSizeRequested);
-			SizeAllocated += new SizeAllocatedHandler (OnSizeAllocated);
+			SizeRequested += delegate(object sender, SizeRequestedArgs args) 
+				{ args.Requisition = duelWidget.SizeRequest(); };
+			SizeAllocated += delegate(object sender, SizeAllocatedArgs args)
+				{ duelWidget.Allocation = args.Allocation; };
 			#endregion
 		}
 		
@@ -767,14 +769,6 @@ namespace Arbiter
 			resolveButton.Sensitive = CanResolve;
 			Arbiter.MainWin.CheckDuelMenu();
 		}
-		
-		// Size requisition.
-		private void OnSizeRequested (object sender, SizeRequestedArgs args)
-			{ args.Requisition = duelWidget.SizeRequest(); }
-		
-		// Size allocation.
-		private void OnSizeAllocated (object sender, SizeAllocatedArgs args)
-			{ duelWidget.Allocation = args.Allocation; }
 		#endregion
 	}
 }

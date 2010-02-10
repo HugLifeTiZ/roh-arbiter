@@ -1567,6 +1567,7 @@ Ring ThisRing</property>
                     <property name="n_rows">3</property>
                     <property name="n_columns">2</property>
                     <property name="column_spacing">2</property>
+                    <property name="row_spacing">2</property>
                     <child>
                       <widget class="GtkLabel" id="primaryLabel">
                         <property name="visible">True</property>
@@ -2080,6 +2081,43 @@ Mithos</property>
                     <property name="visible">True</property>
                     <property name="orientation">vertical</property>
                     <child>
+                      <widget class="GtkHBox" id="sportBox">
+                        <property name="visible">True</property>
+                        <property name="spacing">2</property>
+                        <child>
+                          <widget class="GtkLabel" id="sportLabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label">Sport:</property>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkComboBox" id="sportCombo">
+                            <property name="visible">True</property>
+                            <property name="active">0</property>
+                            <property name="items">Swords
+Fists
+Magic</property>
+                          </widget>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
                       <widget class="GtkTable" id="statTable">
                         <property name="visible">True</property>
                         <property name="n_rows">2</property>
@@ -2139,7 +2177,7 @@ Mithos</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">0</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -2152,7 +2190,7 @@ Mithos</property>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
@@ -2166,7 +2204,7 @@ Mithos</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">2</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </widget>
@@ -2191,10 +2229,35 @@ Mithos</property>
                 <property name="visible">True</property>
                 <child>
                   <widget class="GtkButton" id="startButton">
-                    <property name="label" translatable="yes">button</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <child>
+                      <widget class="GtkHBox" id="startBox">
+                        <property name="visible">True</property>
+                        <property name="spacing">2</property>
+                        <child>
+                          <widget class="GtkImage" id="startImage">
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="stock">gtk-ok</property>
+                          </widget>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkLabel" id="startLabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label">Start Brawl</property>
+                          </widget>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </widget>
+                    </child>
                   </widget>
                   <packing>
                     <property name="expand">False</property>
