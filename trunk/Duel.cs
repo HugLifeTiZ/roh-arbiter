@@ -269,9 +269,9 @@ namespace Arbiter
 			manual = false;
 			
 			// Participate in size negotiation.
-			SizeRequested += delegate(object sender, SizeRequestedArgs args) 
+			SizeRequested += delegate (object sender, SizeRequestedArgs args) 
 				{ args.Requisition = duelWidget.SizeRequest(); };
-			SizeAllocated += delegate(object sender, SizeAllocatedArgs args)
+			SizeAllocated += delegate (object sender, SizeAllocatedArgs args)
 				{ duelWidget.Allocation = args.Allocation; };
 			#endregion
 		}
