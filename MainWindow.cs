@@ -37,6 +37,7 @@ namespace Arbiter
 		#region Widgets
 		// Widgets to be attached by Glade#.
 		[Widget] private Window mainWin;
+		[Widget] private VBox mainWidget;
 		[Widget] private Notebook duelNotebook;
 		[Widget] private ComboBoxEntry duelistANameCEntry;
 		[Widget] private ComboBoxEntry duelistBNameCEntry;
@@ -345,10 +346,13 @@ namespace Arbiter
 		// Store the size setting.
 		private void SaveSize (object sender, SizeAllocatedArgs args)
 		{
-			int width, height;
-			mainWin.GetSize(out width, out height);
-			Arbiter.WindowWidth = width;
-			Arbiter.WindowHeight = height;
+			if (mainWin.Child == mainWidget)
+			{
+				int width, height;
+				mainWin.GetSize(out width, out height);
+				Arbiter.WindowWidth = width;
+				Arbiter.WindowHeight = height;
+			}
 		}
 		#endregion
 		
@@ -377,6 +381,14 @@ namespace Arbiter
 			StreamWriter sw = new StreamWriter(path, false);
 			sw.Write(Arbiter.ShiftReport.Text);
 			sw.Close();
+		}
+		
+		// Start a brawl.
+		private void StartBrawl (object sender, EventArgs args)
+		{
+			BrawlSetup bs = new BrawlSetup();
+			ReplaceWidget(bs);
+			bs.ShowAll();
 		}
 		
 		// Save settings then quit.
@@ -555,6 +567,17 @@ namespace Arbiter
 			// Loop through each tab and hide the icon.
 			for (int i = 0; i < duelNotebook.NPages - 1; i++)
 				((Duel)duelNotebook.Children[i]).UpdateLabels();
+		}
+		#endregion
+		
+		#region Other Methods
+		// This replaces the main widget with a new one.
+		// Needed for the brawl tool.
+		public void ReplaceWidget(Widget widget)
+		{
+			mainWin.Remove(mainWin.Child);
+			mainWin.Add(widget);
+			mainWin.WindowPosition = WindowPosition.Center;
 		}
 		#endregion
 	}

@@ -33,12 +33,14 @@ namespace Arbiter
 	public class Combatant : Bin
 	{
 		#region Widgets
-		[Widget] private Frame combatantWidget;
-		[Widget] private Label combatantLabel;
-		[Widget] private Label hpLabel;
-		[Widget] private Label mpLabel;
-		[Widget] private CheckButton modCheck;
+		[Widget] private HBox combatantWidget;
+		[Widget] private Label nameLabel;
+		[Widget] private Entry hpEntry;
+		[Widget] private Entry mpEntry;
+		[Widget] private CheckButton fancyCheck;
+		[Widget] private CheckButton feintCheck;
 		[Widget] private CheckButton sdCheck;
+		[Widget] private CheckButton eliminateCheck;
 		[Widget] private ComboBox primaryCombo;
 		[Widget] private ComboBox targetCombo;
 		[Widget] private ComboBox secondaryCombo;
@@ -51,29 +53,25 @@ namespace Arbiter
 		#endregion
 		
 		#region Properties
-		// Automatically handles HP label updating.
+		// Automatically handles HP entry updating.
 		public float HP
 		{
 			get { return hp; }
 			set
 			{
 				hp = value;
-				hpLabel.Markup =
-					"<span size='small'>HP</span> <span size='xx-large' weight='bold'>"
-					+ hp.ToString(sport.ScoreFormat) + "</span>";
+				hpEntry.Text = hp.ToString(sport.ScoreFormat);
 			}
 		}
 		
-		// Automatically handles MP label updating.
+		// Automatically handles MP entry updating.
 		public short MP
 		{
 			get { return mp; }
 			set
 			{
 				mp = value;
-				mpLabel.Markup =
-					"<span size='small'>HP</span> <span size='xx-large' weight='bold'>"
-					+ mp.ToString() + "</span>";
+				mpEntry.Text = mp.ToString();
 			}
 		}
 		
@@ -86,18 +84,22 @@ namespace Arbiter
 		public int Secondary
 			{ get { return secondaryCombo.Active; } }
 		
-		// These translated the active states of the
-		// two checkboxes into publically accessible bools.
-		public bool Mod
-			{ get { return modCheck.Active; } }
+		// These translate the active states of the
+		// checkboxes into publically accessible bools.
+		public bool Fancy
+			{ get { return fancyCheck.Active; } }
+		public bool Feint
+			{ get { return feintCheck.Active; } }
 		public bool SD
 			{ get { return sdCheck.Active; } }
+		public bool Eliminate
+			{ get { return eliminateCheck.Active; } }
 		
 		// The combatant's name.
-		public string Name  { get; private set; }
+		public string CombatantName  { get; private set; }
 		#endregion
 		
-		// The constructor.
+		// Constructor.
 		public Combatant (string name, float hp, short mp, Sport sport, bool sd) : base()
 		{
 			// Load the widgets.
@@ -109,22 +111,33 @@ namespace Arbiter
 			this.sport = sport;
 			
 			// Set combatant's name.
-			Name = name;
-			combatantLabel.Markup =
-				"<span size='xx-large' weight='bold'>" + name + "</span>";
+			CombatantName = name;
+			nameLabel.Markup = "<b>" + name + "</b>";
 			
 			// Assign intial hp and mp, and set labels.
 			HP = hp;
 			MP = mp;
 			
+			// Allow manual editing of HP and MP.
+			hpEntry.FocusOutEvent += delegate { HP = Single.Parse(hpEntry.Text); };
+			mpEntry.FocusOutEvent += delegate { MP = Int16.Parse(mpEntry.Text); };
+			hpEntry.Activated += delegate { HP = Single.Parse(hpEntry.Text); };
+			mpEntry.Activated += delegate { MP = Int16.Parse(mpEntry.Text); };
+			
 			// Determine checkbutton visiblity.
-			modCheck.Visible = !modCheck.NoShowAll = (sport.Fancies || sport.Feints);
-			sdCheck.Visible = !sdCheck.NoShowAll = !sd;
+			fancyCheck.NoShowAll = !(fancyCheck.Visible = sport.Fancies);
+			feintCheck.NoShowAll = !(feintCheck.Visible = sport.Feints);
+			sdCheck.NoShowAll = !(sdCheck.Visible = sd);
+			
+			// Assign combobox lists.
+			primaryCombo.Model = sport.Moves;
+			secondaryCombo.Model = sport.Moves;
+			targetCombo.Model = Brawl.Order;
 			
 			// Participate in size negotiation.
-			SizeRequested += delegate(object sender, SizeRequestedArgs args) 
+			SizeRequested += delegate (object sender, SizeRequestedArgs args) 
 				{ args.Requisition = combatantWidget.SizeRequest(); };
-			SizeAllocated += delegate(object sender, SizeAllocatedArgs args)
+			SizeAllocated += delegate (object sender, SizeAllocatedArgs args)
 				{ combatantWidget.Allocation = args.Allocation; };
 		}
 	}

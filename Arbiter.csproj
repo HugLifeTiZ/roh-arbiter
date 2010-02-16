@@ -73,6 +73,7 @@
     <Compile Include="Arbiter.cs" />
     <Compile Include="Combatant.cs" />
     <Compile Include="BrawlSetup.cs" />
+    <Compile Include="Brawl.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="arbiter.desktop">
