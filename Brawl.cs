@@ -113,7 +113,7 @@ namespace Arbiter
 		}
 		
 		// Resolves the current round.
-		private void ResolveRound ()
+		private void ResolveRound (object sender, EventArgs args)
 		{
 			// Print the round header into the summary.
 			Summary += "  ROUND " + round.ToString() + n;
