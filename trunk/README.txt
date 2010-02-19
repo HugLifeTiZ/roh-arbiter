@@ -7,11 +7,8 @@ by Trent McPheron (twilightinzero@gmail.com)
  *A brawl tool has been added! A new section in the
   readme has been added for how to use it. Do note
   that Fists is NOT properly implemented yet.
- *The fancy and feint checks have been merged. The
-  correct modifier is determined according to how
-  the modified move scores. For sports without
-  feints, modifying attack will do nothing. And for
-  DoM, the checkboxes are now hidden.
+ *The fancy and feint checks are now hidden depending
+  on the sport.
 -v0.3-
  *Switched to MIT/X11 license. It's more permissive.
   Besides, I don't like GNU's fanaticism. :P
