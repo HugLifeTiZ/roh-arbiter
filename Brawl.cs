@@ -57,18 +57,29 @@ namespace Arbiter
 		// The liststore that each combatant will use for targeting.
 		public static ListStore Order { get; private set; }
 		
-		// Convenience property.
+		// Convenience properties.
 		private string Summary
 		{
 			get { return summaryView.Buffer.Text; }
 			set { summaryView.Buffer.Text = value; }
 		}
+		private int Round
+		{
+			get { return round; }
+			set
+			{
+				round = value;
+				roundLabel.Markup = "<span size='xx-large' weight='bold'>"
+					+ round.ToString() + "</span>";
+			}
+		}
 		
 		public Brawl (List<string> order, Sport sport, float hp,
 		              short mp, bool fullFancy, bool sd) : base()
 		{
-			// Save the full fancy option.
+			// Save a couple parameters.
 			this.fullFancy = fullFancy;
+			this.sport = sport;
 			
 			// Create widgets.
 			XML xml = new XML("Arbiter.GUI.glade", "brawlWidget");
@@ -92,6 +103,9 @@ namespace Arbiter
 				orderLabel.Text += order[i];
 				if (i < order.Count - 1) orderLabel.Text += ", ";
 			}
+			
+			// Set initial round number.
+			Round = 1;
 			
 			// Store present instance.
 			instance = this;
@@ -128,24 +142,28 @@ namespace Arbiter
 				// Loop through all combatants.
 				for (int c = 0; c < order.Count; c++)
 				{
-					// Track the number of people that will be
-					// defended.
-					int defended = 0;
-					
-					// Now loop through everyone some more.
-					for (int t = 0; t < order.Count; t++)
+					// Don't consider the combatant if he's not fancying.
+					if (order[c].SecFancy)
 					{
-						if (order[t].Target == c &&
-						    order[c].Target != t && !order[t].SD)
+						// Track the number of people that will be
+						// defended.
+						int defended = 0;
+						
+						// Now loop through everyone some more.
+						for (int t = 0; t < order.Count; t++)
 						{
-							Evaluate(order[c].Secondary, order[c].SecFancy, order[c].SecFeint,
-							         order[t].Primary, order[t].PriFancy, order[t].PriFeint,
-							         out resultA, out resultB);
-							if (resultA == 1) defended++;
+							if (order[t].Target == c &&
+							    order[c].Target != t && !order[t].SD)
+							{
+								Evaluate(order[c].Secondary, order[c].SecFancy, order[c].SecFeint,
+								         order[t].Primary, order[t].PriFancy, order[t].PriFeint,
+								         out resultA, out resultB);
+								if (resultA == 1) defended++;
+							}
 						}
+						
+						order[c].FullFancy = defended > 1;
 					}
-					
-					order[c].FullFancy = defended > 1;
 				}
 			}
 			
@@ -157,10 +175,10 @@ namespace Arbiter
 				resultB = 0;
 				
 				// Decrement MP.
-				order[c].MP -= Convert.ToByte(order[c].PriFancy);
-				order[c].MP -= Convert.ToByte(order[c].PriFeint);
-				order[c].MP -= Convert.ToByte(order[c].SecFancy);
-				order[c].MP -= Convert.ToByte(order[c].SecFeint);
+				order[c].MP -= Convert.ToInt16(order[c].PriFancy);
+				order[c].MP -= Convert.ToInt16(order[c].PriFeint);
+				order[c].MP -= Convert.ToInt16(order[c].SecFancy);
+				order[c].MP -= Convert.ToInt16(order[c].SecFeint);
 				
 				// Store target in a variable.
 				int t = order[c].Target;
@@ -236,7 +254,7 @@ namespace Arbiter
 							(order[c].PriFancy ? "Fancy " : "") +
 							(order[c].PriFeint ? "Feint " : "") +
 							sport.Moves[order[c].Primary] + ", who is protected by " +
-							order[d].CName + ", who uses" +
+							order[d].CName + ", who uses " +
 							(order[d].PriFancy ? "Fancy " : "") +
 							(order[d].PriFeint ? "Feint " : "") +
 							sport.Moves[order[d].Primary] + ".  ( " +
@@ -268,7 +286,7 @@ namespace Arbiter
 							(order[t].FullFancy ? "Full " : "") +
 							(order[t].SecFancy ? "Fancy " : "") +
 							(order[t].SecFeint ? "Feint " : "") +
-							sport.Moves[order[t].Primary] + ".  ( " +
+							sport.Moves[order[t].Secondary] + ".  ( " +
 							resultA.ToString(sport.ScoreFormat) + " / " +
 							resultB.ToString(sport.ScoreFormat) + " )" + n;
 							
@@ -287,6 +305,9 @@ namespace Arbiter
 								if (sport.Abbrev[order[c].Primary] == a &&
 								    !order[c].PriFeint)
 									resultA = 1;
+							
+							// Inflict damange.
+							order[t].HP -= resultA;
 							
 							// Print what just happened.
 							Summary += order[c].CName + " attacks " + order[t].CName + " with " +
@@ -312,6 +333,7 @@ namespace Arbiter
 			}
 			
 			// Print sub-header.
+			Summary += "------------------" + n;
 			Summary += "REMAINING HP" + n;
 			
 			// Print out each HP value.
@@ -350,13 +372,16 @@ namespace Arbiter
 			orderLabel.Text = "";
 			for (int i = 0; i < order.Count; i++)
 			{
-				Order.AppendValues(order[i]);
-				orderLabel.Text += order[i];
+				Order.AppendValues(order[i].CName);
+				orderLabel.Text += order[i].CName;
 				if (i < order.Count - 1) orderLabel.Text += ", ";
 			}
 			
 			// Insert a couple of line breaks into the summary.
 			Summary += n + n;
+			
+			// Advance round number.
+			Round++;
 			
 			// Make the resolver insensitive.
 			resolveButton.Sensitive = false;

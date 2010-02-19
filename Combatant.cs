@@ -110,9 +110,9 @@ namespace Arbiter
 		public bool PriFeint
 			{ get { return priFeintCheck.Active; } }
 		public bool SecFancy
-			{ get { return priFancyCheck.Active; } }
+			{ get { return secFancyCheck.Active; } }
 		public bool SecFeint
-			{ get { return priFeintCheck.Active; } }
+			{ get { return secFeintCheck.Active; } }
 		public bool SD
 			{ get { return sdCheck.Active; } }
 		public bool Eliminate
@@ -145,6 +145,12 @@ namespace Arbiter
 			// Set combatant's name.
 			CName = name;
 			nameLabel.Markup = "<b>" + name + "</b>";
+			
+			// Change appearance of the entryboxes.
+			/*hpEntry.ModifyBase(StateType.Normal, hpEntry.Style.Background(StateType.Normal));
+			mpEntry.ModifyBase(StateType.Normal, mpEntry.Style.Background(StateType.Normal));
+			hpEntry.Style.FontDescription.Weight = Pango.Weight.Bold;
+			mpEntry.Style.FontDescription.Weight = Pango.Weight.Bold;*/
 			
 			// Assign intial hp and mp, and set entries.
 			HP = hp;
@@ -197,14 +203,14 @@ namespace Arbiter
 				(Primary != lastPrimary && Primary != lastSecondary))
 			{
 				primaryValid = true;
-				primaryCombo.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
-				primaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
+				primaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(0, 128, 0));
+				primaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(0, 128, 0));
 			}
 			else
 			{
 				primaryValid = false;
-				primaryCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
-				primaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+				primaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
+				primaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
 			}
 			
 			// Check to see if the resolver can be enabled.
@@ -218,14 +224,14 @@ namespace Arbiter
 				(Secondary != lastSecondary))
 			{
 				secondaryValid = true;
-				secondaryCombo.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
-				secondaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
+				secondaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(0, 128, 0));
+				secondaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(0, 128, 0));
 			}
 			else
 			{
 				secondaryValid = false;
-				secondaryCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
-				secondaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+				secondaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
+				secondaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
 			}
 			
 			// Check to see if the resolver can be enabled.
@@ -237,8 +243,8 @@ namespace Arbiter
 		public void VerifyTarget (object sender, EventArgs args)
 		{
 			targetValid = true;
-			targetCombo.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
-			targetCombo.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
+			targetCombo.ModifyFg(StateType.Normal, new Gdk.Color(0, 128, 0));
+			targetCombo.ModifyFg(StateType.Prelight, new Gdk.Color(0, 128, 0));
 			
 			// Check to see if the resolver can be enabled.
 			Brawl.CheckResolve();
@@ -248,10 +254,10 @@ namespace Arbiter
 		// has insufficient MP.
 		public void VerifyMod (object sender, EventArgs args)
 		{
-			bool modValid = (Convert.ToByte(PriFancy) +
-			            Convert.ToByte(PriFeint) +
-			            Convert.ToByte(SecFancy) +
-			            Convert.ToByte(SecFeint) <= MP);
+			bool modValid = (Convert.ToInt16(PriFancy) +
+			                 Convert.ToInt16(PriFeint) +
+			                 Convert.ToInt16(SecFancy) +
+			                 Convert.ToInt16(SecFeint) <= MP);
 			
 			// Uncheck the box that was just checked.
 			if (!modValid) ((CheckButton)sender).Active = false;
@@ -269,12 +275,12 @@ namespace Arbiter
 			eliminateCheck.Active = false;
 			
 			// Change the attributes of the combo boxes.
-			primaryCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
-			primaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
-			secondaryCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
-			secondaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
-			targetCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
-			targetCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			primaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
+			primaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			secondaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
+			secondaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			targetCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
+			targetCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
 			
 			// Store the last moves.
 			lastPrimary = Primary;
