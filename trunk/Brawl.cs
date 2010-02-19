@@ -336,7 +336,8 @@ namespace Arbiter
 			foreach (Combatant c in order)
 				if (!c.Acted && c.SD)
 					Summary += c.CName + " was poised to defend " +
-						order[c.Target].CName +
+						order[c.Target].CName + " with " +
+						sport.Moves[c.Primary] +
 						", but no attack came that way." + n;
 			
 			// Print sub-header.
