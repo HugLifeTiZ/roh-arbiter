@@ -1652,50 +1652,7 @@ Ring ThisRing</property>
                 <property name="spacing">6</property>
                 <property name="layout_style">center</property>
                 <child>
-                  <widget class="GtkButton" id="undo">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip">Reverses the previous round. You can undo up to the beginning of the duel.</property>
-                    <child>
-                      <widget class="GtkHBox" id="undoBox">
-                        <property name="visible">True</property>
-                        <property name="spacing">2</property>
-                        <child>
-                          <widget class="GtkImage" id="undoIcon">
-                            <property name="visible">True</property>
-                            <property name="xalign">1</property>
-                            <property name="stock">gtk-undo</property>
-                          </widget>
-                          <packing>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <widget class="GtkLabel" id="undoLabel">
-                            <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label">_Undo</property>
-                            <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">undo</property>
-                          </widget>
-                          <packing>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkButton" id="resolve">
+                  <widget class="GtkButton" id="resolveButton">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
@@ -1722,7 +1679,7 @@ Ring ThisRing</property>
                             <property name="xalign">0</property>
                             <property name="label">_Resolve</property>
                             <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">resolve</property>
+                            <property name="mnemonic_widget">resolveButton</property>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1734,7 +1691,7 @@ Ring ThisRing</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">1</property>
+                    <property name="position">0</property>
                   </packing>
                 </child>
               </widget>
