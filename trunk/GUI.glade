@@ -1598,6 +1598,7 @@ Ring ThisRing</property>
               <widget class="GtkLabel" id="roundLabel">
                 <property name="width_request">128</property>
                 <property name="visible">True</property>
+                <property name="tooltip">This indicates the upcoming round.</property>
                 <property name="label">&lt;span size='xx-large' weight='bold'&gt;Round 1&lt;/span&gt;</property>
                 <property name="use_markup">True</property>
               </widget>
@@ -1623,6 +1624,7 @@ Ring ThisRing</property>
                         <child>
                           <widget class="GtkLabel" id="orderLabel">
                             <property name="visible">True</property>
+                            <property name="tooltip">This indicates the order of combatants for the upcoming round.</property>
                             <property name="xpad">4</property>
                             <property name="label">Cless, Stahn, Leon, Reid, Kyle, Loni, Lloyd, Kratos, Chloe, Luke, Guy, Yuri, Flynn, Mithos</property>
                             <property name="wrap">True</property>
@@ -1662,15 +1664,17 @@ Ring ThisRing</property>
                           <widget class="GtkScrolledWindow" id="summaryScroll">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip">What is with your fascination with scrollbars?</property>
                             <property name="hscrollbar_policy">never</property>
                             <property name="vscrollbar_policy">automatic</property>
                             <property name="shadow_type">etched-out</property>
                             <child>
                               <widget class="GtkTextView" id="summaryView">
                                 <property name="width_request">260</property>
-                                <property name="height_request">200</property>
+                                <property name="height_request">260</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip">Displays the summary of the brawl thus far. Round results will be printed here.</property>
                                 <property name="editable">False</property>
                                 <property name="wrap_mode">word</property>
                                 <property name="accepts_tab">False</property>
@@ -1706,13 +1710,30 @@ Ring ThisRing</property>
                 <property name="spacing">6</property>
                 <property name="layout_style">center</property>
                 <child>
+                  <widget class="GtkButton" id="cancelButton">
+                    <property name="label">gtk-cancel</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip">Cancels the brawl in progress and returns to the main dueling window.</property>
+                    <property name="use_stock">True</property>
+                    <signal name="clicked" handler="CancelBrawl"/>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="GtkButton" id="resolveButton">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip">Compare the two selected moves and modifiers, and assign scores. The button will be disabled until new moves are selected.</property>
+                    <property name="tooltip">Resolves the present round. Will only be enabled once each combatant has selected valid moves.</property>
                     <signal name="clicked" handler="ResolveRound"/>
                     <child>
                       <widget class="GtkHBox" id="resolveBox">
@@ -1746,7 +1767,7 @@ Ring ThisRing</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">0</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
               </widget>
@@ -1775,19 +1796,21 @@ Ring ThisRing</property>
             <property name="visible">True</property>
             <property name="label_xalign">0</property>
             <child>
-              <widget class="GtkVBox" id="vbox1">
+              <widget class="GtkVBox" id="combatantBox">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <widget class="GtkScrolledWindow" id="combatantsScroll">
+                  <widget class="GtkScrolledWindow" id="combatantScroll">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="tooltip">This scrollbar is just like every other scrollbar in the program.</property>
                     <property name="hscrollbar_policy">automatic</property>
                     <property name="shadow_type">etched-in</property>
                     <child>
-                      <widget class="GtkTextView" id="combatantsView">
+                      <widget class="GtkTextView" id="combatantView">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="tooltip">Insert your combatants here, separated by line breaks. Use short names.</property>
                         <property name="wrap_mode">word</property>
                       </widget>
                     </child>
@@ -1805,6 +1828,7 @@ Ring ThisRing</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip">Shuffles the combatant list.</property>
                         <signal name="clicked" handler="ShuffleCombatants"/>
                         <child>
                           <widget class="GtkHBox" id="shuffleBox">
@@ -1824,7 +1848,9 @@ Ring ThisRing</property>
                               <widget class="GtkLabel" id="shuffleLabel">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label">Shuffle</property>
+                                <property name="label">S_huffle</property>
+                                <property name="use_underline">True</property>
+                                <property name="mnemonic_widget">shuffleButton</property>
                               </widget>
                               <packing>
                                 <property name="position">1</property>
@@ -1882,8 +1908,11 @@ Ring ThisRing</property>
                         <child>
                           <widget class="GtkLabel" id="sportLabel">
                             <property name="visible">True</property>
+                            <property name="tooltip">Select the sport in which the brawl will be fought. Do note that Fists does not presently take advantages into consdieration.</property>
                             <property name="xalign">0</property>
-                            <property name="label">Sport:</property>
+                            <property name="label">S_port:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">sportCombo</property>
                           </widget>
                           <packing>
                             <property name="expand">False</property>
@@ -1894,6 +1923,7 @@ Ring ThisRing</property>
                         <child>
                           <widget class="GtkComboBox" id="sportCombo">
                             <property name="visible">True</property>
+                            <property name="tooltip">Select the sport in which the brawl will be fought. Do note that Fists does not presently take advantages into consdieration.</property>
                             <property name="active">0</property>
                             <property name="items">Swords
 Fists
@@ -1923,6 +1953,7 @@ Magic</property>
                           <widget class="GtkSpinButton" id="hpSpin">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip">Determines the initial stamina of the combatants. When it hits zero, they're out.</property>
                             <property name="invisible_char">&#x25CF;</property>
                             <property name="adjustment">10 0 20 1 1 1</property>
                           </widget>
@@ -1935,6 +1966,7 @@ Magic</property>
                           <widget class="GtkSpinButton" id="mpSpin">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip">Determines how many modifiers each duelist starts with. Unused in Magic.</property>
                             <property name="invisible_char">&#x25CF;</property>
                             <property name="adjustment">4 0 10 1 1 1</property>
                           </widget>
@@ -1948,6 +1980,7 @@ Magic</property>
                         <child>
                           <widget class="GtkLabel" id="hpLabel">
                             <property name="visible">True</property>
+                            <property name="tooltip">Determines the initial stamina of the combatants. When it hits zero, they're out.</property>
                             <property name="xalign">0</property>
                             <property name="label">Starting HP</property>
                           </widget>
@@ -1959,6 +1992,7 @@ Magic</property>
                         <child>
                           <widget class="GtkLabel" id="mpLabel">
                             <property name="visible">True</property>
+                            <property name="tooltip">Determines how many modifiers each duelist starts with. Unused in Magic.</property>
                             <property name="xalign">0</property>
                             <property name="label">Starting MP</property>
                           </widget>
@@ -1978,10 +2012,12 @@ Magic</property>
                     </child>
                     <child>
                       <widget class="GtkCheckButton" id="staticDefenseCheck">
-                        <property name="label">Static Defenses</property>
+                        <property name="label">Static _Defenses</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="tooltip">This option allows a combatant to protect another combatant, by targeting who they want to protect and checking the SD box. If someone attacks the combatant being protected, the defender will be evaluated against instead of the target.</property>
+                        <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
                       </widget>
                       <packing>
@@ -1991,10 +2027,12 @@ Magic</property>
                     </child>
                     <child>
                       <widget class="GtkCheckButton" id="fullFancyCheck">
-                        <property name="label">Full Fancy Defenses</property>
+                        <property name="label">_Full Fancy Defenses</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="tooltip">This determines whether or not a fancy secondary defense is capable of blocking all attackers. If more than one person hits into a secondary fancy defense, it becomes a full fancy, and all attackers are blocked, but no damage is inflicted upon them.</property>
+                        <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
                       </widget>
                       <packing>
@@ -2023,6 +2061,8 @@ Magic</property>
             <child>
               <widget class="GtkHButtonBox" id="actionBox">
                 <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">2</property>
                 <child>
                   <widget class="GtkButton" id="startButton">
                     <property name="visible">True</property>
@@ -2047,7 +2087,9 @@ Magic</property>
                           <widget class="GtkLabel" id="startLabel">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label">Start Brawl</property>
+                            <property name="label">_Start Brawl</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">startButton</property>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -2060,6 +2102,22 @@ Magic</property>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkButton" id="cancelButton">
+                    <property name="label">gtk-cancel</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="tooltip">Return to the main dueling window.</property>
+                    <property name="use_stock">True</property>
+                    <signal name="clicked" handler="CancelBrawl"/>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
               </widget>
@@ -2102,6 +2160,7 @@ Magic</property>
           <widget class="GtkLabel" id="hpLabel">
             <property name="width_request">20</property>
             <property name="visible">True</property>
+            <property name="tooltip">Indicates the combatant's present HP. Can be edited manually in case of errors.</property>
             <property name="xalign">1</property>
             <property name="label">hp</property>
             <property name="use_markup">True</property>
@@ -2117,6 +2176,7 @@ Magic</property>
             <property name="width_request">32</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="tooltip">Indicates the combatant's present HP. Can be edited manually in case of errors.</property>
             <property name="max_length">4</property>
             <property name="has_frame">False</property>
             <property name="invisible_char">&#x25CF;</property>
@@ -2133,6 +2193,7 @@ Magic</property>
           <widget class="GtkLabel" id="mpLabel">
             <property name="width_request">20</property>
             <property name="visible">True</property>
+            <property name="tooltip">Indicates the duelist's remaining modifiers. Can be edited manually in case of errors.</property>
             <property name="xalign">1</property>
             <property name="label">mp</property>
             <property name="use_markup">True</property>
@@ -2148,6 +2209,7 @@ Magic</property>
             <property name="width_request">24</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="tooltip">Indicates the duelist's remaining modifiers. Can be edited manually in case of errors.</property>
             <property name="has_frame">False</property>
             <property name="invisible_char">&#x25CF;</property>
             <property name="width_chars">2</property>
@@ -2187,6 +2249,7 @@ Magic</property>
         <child>
           <widget class="GtkLabel" id="primaryLabel">
             <property name="visible">True</property>
+            <property name="tooltip">Select the combatant's primary move. It may not be the same as the current secondary move, or the previous primary or secondary moves.</property>
             <property name="label">P:</property>
           </widget>
           <packing>
@@ -2198,6 +2261,7 @@ Magic</property>
         <child>
           <widget class="GtkComboBox" id="primaryCombo">
             <property name="visible">True</property>
+            <property name="tooltip">Select the combatant's primary move. It may not be the same as the current secondary move, or the previous primary or secondary moves.</property>
             <property name="items">Thrust
 High Cut
 Low Cut
@@ -2219,6 +2283,7 @@ Disengage</property>
         <child>
           <widget class="GtkLabel" id="targetLabel">
             <property name="visible">True</property>
+            <property name="tooltip">Select the combatant's target.</property>
             <property name="label">T:</property>
           </widget>
           <packing>
@@ -2230,6 +2295,7 @@ Disengage</property>
         <child>
           <widget class="GtkComboBox" id="targetCombo">
             <property name="visible">True</property>
+            <property name="tooltip">Select the combatant's target.</property>
             <property name="items">Cless
 Dhaos
 Stahn
@@ -2257,6 +2323,7 @@ Mithos</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
+            <property name="tooltip">Fancy modifier for the primary move.</property>
             <property name="draw_indicator">True</property>
           </widget>
           <packing>
@@ -2271,6 +2338,7 @@ Mithos</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
+            <property name="tooltip">Feint modifier for the primary move.</property>
             <property name="draw_indicator">True</property>
           </widget>
           <packing>
@@ -2285,6 +2353,7 @@ Mithos</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
+            <property name="tooltip">Causes the combatant to protect the target, rather than to attack it. The first attack directed toward the target will be intercepted and resolved against this combatant instead.</property>
             <property name="draw_indicator">True</property>
           </widget>
           <packing>
@@ -2307,6 +2376,7 @@ Mithos</property>
         <child>
           <widget class="GtkLabel" id="secondaryLabel">
             <property name="visible">True</property>
+            <property name="tooltip">Select the combatant's secondary move. It may not be the same as the current primary move, or the previous secondary move. It may, however, be the same as the previous primary move.</property>
             <property name="label">S:</property>
           </widget>
           <packing>
@@ -2318,6 +2388,7 @@ Mithos</property>
         <child>
           <widget class="GtkComboBox" id="secondaryCombo">
             <property name="visible">True</property>
+            <property name="tooltip">Select the combatant's secondary move. It may not be the same as the current primary move, or the previous secondary move. It may, however, be the same as the previous primary move.</property>
             <property name="items">Thrust
 High Cut
 Low Cut
@@ -2342,6 +2413,7 @@ Disengage</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
+            <property name="tooltip">Fancy modifier for the secondary move.</property>
             <property name="draw_indicator">True</property>
           </widget>
           <packing>
@@ -2356,6 +2428,7 @@ Disengage</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
+            <property name="tooltip">Feint modifier for the secondary move.</property>
             <property name="draw_indicator">True</property>
           </widget>
           <packing>
