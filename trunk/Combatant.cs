@@ -214,8 +214,8 @@ namespace Arbiter
 			}
 			else
 			{
-				primaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 0, 0));
-				primaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 0, 0));
+				primaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(192, 0, 0));
+				primaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(192, 0, 0));
 			}
 			
 			// Check to see if the resolver can be enabled.
@@ -239,8 +239,8 @@ namespace Arbiter
 			}
 			else
 			{
-				secondaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 0, 0));
-				secondaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 0, 0));
+				secondaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(192, 0, 0));
+				secondaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(192, 0, 0));
 			}
 			
 			// Check to see if the resolver can be enabled.
