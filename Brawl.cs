@@ -69,7 +69,7 @@ namespace Arbiter
 			set
 			{
 				round = value;
-				roundLabel.Markup = "<span size='xx-large' weight='bold'>"
+				roundLabel.Markup = "<span size='xx-large' weight='bold'>Round "
 					+ round.ToString() + "</span>";
 			}
 		}
@@ -191,10 +191,10 @@ namespace Arbiter
 					{
 						// Nothing happens, pretty much.
 						Summary += order[c].CName + " attacks " + order[t].CName + " with " +
-						(order[c].PriFancy ? "Fancy " : "") +
-						(order[c].PriFeint ? "Feint " : "") +
-						sport.Moves[order[c].Primary] + ", which is wasted on " +
-						"the KO'd combatant." + n;
+							(order[c].PriFancy ? "Fancy " : "") +
+							(order[c].PriFeint ? "Feint " : "") +
+							sport.Moves[order[c].Primary] + ", which is wasted on " +
+							"the KO'd combatant." + n;
 					}
 					// If the combatant and their target are targeting each other...
 					else if (order[t].Target == c && !order[t].Acted)
@@ -210,14 +210,14 @@ namespace Arbiter
 						
 						// Print what just happened.
 						Summary += order[c].CName + " attacks " + order[t].CName + " with " +
-						(order[c].PriFancy ? "Fancy " : "") +
-						(order[c].PriFeint ? "Feint " : "") +
-						sport.Moves[order[c].Primary] + ", who counterattacks with " +
-						(order[t].PriFancy ? "Fancy " : "") +
-						(order[t].PriFeint ? "Feint " : "") +
-						sport.Moves[order[t].Primary] + ".  ( " +
-						resultA.ToString(sport.ScoreFormat) + " / " +
-						resultB.ToString(sport.ScoreFormat) + " )" + n;
+							(order[c].PriFancy ? "Fancy " : "") +
+							(order[c].PriFeint ? "Feint " : "") +
+							sport.Moves[order[c].Primary] + ", who counterattacks with " +
+							(order[t].PriFancy ? "Fancy " : "") +
+							(order[t].PriFeint ? "Feint " : "") +
+							sport.Moves[order[t].Primary] + ".  ( " +
+							resultA.ToString(sport.ScoreFormat) + " / " +
+							resultB.ToString(sport.ScoreFormat) + " )" + n;
 						
 						// Mark the target as having acted.
 						order[t].Acted = true;
@@ -251,15 +251,15 @@ namespace Arbiter
 							
 							// Print what just happened.
 							Summary += order[c].CName + " attacks " + order[t].CName + " with " +
-							(order[c].PriFancy ? "Fancy " : "") +
-							(order[c].PriFeint ? "Feint " : "") +
-							sport.Moves[order[c].Primary] + ", who is protected by " +
-							order[d].CName + ", who uses " +
-							(order[d].PriFancy ? "Fancy " : "") +
-							(order[d].PriFeint ? "Feint " : "") +
-							sport.Moves[order[d].Primary] + ".  ( " +
-							resultA.ToString(sport.ScoreFormat) + " / " +
-							resultB.ToString(sport.ScoreFormat) + " )" + n;
+								(order[c].PriFancy ? "Fancy " : "") +
+								(order[c].PriFeint ? "Feint " : "") +
+								sport.Moves[order[c].Primary] + ", who is protected by " +
+								order[d].CName + ", who uses " +
+								(order[d].PriFancy ? "Fancy " : "") +
+								(order[d].PriFeint ? "Feint " : "") +
+								sport.Moves[order[d].Primary] + ".  ( " +
+								resultA.ToString(sport.ScoreFormat) + " / " +
+								resultB.ToString(sport.ScoreFormat) + " )" + n;
 							
 							// Mark the defender as having acted.
 							order[d].Acted = true;
@@ -280,15 +280,15 @@ namespace Arbiter
 							
 							// Print what just happened.
 							Summary += order[c].CName + " attacks " + order[t].CName + " with " +
-							(order[c].PriFancy ? "Fancy " : "") +
-							(order[c].PriFeint ? "Feint " : "") +
-							sport.Moves[order[c].Primary] + ", who defends with " +
-							(order[t].FullFancy ? "Full " : "") +
-							(order[t].SecFancy ? "Fancy " : "") +
-							(order[t].SecFeint ? "Feint " : "") +
-							sport.Moves[order[t].Secondary] + ".  ( " +
-							resultA.ToString(sport.ScoreFormat) + " / " +
-							resultB.ToString(sport.ScoreFormat) + " )" + n;
+								(order[c].PriFancy ? "Fancy " : "") +
+								(order[c].PriFeint ? "Feint " : "") +
+								sport.Moves[order[c].Primary] + ", who defends with " +
+								(order[t].FullFancy ? "Full " : "") +
+								(order[t].SecFancy ? "Fancy " : "") +
+								(order[t].SecFeint ? "Feint " : "") +
+								sport.Moves[order[t].Secondary] + ".  ( " +
+								resultA.ToString(sport.ScoreFormat) + " / " +
+								resultB.ToString(sport.ScoreFormat) + " )" + n;
 							
 							// Mark the defender as having defended if
 							// a full fancy defense wasn't used.
@@ -311,11 +311,11 @@ namespace Arbiter
 							
 							// Print what just happened.
 							Summary += order[c].CName + " attacks " + order[t].CName + " with " +
-							(order[c].PriFancy ? "Fancy " : "") +
-							(order[c].PriFeint ? "Feint " : "") +
-							sport.Moves[order[c].Primary] + ", which goes unhindered. ( " +
-							resultA.ToString(sport.ScoreFormat) + " / " +
-							resultB.ToString(sport.ScoreFormat) + " )" + n;
+								(order[c].PriFancy ? "Fancy " : "") +
+								(order[c].PriFeint ? "Feint " : "") +
+								sport.Moves[order[c].Primary] + ", which goes unhindered. ( " +
+								resultA.ToString(sport.ScoreFormat) + " / " +
+								resultB.ToString(sport.ScoreFormat) + " )" + n;
 						}
 					}
 					
@@ -331,6 +331,13 @@ namespace Arbiter
 					order[c].Acted = true;
 				}
 			}
+			
+			// Check for any SDers that didn't get to defend.
+			foreach (Combatant c in order)
+				if (!c.Acted && c.SD)
+					Summary += c.CName + " was poised to defend " +
+						order[c.Target].CName +
+						", but no attack came that way." + n;
 			
 			// Print sub-header.
 			Summary += "------------------" + n;
