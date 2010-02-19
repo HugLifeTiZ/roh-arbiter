@@ -579,6 +579,13 @@ namespace Arbiter
 			mainWin.Add(widget);
 			mainWin.WindowPosition = WindowPosition.Center;
 		}
+		
+		// This resets the main widget back to normal.
+		public void ReturnToDuels()
+		{
+			ReplaceWidget(mainWidget);
+			mainWin.Resize(Arbiter.WindowWidth, Arbiter.WindowHeight);
+		}
 		#endregion
 	}
 }

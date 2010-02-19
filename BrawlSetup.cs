@@ -65,12 +65,16 @@ namespace Arbiter
 		private void CheckSport (object sender, EventArgs args)
 			{ mpSpin.Sensitive = fullFancyCheck.Sensitive = sportCombo.ActiveText != "Magic"; }
 		
+		// Cancels the brawl and returns to the main dueling window.
+		private void CancelBrawl (object sender, EventArgs args)
+			{ Arbiter.MainWin.ReturnToDuels(); }
+		
 		// Starts the brawl.
 		private void StartBrawl (object sender, EventArgs args)
 		{
 			// Split the combatants by newline and convert them into a list.
 			string[] combatants = combatantsView.Buffer.Text.Split(
-					new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+					new string[] {"\n", "\r"}, StringSplitOptions.RemoveEmptyEntries);
 			List<string> order = new List<string>(combatants);
 			
 			// Determine sport.
@@ -97,7 +101,7 @@ namespace Arbiter
 		{
 			// Split the combatants by newline and convert them into a list.
 			string[] combatants = combatantsView.Buffer.Text.Split(
-					new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+					new string[] {"\n", "\r"}, StringSplitOptions.RemoveEmptyEntries);
 			List<string> oldOrder = new List<string>(combatants);
 			
 			// Clear the list.

@@ -104,6 +104,9 @@ namespace Arbiter
 				if (i < order.Count - 1) orderLabel.Text += ", ";
 			}
 			
+			// For automatic scrolling.
+			summaryView.Buffer.CreateMark("scroll", summaryView.Buffer.EndIter, true);
+			
 			// Set initial round number.
 			Round = 1;
 			
@@ -124,6 +127,33 @@ namespace Arbiter
 			foreach (Combatant c in instance.order)
 				resolve = resolve && c.Valid;
 			instance.resolveButton.Sensitive = resolve;
+		}
+		
+		// Cancel the brawl in progress.
+		private void CancelBrawl (object sender, EventArgs args)
+		{
+			// Just in case of mis-clicks...
+			Dialog dialog = new Dialog("Cancel brawl?", null,
+			                        DialogFlags.NoSeparator | DialogFlags.Modal,
+			                        new object[] {Stock.No, ResponseType.No,
+									Stock.Yes, ResponseType.Yes});
+			dialog.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			Label label = new Label("If you cancel this brawl, all current progress\n" +
+			                        "in the brawl will be lost. Are you sure you\n" +
+			                        "want to cancel?");
+			dialog.VBox.PackStart(label);
+			dialog.Default = dialog.ActionArea.Children[0];
+			dialog.VBox.ShowAll();
+			bool cancel = dialog.Run() == (int)ResponseType.Yes;
+			dialog.Destroy();
+			
+			// Exit the method if the user said anything other than yes.
+			if (!cancel) return;
+			
+			// Otherwise, nullify the saved instance and
+			// reset to the main widget.
+			instance = null;
+			Arbiter.MainWin.ReturnToDuels();
 		}
 		
 		// Resolves the current round.
@@ -167,6 +197,19 @@ namespace Arbiter
 				}
 			}
 			
+			// Then, check for anyone exiting the ring.
+			foreach (Combatant c in order)
+				if (c.Eliminate)
+			{
+				// Set HP to zero, mark as having acted and defended
+				c.HP = 0;
+				c.Acted = true;
+				c.Defended = true;
+				
+				// Print what happened.
+				Summary += c.CName + " exits the ring." + n;
+			}
+			
 			// Loop through each combatant.
 			for (int c = 0; c < order.Count; c++)
 			{
@@ -195,6 +238,29 @@ namespace Arbiter
 							(order[c].PriFeint ? "Feint " : "") +
 							sport.Moves[order[c].Primary] + ", which is wasted on " +
 							"the KO'd combatant." + n;
+					}
+					// The combatant is attacking him/herself...
+					// ...I'm going to enjoy this far more than I should.
+					else if (order[c].Target == c)
+					{
+						// Loop through each candidate in attacks and see if
+						// the combatant is using any of them.
+						string attacks = "TH,HC,LC,SL,JA,CH,UC,HO,SN,JK,SP,FL," +
+						                 "MB,MW,WB,FT,FF,MS,AB,RF,NR,IM,EF";
+						foreach (string a in attacks.Split(','))
+							if (sport.Abbrev[order[c].Primary] == a &&
+							    !order[c].PriFeint)
+								resultA = 1;
+						
+							// Inflict damange.
+						order[c].HP -= resultA;
+						
+						// Print what just happened.
+						Summary += order[c].CName + " attacks self with " +
+							(order[c].PriFancy ? "Fancy " : "") +
+							(order[c].PriFeint ? "Feint " : "") +
+							sport.Moves[order[c].Primary] + ". That wasn't very smart. ( " +
+							resultA.ToString(sport.ScoreFormat) + " )" + n;
 					}
 					// If the combatant and their target are targeting each other...
 					else if (order[t].Target == c && !order[t].Acted)
@@ -314,8 +380,7 @@ namespace Arbiter
 								(order[c].PriFancy ? "Fancy " : "") +
 								(order[c].PriFeint ? "Feint " : "") +
 								sport.Moves[order[c].Primary] + ", which goes unhindered. ( " +
-								resultA.ToString(sport.ScoreFormat) + " / " +
-								resultB.ToString(sport.ScoreFormat) + " )" + n;
+								resultA.ToString(sport.ScoreFormat) + " )" + n;
 						}
 					}
 					
@@ -387,6 +452,10 @@ namespace Arbiter
 			
 			// Insert a couple of line breaks into the summary.
 			Summary += n + n;
+			
+			// Scroll the summary to the bottom.
+			summaryView.Buffer.MoveMark("scroll", summaryView.Buffer.EndIter);
+			summaryView.ScrollMarkOnscreen(summaryView.Buffer.GetMark("scroll"));
 			
 			// Advance round number.
 			Round++;

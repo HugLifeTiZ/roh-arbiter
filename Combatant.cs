@@ -181,13 +181,13 @@ namespace Arbiter
 			
 			// Handle the checkboxes.
 			priFancyCheck.Toggled += delegate(object sender, EventArgs args)
-				{ priFeintCheck.Active = false; VerifyMod(sender, args); };
+				{ priFeintCheck.Active = false; VerifyMod(priFancyCheck); };
 			priFeintCheck.Toggled += delegate(object sender, EventArgs args)
-				{ priFancyCheck.Active = false; VerifyMod(sender, args); };
+				{ priFancyCheck.Active = false; VerifyMod(priFeintCheck); };
 			secFancyCheck.Toggled += delegate(object sender, EventArgs args)
-				{ secFeintCheck.Active = false; VerifyMod(sender, args); };
+				{ secFeintCheck.Active = false; VerifyMod(secFancyCheck); };
 			secFeintCheck.Toggled += delegate(object sender, EventArgs args)
-				{ secFancyCheck.Active = false; VerifyMod(sender, args); };
+				{ secFancyCheck.Active = false; VerifyMod(secFeintCheck); };
 			
 			// Participate in size negotiation.
 			SizeRequested += delegate (object sender, SizeRequestedArgs args) 
@@ -200,7 +200,9 @@ namespace Arbiter
 		public void VerifyPrimary (object sender, EventArgs args)
 		{
 			if ((primaryCombo.ActiveText == "Disengage") ||
-				(Primary != lastPrimary && Primary != lastSecondary))
+				(Primary != lastPrimary && Primary != lastSecondary &&
+			     Primary != Secondary) ||
+			    Eliminate)
 			{
 				primaryValid = true;
 				primaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(0, 128, 0));
@@ -221,7 +223,8 @@ namespace Arbiter
 		public void VerifySecondary (object sender, EventArgs args)
 		{
 			if ((secondaryCombo.ActiveText == "Disengage") ||
-				(Secondary != lastSecondary))
+				(Secondary != lastSecondary && Primary != Secondary) ||
+			    Eliminate)
 			{
 				secondaryValid = true;
 				secondaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(0, 128, 0));
@@ -252,7 +255,7 @@ namespace Arbiter
 		
 		// Ensures a mod is not activated when the combatant
 		// has insufficient MP.
-		public void VerifyMod (object sender, EventArgs args)
+		public void VerifyMod (CheckButton check)
 		{
 			bool modValid = (Convert.ToInt16(PriFancy) +
 			                 Convert.ToInt16(PriFeint) +
@@ -260,7 +263,15 @@ namespace Arbiter
 			                 Convert.ToInt16(SecFeint) <= MP);
 			
 			// Uncheck the box that was just checked.
-			if (!modValid) ((CheckButton)sender).Active = false;
+			if (!modValid) check.Active = false;
+		}
+		
+		// Automatically makes the combatant's moves valid when
+		// manual elimination is requested.
+		public void VerifyElimination (object sender, EventArgs args)
+		{
+			if (Eliminate) Valid = true;
+			Brawl.CheckResolve();
 		}
 		
 		// Resets all the duelist's attributes for the next round.
