@@ -1623,6 +1623,7 @@ Ring ThisRing</property>
                         <property name="left_padding">6</property>
                         <child>
                           <widget class="GtkLabel" id="orderLabel">
+                            <property name="width_request">220</property>
                             <property name="visible">True</property>
                             <property name="tooltip">This indicates the order of combatants for the upcoming round.</property>
                             <property name="xpad">4</property>

@@ -199,20 +199,23 @@ namespace Arbiter
 		// Verifies primary move selection.
 		public void VerifyPrimary (object sender, EventArgs args)
 		{
+			// Since there's no undoer, it's safer to just ensure
+			// that a move is chosen...
+			primaryValid = true;
+			
+			// But color the combobox text depending on validity.
 			if ((primaryCombo.ActiveText == "Disengage") ||
 				(Primary != lastPrimary && Primary != lastSecondary &&
 			     Primary != Secondary) ||
 			    Eliminate)
 			{
-				primaryValid = true;
-				primaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(0, 128, 0));
-				primaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(0, 128, 0));
+				primaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
+				primaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
 			}
 			else
 			{
-				primaryValid = false;
-				primaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
-				primaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
+				primaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 0, 0));
+				primaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 0, 0));
 			}
 			
 			// Check to see if the resolver can be enabled.
@@ -222,19 +225,22 @@ namespace Arbiter
 		// Verifies secondary move selection.
 		public void VerifySecondary (object sender, EventArgs args)
 		{
+			// Since there's no undoer, it's safer to just
+			// ensure that a move is chosen...
+			secondaryValid = true;
+			
+			// But color the combobox text depending on validity.
 			if ((secondaryCombo.ActiveText == "Disengage") ||
 				(Secondary != lastSecondary && Primary != Secondary) ||
 			    Eliminate)
 			{
-				secondaryValid = true;
-				secondaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(0, 128, 0));
-				secondaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(0, 128, 0));
+				secondaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
+				secondaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
 			}
 			else
 			{
-				secondaryValid = false;
-				secondaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
-				secondaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
+				secondaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 0, 0));
+				secondaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 0, 0));
 			}
 			
 			// Check to see if the resolver can be enabled.
@@ -246,8 +252,8 @@ namespace Arbiter
 		public void VerifyTarget (object sender, EventArgs args)
 		{
 			targetValid = true;
-			targetCombo.ModifyFg(StateType.Normal, new Gdk.Color(0, 128, 0));
-			targetCombo.ModifyFg(StateType.Prelight, new Gdk.Color(0, 128, 0));
+			targetCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
+			targetCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
 			
 			// Check to see if the resolver can be enabled.
 			Brawl.CheckResolve();
@@ -286,12 +292,12 @@ namespace Arbiter
 			eliminateCheck.Active = false;
 			
 			// Change the attributes of the combo boxes.
-			primaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
-			primaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
-			secondaryCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
-			secondaryCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
-			targetCombo.ModifyFg(StateType.Normal, new Gdk.Color(128, 128, 128));
-			targetCombo.ModifyFg(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			primaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			primaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			secondaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			secondaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			targetCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			targetCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
 			
 			// Store the last moves.
 			lastPrimary = Primary;
