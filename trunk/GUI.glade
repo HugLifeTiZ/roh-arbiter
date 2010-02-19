@@ -1659,6 +1659,7 @@ Ring ThisRing</property>
                     <property name="receives_default">True</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip">Compare the two selected moves and modifiers, and assign scores. The button will be disabled until new moves are selected.</property>
+                    <signal name="clicked" handler="ResolveRound"/>
                     <child>
                       <widget class="GtkHBox" id="resolveBox">
                         <property name="visible">True</property>
