@@ -35,7 +35,7 @@ namespace Arbiter
 	{
 		#region Widgets
 		[Widget] private HBox brawlSetupWidget;
-		[Widget] private TextView combatantsView;
+		[Widget] private TextView combatantView;
 		[Widget] private ComboBox sportCombo;
 		[Widget] private SpinButton hpSpin;
 		[Widget] private SpinButton mpSpin;
@@ -73,7 +73,7 @@ namespace Arbiter
 		private void StartBrawl (object sender, EventArgs args)
 		{
 			// Split the combatants by newline and convert them into a list.
-			string[] combatants = combatantsView.Buffer.Text.Split(
+			string[] combatants = combatantView.Buffer.Text.Split(
 					new string[] {"\n", "\r"}, StringSplitOptions.RemoveEmptyEntries);
 			List<string> order = new List<string>(combatants);
 			
@@ -100,12 +100,12 @@ namespace Arbiter
 		private void ShuffleCombatants (object sender, EventArgs args)
 		{
 			// Split the combatants by newline and convert them into a list.
-			string[] combatants = combatantsView.Buffer.Text.Split(
+			string[] combatants = combatantView.Buffer.Text.Split(
 					new string[] {"\n", "\r"}, StringSplitOptions.RemoveEmptyEntries);
 			List<string> oldOrder = new List<string>(combatants);
 			
 			// Clear the list.
-			combatantsView.Buffer.Clear();
+			combatantView.Buffer.Clear();
 			
 			// Use a random number generator.
 			Random random = new Random();
@@ -116,7 +116,7 @@ namespace Arbiter
 			while (oldOrder.Count > 0)
 			{
 				r = random.Next(0, oldOrder.Count);
-				combatantsView.Buffer.Text += oldOrder[r]
+				combatantView.Buffer.Text += oldOrder[r]
 					+ (oldOrder.Count > 1 ? Environment.NewLine : "");
 				oldOrder.RemoveAt(r);
      		}
