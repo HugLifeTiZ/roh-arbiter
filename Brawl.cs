@@ -159,6 +159,9 @@ namespace Arbiter
 		// Resolves the current round.
 		private void ResolveRound (object sender, EventArgs args)
 		{
+			// Line breaks for padding.
+			if (round > 1) Summary += n + n;
+			
 			// Print the round header into the summary.
 			Summary += "  ROUND " + round.ToString() + n;
 			Summary += "===========================" + n;
@@ -380,7 +383,8 @@ namespace Arbiter
 								(order[c].PriFancy ? "Fancy " : "") +
 								(order[c].PriFeint ? "Feint " : "") +
 								sport.Moves[order[c].Primary] + ", which goes unhindered. ( " +
-								resultA.ToString(sport.ScoreFormat) + " )" + n;
+								resultA.ToString(sport.ScoreFormat) + " / " +
+								resultB.ToString(sport.ScoreFormat) + " )" + n;
 						}
 					}
 					
@@ -407,24 +411,25 @@ namespace Arbiter
 			
 			// Print sub-header.
 			Summary += "------------------" + n;
-			Summary += "REMAINING HP" + n;
+			Summary += "REMAINING HP" +
+				((sport.Fancies || sport.Feints) ? " / MP" : "") + n;
 			
 			// Print out each HP value.
 			for (int i = 0; i < order.Count; i++)
+			{
 				Summary += order[i].CName + ": " +
-					order[i].HP.ToString(sport.ScoreFormat) + n;
+					order[i].HP.ToString(sport.ScoreFormat);
+				if (sport.Fancies || sport.Feints)
+					Summary += " / " + order[i].MP.ToString();
+				Summary += n;
+			}
 			
-			// Check for KO'd combatants and remove them from the list.
+			// Check for KO'd combatants and desensitize(?) them.
 			foreach (Combatant c in order)
 			{
 				// First, reset them.
 				c.Reset();
-				
-				if (c.HP <= 0)
-				{
-					order.Remove(c);
-					c.Sensitive = false;
-				}
+				if (c.HP <= 0) c.Sensitive = false;
 			}
 			
 			// Create a list to hold the new order.
@@ -432,10 +437,10 @@ namespace Arbiter
 			
 			// Add each combatant, from #2 on, into the new list.
 			for (int i = 1; i < order.Count; i++)
-				newOrder.Add(order[i]);
+				if (order[i].HP > 0) newOrder.Add(order[i]);
 			
 			// And then put the old #1 duelist at the end.
-			newOrder.Add(order[0]);
+			if (order[0].HP > 0) newOrder.Add(order[0]);
 			
 			// Save the new order.
 			order = newOrder;
@@ -449,9 +454,6 @@ namespace Arbiter
 				orderLabel.Text += order[i].CName;
 				if (i < order.Count - 1) orderLabel.Text += ", ";
 			}
-			
-			// Insert a couple of line breaks into the summary.
-			Summary += n + n;
 			
 			// Scroll the summary to the bottom.
 			summaryView.Buffer.MoveMark("scroll", summaryView.Buffer.EndIter);
