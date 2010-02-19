@@ -37,8 +37,10 @@ namespace Arbiter
 		[Widget] private Label nameLabel;
 		[Widget] private Entry hpEntry;
 		[Widget] private Entry mpEntry;
-		[Widget] private CheckButton fancyCheck;
-		[Widget] private CheckButton feintCheck;
+		[Widget] private CheckButton priFancyCheck;
+		[Widget] private CheckButton priFeintCheck;
+		[Widget] private CheckButton secFancyCheck;
+		[Widget] private CheckButton secFeintCheck;
 		[Widget] private CheckButton sdCheck;
 		[Widget] private CheckButton eliminateCheck;
 		[Widget] private ComboBox primaryCombo;
@@ -50,6 +52,11 @@ namespace Arbiter
 		private Sport sport;
 		private float hp;
 		private short mp;
+		private int lastPrimary;
+		private int lastSecondary;
+		private bool primaryValid;
+		private bool secondaryValid;
+		private bool targetValid;
 		#endregion
 		
 		#region Properties
@@ -75,6 +82,18 @@ namespace Arbiter
 			}
 		}
 		
+		// Checks to see if the combatant's choices are valid.
+		public bool Valid
+		{ 
+			get
+				{ return primaryValid && secondaryValid && targetValid; }
+			set
+				{ primaryValid = secondaryValid = targetValid = value; }
+		}
+		
+		// The combatant's name.
+		public string CName { get; private set; }
+		
 		// These translate the selected items in the
 		// comboboxes into publically accessible ints.
 		public int Primary
@@ -86,17 +105,30 @@ namespace Arbiter
 		
 		// These translate the active states of the
 		// checkboxes into publically accessible bools.
-		public bool Fancy
-			{ get { return fancyCheck.Active; } }
-		public bool Feint
-			{ get { return feintCheck.Active; } }
+		public bool PriFancy
+			{ get { return priFancyCheck.Active; } }
+		public bool PriFeint
+			{ get { return priFeintCheck.Active; } }
+		public bool SecFancy
+			{ get { return priFancyCheck.Active; } }
+		public bool SecFeint
+			{ get { return priFeintCheck.Active; } }
 		public bool SD
 			{ get { return sdCheck.Active; } }
 		public bool Eliminate
 			{ get { return eliminateCheck.Active; } }
 		
-		// The combatant's name.
-		public string CombatantName  { get; private set; }
+		// Determines if the combatant has acted yet
+		// during resolution.
+		public bool Acted { get; set; }
+		
+		// Determines if the combatant has defended
+		// yet during resolution.
+		public bool Defended { get; set; }
+		
+		// Determines if the special full fancy defense
+		// rule will take place.
+		public bool FullFancy { get; set; }
 		#endregion
 		
 		// Constructor.
@@ -111,10 +143,10 @@ namespace Arbiter
 			this.sport = sport;
 			
 			// Set combatant's name.
-			CombatantName = name;
+			CName = name;
 			nameLabel.Markup = "<b>" + name + "</b>";
 			
-			// Assign intial hp and mp, and set labels.
+			// Assign intial hp and mp, and set entries.
 			HP = hp;
 			MP = mp;
 			
@@ -125,20 +157,134 @@ namespace Arbiter
 			mpEntry.Activated += delegate { MP = Int16.Parse(mpEntry.Text); };
 			
 			// Determine checkbutton visiblity.
-			fancyCheck.NoShowAll = !(fancyCheck.Visible = sport.Fancies);
-			feintCheck.NoShowAll = !(feintCheck.Visible = sport.Feints);
+			priFancyCheck.NoShowAll = !(priFancyCheck.Visible = sport.Fancies);
+			priFeintCheck.NoShowAll = !(priFeintCheck.Visible = sport.Feints);
+			secFancyCheck.NoShowAll = !(secFancyCheck.Visible = sport.Fancies);
+			secFeintCheck.NoShowAll = !(secFeintCheck.Visible = sport.Feints);
 			sdCheck.NoShowAll = !(sdCheck.Visible = sd);
 			
 			// Assign combobox lists.
-			primaryCombo.Model = sport.Moves;
-			secondaryCombo.Model = sport.Moves;
+			primaryCombo.Model = sport.MoveLS;
+			secondaryCombo.Model = sport.MoveLS;
 			targetCombo.Model = Brawl.Order;
+			
+			// Set last move selections and valid state.
+			lastPrimary = -1;
+			lastSecondary = -1;
+			Valid = false;
+			
+			// Handle the checkboxes.
+			priFancyCheck.Toggled += delegate(object sender, EventArgs args)
+				{ priFeintCheck.Active = false; VerifyMod(sender, args); };
+			priFeintCheck.Toggled += delegate(object sender, EventArgs args)
+				{ priFancyCheck.Active = false; VerifyMod(sender, args); };
+			secFancyCheck.Toggled += delegate(object sender, EventArgs args)
+				{ secFeintCheck.Active = false; VerifyMod(sender, args); };
+			secFeintCheck.Toggled += delegate(object sender, EventArgs args)
+				{ secFancyCheck.Active = false; VerifyMod(sender, args); };
 			
 			// Participate in size negotiation.
 			SizeRequested += delegate (object sender, SizeRequestedArgs args) 
 				{ args.Requisition = combatantWidget.SizeRequest(); };
 			SizeAllocated += delegate (object sender, SizeAllocatedArgs args)
 				{ combatantWidget.Allocation = args.Allocation; };
+		}
+		
+		// Verifies primary move selection.
+		public void VerifyPrimary (object sender, EventArgs args)
+		{
+			if ((primaryCombo.ActiveText == "Disengage") ||
+				(Primary != lastPrimary && Primary != lastSecondary))
+			{
+				primaryValid = true;
+				primaryCombo.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
+				primaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
+			}
+			else
+			{
+				primaryValid = false;
+				primaryCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+				primaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			}
+			
+			// Check to see if the resolver can be enabled.
+			Brawl.CheckResolve();
+		}
+		
+		// Verifies secondary move selection.
+		public void VerifySecondary (object sender, EventArgs args)
+		{
+			if ((secondaryCombo.ActiveText == "Disengage") ||
+				(Secondary != lastSecondary))
+			{
+				secondaryValid = true;
+				secondaryCombo.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
+				secondaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
+			}
+			else
+			{
+				secondaryValid = false;
+				secondaryCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+				secondaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			}
+			
+			// Check to see if the resolver can be enabled.
+			Brawl.CheckResolve();
+		}
+		
+		// Verifies target selection. Really, the only point
+		// of this one is to make sure a target is selected.
+		public void VerifyTarget (object sender, EventArgs args)
+		{
+			targetValid = true;
+			targetCombo.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
+			targetCombo.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
+			
+			// Check to see if the resolver can be enabled.
+			Brawl.CheckResolve();
+		}
+		
+		// Ensures a mod is not activated when the combatant
+		// has insufficient MP.
+		public void VerifyMod (object sender, EventArgs args)
+		{
+			bool modValid = (Convert.ToByte(PriFancy) +
+			            Convert.ToByte(PriFeint) +
+			            Convert.ToByte(SecFancy) +
+			            Convert.ToByte(SecFeint) <= MP);
+			
+			// Uncheck the box that was just checked.
+			if (!modValid) ((CheckButton)sender).Active = false;
+		}
+		
+		// Resets all the duelist's attributes for the next round.
+		public void Reset ()
+		{
+			// Uncheck all the checkboxes.
+			priFancyCheck.Active = false;
+			priFeintCheck.Active = false;
+			secFancyCheck.Active = false;
+			secFeintCheck.Active = false;
+			sdCheck.Active = false;
+			eliminateCheck.Active = false;
+			
+			// Change the attributes of the combo boxes.
+			primaryCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			primaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			secondaryCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			secondaryCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			targetCombo.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			targetCombo.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			
+			// Store the last moves.
+			lastPrimary = Primary;
+			lastSecondary = Secondary;
+			
+			// Reset the other variables.
+			Acted = false;
+			Defended = false;
+			FullFancy = false;
+			Valid = false;
 		}
 	}
 }

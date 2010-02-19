@@ -40,6 +40,15 @@
                       </widget>
                     </child>
                     <child>
+                      <widget class="GtkMenuItem" id="brawlMenuItem">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">Starts a brawl.</property>
+                        <property name="label" translatable="yes">_Brawl...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="StartBrawl"/>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkImageMenuItem" id="quitMenuItem">
                         <property name="label" translatable="yes">_Quit</property>
                         <property name="visible">True</property>
@@ -54,15 +63,6 @@
                             <property name="icon-size">1</property>
                           </widget>
                         </child>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkMenuItem" id="brawlMenuItem">
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">Starts a brawl.</property>
-                        <property name="label" translatable="yes">_Brawl...</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="StartBrawl"/>
                       </widget>
                     </child>
                   </widget>
@@ -2163,7 +2163,7 @@ Magic</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkVSeparator" id="separator">
+          <widget class="GtkVSeparator" id="separator1">
             <property name="visible">True</property>
             <property name="orientation">vertical</property>
           </widget>
@@ -2196,6 +2196,7 @@ Duck
 Stop Hit
 Slash
 Disengage</property>
+            <signal name="changed" handler="VerifyPrimary"/>
           </widget>
           <packing>
             <property name="expand">False</property>
@@ -2230,11 +2231,65 @@ Barbatos
 Lloyd
 Zelos
 Mithos</property>
+            <signal name="changed" handler="VerifyTarget"/>
           </widget>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="position">10</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkCheckButton" id="priFancyCheck">
+            <property name="label">Fa</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="draw_indicator">True</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">11</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkCheckButton" id="priFeintCheck">
+            <property name="label">Fe</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="draw_indicator">True</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">12</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkCheckButton" id="sdCheck">
+            <property name="label">SD</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="draw_indicator">True</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">13</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkVSeparator" id="separator2">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">14</property>
           </packing>
         </child>
         <child>
@@ -2245,7 +2300,7 @@ Mithos</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">11</property>
+            <property name="position">15</property>
           </packing>
         </child>
         <child>
@@ -2261,15 +2316,16 @@ Duck
 Stop Hit
 Slash
 Disengage</property>
+            <signal name="changed" handler="VerifySecondary"/>
           </widget>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">12</property>
+            <property name="position">16</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkCheckButton" id="fancyCheck">
+          <widget class="GtkCheckButton" id="secFancyCheck">
             <property name="label">Fa</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -2279,11 +2335,11 @@ Disengage</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">13</property>
+            <property name="position">17</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkCheckButton" id="feintCheck">
+          <widget class="GtkCheckButton" id="secFeintCheck">
             <property name="label">Fe</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -2293,21 +2349,7 @@ Disengage</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">14</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="GtkCheckButton" id="sdCheck">
-            <property name="label">SD</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="draw_indicator">True</property>
-          </widget>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">15</property>
+            <property name="position">18</property>
           </packing>
         </child>
       </widget>

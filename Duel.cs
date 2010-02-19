@@ -166,8 +166,8 @@ namespace Arbiter
 			
 			#region Widget Properties	
 			// Set widget properties.
-			duelistAMoveCombo.Model = sport.Moves;
-			duelistBMoveCombo.Model = sport.Moves;
+			duelistAMoveCombo.Model = sport.MoveLS;
+			duelistBMoveCombo.Model = sport.MoveLS;
 			if (sport.Fancies && sport.Feints)
 			{
 				duelistAModCheck.Label = "Fancy / Feint";

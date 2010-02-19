@@ -51,6 +51,9 @@ namespace Arbiter
 			xml.Autoconnect(this);
 			this.Add(brawlSetupWidget);
 			
+			// Set default option in the sport combo.
+			sportCombo.Active = 0;
+			
 			// Participate in size negotiation.
 			SizeRequested += delegate (object sender, SizeRequestedArgs args) 
 				{ args.Requisition = brawlSetupWidget.SizeRequest(); };
@@ -60,8 +63,7 @@ namespace Arbiter
 		
 		// Makes various widgets insensitive if DoM is selected.
 		private void CheckSport (object sender, EventArgs args)
-			{ mpSpin.Sensitive = fullFancyCheck.Sensitive =
-							!(sportCombo.ActiveText == "Magic"); }
+			{ mpSpin.Sensitive = fullFancyCheck.Sensitive = sportCombo.ActiveText != "Magic"; }
 		
 		// Starts the brawl.
 		private void StartBrawl (object sender, EventArgs args)

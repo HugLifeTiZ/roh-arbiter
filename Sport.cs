@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Gtk;
@@ -42,7 +43,8 @@ namespace Arbiter
 		public string ScoreFormat { get; set; }
 		public char[,] Matrix     { get; set; }
 		public string[] Abbrev    { get; set; }
-		public ListStore Moves    { get; set; }
+		public string[] Moves     { get; set; }
+		public ListStore MoveLS   { get; set; }
 		#endregion
 		
 		// Load a sport from an embedded config.
@@ -116,9 +118,13 @@ namespace Arbiter
 			Abbrev = sr.ReadLine().Split(',');
 			
 			// Read the move list.
-			Moves = new ListStore(typeof(string));
+			Moves = new string[m];
 			for (int l = 0; l < m; l++)
-				Moves.AppendValues(sr.ReadLine());
+				Moves[l] = sr.ReadLine();
+			
+			MoveLS = new ListStore(typeof(string));
+			foreach (string s in Moves)
+				MoveLS.AppendValues(s);
 		}
 	}
 }

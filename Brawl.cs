@@ -48,14 +48,28 @@ namespace Arbiter
 		#region Fields
 		private List<Combatant> order;
 		private int round;
+		private bool fullFancy;
 		private Sport sport;
+		private string n = Environment.NewLine;
+		private static Brawl instance;
 		#endregion
 		
+		// The liststore that each combatant will use for targeting.
 		public static ListStore Order { get; private set; }
+		
+		// Convenience property.
+		private string Summary
+		{
+			get { return summaryView.Buffer.Text; }
+			set { summaryView.Buffer.Text = value; }
+		}
 		
 		public Brawl (List<string> order, Sport sport, float hp,
 		              short mp, bool fullFancy, bool sd) : base()
 		{
+			// Save the full fancy option.
+			this.fullFancy = fullFancy;
+			
 			// Create widgets.
 			XML xml = new XML("Arbiter.GUI.glade", "brawlWidget");
 			xml.Autoconnect(this);
@@ -79,11 +93,316 @@ namespace Arbiter
 				if (i < order.Count - 1) orderLabel.Text += ", ";
 			}
 			
+			// Store present instance.
+			instance = this;
+			
 			// Participate in size negotiation.
 			SizeRequested += delegate (object sender, SizeRequestedArgs args) 
 				{ args.Requisition = brawlWidget.SizeRequest(); };
 			SizeAllocated += delegate (object sender, SizeAllocatedArgs args)
 				{ brawlWidget.Allocation = args.Allocation; };
+		}
+		
+		// Enables the resolve button if all the combatants' choices are valid.
+		public static void CheckResolve ()
+		{
+			bool resolve = true;
+			foreach (Combatant c in instance.order)
+				resolve = resolve && c.Valid;
+			instance.resolveButton.Sensitive = resolve;
+		}
+		
+		// Resolves the current round.
+		private void ResolveRound ()
+		{
+			// Print the round header into the summary.
+			Summary += "  ROUND " + round.ToString() + n;
+			Summary += "===========================" + n;
+			
+			float resultA = 0;
+			float resultB = 0;
+			
+			// First, check for full fancy defenders.
+			if (fullFancy)
+			{
+				// Loop through all combatants.
+				for (int c = 0; c < order.Count; c++)
+				{
+					// Track the number of people that will be
+					// defended.
+					int defended = 0;
+					
+					// Now loop through everyone some more.
+					for (int t = 0; t < order.Count; t++)
+					{
+						if (order[t].Target == c &&
+						    order[c].Target != t && !order[t].SD)
+						{
+							Evaluate(order[c].Secondary, order[c].SecFancy, order[c].SecFeint,
+							         order[t].Primary, order[t].PriFancy, order[t].PriFeint,
+							         out resultA, out resultB);
+							if (resultA == 1) defended++;
+						}
+					}
+					
+					order[c].FullFancy = defended > 1;
+				}
+			}
+			
+			// Loop through each combatant.
+			for (int c = 0; c < order.Count; c++)
+			{
+				// Reset result variables.
+				resultA = 0;
+				resultB = 0;
+				
+				// Decrement MP.
+				order[c].MP -= Convert.ToByte(order[c].PriFancy);
+				order[c].MP -= Convert.ToByte(order[c].PriFeint);
+				order[c].MP -= Convert.ToByte(order[c].SecFancy);
+				order[c].MP -= Convert.ToByte(order[c].SecFeint);
+				
+				// Store target in a variable.
+				int t = order[c].Target;
+				
+				// If the combatant has not yet acted and is not SDing...
+				if (!order[c].Acted && !order[c].SD)
+				{
+					// If the target is KO'd, first of all...
+					if (order[t].HP <= 0)
+					{
+						// Nothing happens, pretty much.
+						Summary += order[c].CName + " attacks " + order[t].CName + " with " +
+						(order[c].PriFancy ? "Fancy " : "") +
+						(order[c].PriFeint ? "Feint " : "") +
+						sport.Moves[order[c].Primary] + ", which is wasted on " +
+						"the KO'd combatant." + n;
+					}
+					// If the combatant and their target are targeting each other...
+					else if (order[t].Target == c && !order[t].Acted)
+					{
+						// Evaluate primary vs. primary.
+						Evaluate(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
+						         order[t].Primary, order[t].PriFancy, order[t].PriFeint,
+						         out resultA, out resultB);
+						
+						// Inflict damage.
+						order[c].HP -= resultB;
+						order[t].HP -= resultA;
+						
+						// Print what just happened.
+						Summary += order[c].CName + " attacks " + order[t].CName + " with " +
+						(order[c].PriFancy ? "Fancy " : "") +
+						(order[c].PriFeint ? "Feint " : "") +
+						sport.Moves[order[c].Primary] + ", who counterattacks with " +
+						(order[t].PriFancy ? "Fancy " : "") +
+						(order[t].PriFeint ? "Feint " : "") +
+						sport.Moves[order[t].Primary] + ".  ( " +
+						resultA.ToString(sport.ScoreFormat) + " / " +
+						resultB.ToString(sport.ScoreFormat) + " )" + n;
+						
+						// Mark the target as having acted.
+						order[t].Acted = true;
+					}
+					else
+					{
+						// Check for anyone SDing the target.
+						int sder = -1;
+						int d = 0;
+						while (sder == -1 && d < order.Count)
+						{
+							// Stop at the first combatant SDing the target.
+							if (order[d].SD && !order[d].Acted &&
+							    order[d].Target == order[c].Target)
+								sder = d;
+							d++;
+						}
+						if (sder > -1)
+						{
+							// Just looks better this way.
+							d = sder;
+							
+							// Evaluate primary vs. primary.
+							Evaluate(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
+							         order[d].Primary, order[d].PriFancy, order[d].PriFeint,
+							         out resultA, out resultB);
+							
+							// Inflict damage.
+							order[c].HP -= resultB;
+							order[d].HP -= resultA;
+							
+							// Print what just happened.
+							Summary += order[c].CName + " attacks " + order[t].CName + " with " +
+							(order[c].PriFancy ? "Fancy " : "") +
+							(order[c].PriFeint ? "Feint " : "") +
+							sport.Moves[order[c].Primary] + ", who is protected by " +
+							order[d].CName + ", who uses" +
+							(order[d].PriFancy ? "Fancy " : "") +
+							(order[d].PriFeint ? "Feint " : "") +
+							sport.Moves[order[d].Primary] + ".  ( " +
+							resultA.ToString(sport.ScoreFormat) + " / " +
+							resultB.ToString(sport.ScoreFormat) + " )" + n;
+							
+							// Mark the defender as having acted.
+							order[d].Acted = true;
+							
+							// Prevent less than zero values.
+							if (order[d].HP < 0) order[d].HP = 0;
+						}
+						else if (!order[t].Defended)
+						{
+							// Evaluate primary vs. secondary.
+							Evaluate(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
+							         order[t].Secondary, order[t].SecFancy, order[t].SecFeint,
+							         out resultA, out resultB);
+							
+							// Inflict damage.
+							if (!order[t].FullFancy) order[c].HP -= resultB;
+							order[t].HP -= resultA;
+							
+							// Print what just happened.
+							Summary += order[c].CName + " attacks " + order[t].CName + " with " +
+							(order[c].PriFancy ? "Fancy " : "") +
+							(order[c].PriFeint ? "Feint " : "") +
+							sport.Moves[order[c].Primary] + ", who defends with " +
+							(order[t].FullFancy ? "Full " : "") +
+							(order[t].SecFancy ? "Fancy " : "") +
+							(order[t].SecFeint ? "Feint " : "") +
+							sport.Moves[order[t].Primary] + ".  ( " +
+							resultA.ToString(sport.ScoreFormat) + " / " +
+							resultB.ToString(sport.ScoreFormat) + " )" + n;
+							
+							// Mark the defender as having defended if
+							// a full fancy defense wasn't used.
+							order[t].Defended = true && !order[t].FullFancy;
+						}
+						// The defender has already defended.
+						else
+						{
+							// Loop through each candidate in attacks and see if
+							// the combatant is using any of them.
+							string attacks = "TH,HC,LC,SL,JA,CH,UC,HO,SN,JK,SP,FL," +
+							                 "MB,MW,WB,FT,FF,MS,AB,RF,NR,IM,EF";
+							foreach (string a in attacks.Split(','))
+								if (sport.Abbrev[order[c].Primary] == a &&
+								    !order[c].PriFeint)
+									resultA = 1;
+							
+							// Print what just happened.
+							Summary += order[c].CName + " attacks " + order[t].CName + " with " +
+							(order[c].PriFancy ? "Fancy " : "") +
+							(order[c].PriFeint ? "Feint " : "") +
+							sport.Moves[order[c].Primary] + ", which goes unhindered. ( " +
+							resultA.ToString(sport.ScoreFormat) + " / " +
+							resultB.ToString(sport.ScoreFormat) + " )" + n;
+						}
+					}
+					
+					// If the target's out of HP, mark it as having acted.
+					if (order[t].HP <= 0)
+					{
+						order[t].HP = 0;  // Prevent less than zero values.
+						order[t].Acted = true;
+					}
+					if (order[c].HP <= 0) order[c].HP = 0;  // Same as above.
+					
+					// Mark the current combatant as having acted.
+					order[c].Acted = true;
+				}
+			}
+			
+			// Print sub-header.
+			Summary += "REMAINING HP" + n;
+			
+			// Print out each HP value.
+			for (int i = 0; i < order.Count; i++)
+				Summary += order[i].CName + ": " +
+					order[i].HP.ToString(sport.ScoreFormat) + n;
+			
+			// Check for KO'd combatants and remove them from the list.
+			foreach (Combatant c in order)
+			{
+				// First, reset them.
+				c.Reset();
+				
+				if (c.HP <= 0)
+				{
+					order.Remove(c);
+					c.Sensitive = false;
+				}
+			}
+			
+			// Create a list to hold the new order.
+			List<Combatant> newOrder = new List<Combatant>();
+			
+			// Add each combatant, from #2 on, into the new list.
+			for (int i = 1; i < order.Count; i++)
+				newOrder.Add(order[i]);
+			
+			// And then put the old #1 duelist at the end.
+			newOrder.Add(order[0]);
+			
+			// Save the new order.
+			order = newOrder;
+			
+			// Update the order label and list store.
+			Order.Clear();
+			orderLabel.Text = "";
+			for (int i = 0; i < order.Count; i++)
+			{
+				Order.AppendValues(order[i]);
+				orderLabel.Text += order[i];
+				if (i < order.Count - 1) orderLabel.Text += ", ";
+			}
+			
+			// Insert a couple of line breaks into the summary.
+			Summary += n + n;
+			
+			// Make the resolver insensitive.
+			resolveButton.Sensitive = false;
+		}
+		
+		// Evaluates one set of moves against another.
+		// This may get refactored to a system-wide method.
+		private void Evaluate (int moveA, bool fancyA, bool feintA,
+		                       int moveB, bool fancyB, bool feintB,
+		                       out float resultA, out float resultB)
+		{
+			// Initialize the output variables.
+			resultA = 0;
+			resultB = 0;
+			
+			// Does this look familiar? Because it should.
+			switch (sport.Matrix[moveA, moveB])
+			{
+			case 'A':  // A scores.
+				if (!feintA) resultA = 1;
+				break;
+			case 'B':  // B scores.
+				if (!feintB) resultB = 1;
+				break;
+			case 'a':  // A gets advantage.
+				if (feintB) resultB = 1;
+				else if (fancyA) resultA = 1;
+				else resultA = 0.5f;
+				break;
+			case 'b':  // B gets advantage.
+				if (feintA) resultA = 1;
+				else if (fancyB) resultB = 1;
+				else resultB = 0.5f;
+				break;
+			case '!':  // Dual RF, Magic only. Yay for C-style switch.
+			case '1':  // Both score.
+				if (!feintA) resultA = 1;
+				if (!feintB) resultB = 1;
+				break;
+			case '+':  // Magic only: dual advantage.
+				resultA = 0.5f;
+				resultB = 0.5f;
+				break;
+			case '0':  // Null round.
+				break;
+			}
 		}
 	}
 }
