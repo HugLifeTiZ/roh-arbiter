@@ -92,7 +92,10 @@ namespace Arbiter
 		#region Properties
 		// Convenience properties.
 		public string DuelLog
-			{ get { return duelLogView.Buffer.Text; } }
+		{
+			set { duelLogView.Buffer.Text = value; }
+			get { return duelLogView.Buffer.Text; }
+		}
 		public bool DuelistAFancy
 			{ get { return duelistAFancyCheck.Active; } }
 		public bool DuelistBFancy
@@ -149,7 +152,7 @@ namespace Arbiter
 		#endregion
 		
 		// Constructor.
-		public Duel(int duelNum, string ringName, string duelistA, string duelistB,
+		public Duel(string ringName, string duelistA, string duelistB,
 		            Sport sport, bool overtime, bool madness) : base()
 		{
 			// Load the Glade file.
@@ -158,7 +161,7 @@ namespace Arbiter
 			this.Add(duelWidget);
 			
 			#region Copy Parameters
-			this.duelNum = duelNum;
+			this.duelNum = Arbiter.NumDuels++;
 			this.duelistA = duelistA;
 			this.duelistB = duelistB;
 			this.sport = sport;
@@ -386,7 +389,7 @@ namespace Arbiter
 			undoButton.Sensitive = true;
 			
 			// Tell the main window to check its menu items.
-			Arbiter.MainWin.CheckDuelMenu();
+			MainWindow.SCheckDuelMenu();
 			#endregion
 		}
 		
@@ -459,7 +462,7 @@ namespace Arbiter
 			
 			// Disable the undoer if it's round 1 now.
 			undoButton.Sensitive = CanUndo;
-			Arbiter.MainWin.CheckDuelMenu();
+			MainWindow.SCheckDuelMenu();
 		}
 		
 		// Ends the duel prematurely, presenting a dialog
@@ -769,7 +772,7 @@ namespace Arbiter
 		private void MoveChanged (object sender, EventArgs args)
 		{
 			resolveButton.Sensitive = CanResolve;
-			Arbiter.MainWin.CheckDuelMenu();
+			MainWindow.SCheckDuelMenu();
 		}
 		#endregion
 	}

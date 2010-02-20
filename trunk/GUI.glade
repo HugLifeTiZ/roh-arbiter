@@ -2104,6 +2104,22 @@ Magic</property>
                         <property name="position">3</property>
                       </packing>
                     </child>
+                    <child>
+                      <widget class="GtkCheckButton" id="gainModCheck">
+                        <property name="label">_Knockout MP Bonus</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="tooltip">This enables a bonus where the combatant who inflicts the knockout blow upon another combatant will gain one mod.</property>
+                        <property name="use_underline">True</property>
+                        <property name="draw_indicator">True</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
                   </widget>
                 </child>
                 <child>

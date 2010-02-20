@@ -92,7 +92,7 @@ namespace Arbiter
 			{
 				return (primaryCombo.ActiveText == "Disengage") ||
 					(Primary != lastPrimary && Primary != lastSecondary &&
-			    	 (Primary != Secondary || secondaryCombo.ActiveText != "Disengage"));
+			    	 ((Primary != Secondary) || (secondaryCombo.ActiveText == "Disengage")));
 			}
 		}
 		
@@ -103,7 +103,7 @@ namespace Arbiter
 			{
 				return (secondaryCombo.ActiveText == "Disengage") ||
 					(Secondary != lastSecondary && 
-			    	 (Secondary != Primary || primaryCombo.ActiveText != "Disengage"));
+			    	 ((Secondary != Primary) || (primaryCombo.ActiveText == "Disengage")));
 			}
 		}
 		
@@ -190,7 +190,7 @@ namespace Arbiter
 			xml.Autoconnect(this);
 			this.Add(combatantWidget);
 			
-			// Assign sport.
+			// Save sport.
 			this.sport = sport;
 			
 			// Set combatant's name.
@@ -227,7 +227,7 @@ namespace Arbiter
 			targetChosen = false;
 			finalTwo = false;
 			
-			// Handle the checkboxes.
+			// Checkbutton exvent handlers.
 			priFancyCheck.Toggled += delegate(object sender, EventArgs args)
 				{ priFeintCheck.Active = false; VerifyMod(priFancyCheck); };
 			priFeintCheck.Toggled += delegate(object sender, EventArgs args)
@@ -237,8 +237,13 @@ namespace Arbiter
 			secFeintCheck.Toggled += delegate(object sender, EventArgs args)
 				{ secFancyCheck.Active = false; VerifyMod(secFeintCheck); };
 			
-			// Combobox event handlers. The changed event isn't emitted
-			// if the new item is the same as the old.
+			// Combobox event handlers. Both active and popup-shown are used
+			// because the active event is only emitted when the chosen item
+			// is different from the last, and the popup-shown event is
+			// emitted before the active item actually changes.
+			primaryCombo.AddNotification("popup-shown", VerifyPrimary);
+			secondaryCombo.AddNotification("popup-shown", VerifySecondary);
+			targetCombo.AddNotification("popup-shown", VerifyTarget);
 			primaryCombo.AddNotification("active", VerifyPrimary);
 			secondaryCombo.AddNotification("active", VerifySecondary);
 			targetCombo.AddNotification("active", VerifyTarget);
@@ -319,10 +324,11 @@ namespace Arbiter
 		}
 		
 		// Verifies target selection. Really, the only point
-		// of this one is to make sure a target is selected.
+		// of this one is to inform the main brawler that a
+		// target has been selected.
 		public void VerifyTarget (object sender, GLib.NotifyArgs args)
 		{
-			// Indeed, the target has been chosen.
+			// Yup, target selected.
 			targetChosen = true;
 			
 			// Inform the caller if the combatant is targeting self.

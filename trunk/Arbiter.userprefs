@@ -1,26 +1,24 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" ctype="Workspace" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
   <MonoDevelop.Ide.DebuggingService>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService>
-  <MonoDevelop.Ide.Workbench ActiveDocument="BrawlSetup.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Duel.cs" ctype="Workbench">
     <Files>
-      <File FileName="Arbiter.cs" Line="1" Column="1" />
-      <File FileName="MainWindow.cs" Line="1" Column="1" />
-      <File FileName="Duel.cs" Line="717" Column="18" />
+      <File FileName="Arbiter.cs" Line="428" Column="22" />
+      <File FileName="MainWindow.cs" Line="388" Column="4" />
+      <File FileName="Duel.cs" Line="359" Column="13" />
       <File FileName="Sport.cs" Line="1" Column="1" />
-      <File FileName="Combatant.cs" Line="115" Column="22" />
-      <File FileName="BrawlSetup.cs" Line="100" Column="30" />
-      <File FileName="Brawl.cs" Line="345" Column="5" />
+      <File FileName="Combatant.cs" Line="171" Column="22" />
+      <File FileName="BrawlSetup.cs" Line="36" Column="18" />
+      <File FileName="Brawl.cs" Line="103" Column="14" />
       <File FileName="README.txt" Line="167" Column="1" />
       <File FileName="duelists.cfg" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="Arbiter" expanded="True">
-            <Node name="BrawlSetup.cs" selected="True" />
-          </Node>
+        <State expanded="True" selected="True">
+          <Node name="Arbiter" expanded="True" />
           <Node name="Packages" expanded="True" />
         </State>
       </Pad>
