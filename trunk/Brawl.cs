@@ -33,25 +33,22 @@ namespace Arbiter
 {
 	public class Brawl : Bin
 	{
-		#region Widgets
-		// The main widget's still considered an HBox even though
-		// I changed its orientation to Vertical in glade. :/
-		[Widget] private HBox brawlWidget;
-		[Widget] private VBox combatantBox;
-		[Widget] private Label roundLabel;
-		[Widget] private Label orderLabel;
-		[Widget] private ScrolledWindow summaryScroll;
-		[Widget] private TextView summaryView;
-		[Widget] private Button resolveButton;
-		#endregion
-		
 		#region Fields
 		private List<Combatant> order;
-		private int round;
 		private bool fullFancy;
 		private Sport sport;
 		private string n = Environment.NewLine;
 		private static Brawl instance;
+		#endregion
+		
+		#region Widgets
+		[Widget] private HBox brawlWidget;
+		[Widget] private VBox combatantBox;
+		[Widget] private SpinButton roundSpin;
+		[Widget] private Label orderLabel;
+		[Widget] private ScrolledWindow summaryScroll;
+		[Widget] private TextView summaryView;
+		[Widget] private Button resolveButton;
 		#endregion
 		
 		// The liststore that each combatant will use for targeting.
@@ -65,13 +62,8 @@ namespace Arbiter
 		}
 		private int Round
 		{
-			get { return round; }
-			set
-			{
-				round = value;
-				roundLabel.Markup = "<span size='xx-large' weight='bold'>Round "
-					+ round.ToString() + "</span>";
-			}
+			get { return (int)roundSpin.Value; }
+			set { roundSpin.Value = value; }
 		}
 		
 		public Brawl (List<string> order, Sport sport, float hp,
@@ -107,7 +99,7 @@ namespace Arbiter
 			// For automatic scrolling.
 			summaryView.Buffer.CreateMark("scroll", summaryView.Buffer.EndIter, true);
 			
-			// Set initial round number.
+			// Set round number.
 			Round = 1;
 			
 			// Store present instance.
@@ -160,10 +152,10 @@ namespace Arbiter
 		private void ResolveRound (object sender, EventArgs args)
 		{
 			// Line breaks for padding.
-			if (round > 1) Summary += n + n;
+			if (Round > 1) Summary += n + n;
 			
 			// Print the round header into the summary.
-			Summary += "  ROUND " + round.ToString() + n;
+			Summary += "  ROUND " + Round.ToString() + n;
 			Summary += "===========================" + n;
 			
 			float resultA = 0;
@@ -202,7 +194,7 @@ namespace Arbiter
 			
 			// Then, check for anyone exiting the ring.
 			foreach (Combatant c in order)
-				if (c.Eliminate)
+				if (c.Eliminate || c.HP <= 0)
 			{
 				// Set HP to zero, mark as having acted and defended
 				c.HP = 0;
@@ -262,7 +254,7 @@ namespace Arbiter
 						Summary += order[c].CName + " attacks self with " +
 							(order[c].PriFancy ? "Fancy " : "") +
 							(order[c].PriFeint ? "Feint " : "") +
-							sport.Moves[order[c].Primary] + ". That wasn't very smart. ( " +
+							sport.Moves[order[c].Primary] + ". That wasn't very smart.  ( " +
 							resultA.ToString(sport.ScoreFormat) + " )" + n;
 					}
 					// If the combatant and their target are targeting each other...
@@ -382,7 +374,7 @@ namespace Arbiter
 							Summary += order[c].CName + " attacks " + order[t].CName + " with " +
 								(order[c].PriFancy ? "Fancy " : "") +
 								(order[c].PriFeint ? "Feint " : "") +
-								sport.Moves[order[c].Primary] + ", which goes unhindered. ( " +
+								sport.Moves[order[c].Primary] + ", which goes unhindered.  ( " +
 								resultA.ToString(sport.ScoreFormat) + " / " +
 								resultB.ToString(sport.ScoreFormat) + " )" + n;
 						}
@@ -410,9 +402,9 @@ namespace Arbiter
 						", but no attack came that way." + n;
 			
 			// Print sub-header.
-			Summary += "------------------" + n;
+			Summary += "------------------------" + n;
 			Summary += "REMAINING HP" +
-				((sport.Fancies || sport.Feints) ? " / MP" : "") + n;
+				((sport.Fancies || sport.Feints) ? " / MODS" : "") + n;
 			
 			// Print out each HP value.
 			for (int i = 0; i < order.Count; i++)
@@ -421,7 +413,7 @@ namespace Arbiter
 					order[i].HP.ToString(sport.ScoreFormat);
 				if (sport.Fancies || sport.Feints)
 					Summary += " / " + order[i].MP.ToString();
-				Summary += n;
+				if (i < order.Count - 1) Summary += n;
 			}
 			
 			// Check for KO'd combatants and desensitize(?) them.
@@ -453,6 +445,15 @@ namespace Arbiter
 				Order.AppendValues(order[i].CName);
 				orderLabel.Text += order[i].CName;
 				if (i < order.Count - 1) orderLabel.Text += ", ";
+			}
+			
+			// Check to see if we need to enter final two mode.
+			if (order.Count == 2)
+			{
+				order[0].Target = 1;
+				order[0].FinalTwo = true;
+				order[1].Target = 0;
+				order[1].FinalTwo = true;
 			}
 			
 			// Scroll the summary to the bottom.

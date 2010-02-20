@@ -91,8 +91,8 @@ namespace Arbiter
 		
 		#region Properties
 		// Convenience properties.
-		public TextBuffer DuelLog
-			{ get { return duelLogView.Buffer; } }
+		public string DuelLog
+			{ get { return duelLogView.Buffer.Text; } }
 		public bool DuelistAFancy
 			{ get { return duelistAFancyCheck.Active; } }
 		public bool DuelistBFancy
@@ -254,7 +254,7 @@ namespace Arbiter
 				+ shortNameB + " | Score" + n;
 			
 			// For automatic scrolling.
-			DuelLog.CreateMark("scroll", DuelLog.EndIter, true);
+			duelLogView.Buffer.CreateMark("scroll", duelLogView.Buffer.EndIter, true);
 			
 			// Write initial text to the log.
 			UpdateDuelLog();
@@ -598,15 +598,15 @@ namespace Arbiter
 		// Updates the duel log.
 		private void UpdateDuelLog ()
 		{
-			DuelLog.Text = logHeader;
+			DuelLog = logHeader;
 			foreach (string s in log)
 			{
-				DuelLog.Text += n + s;
+				DuelLog += n + s;
 			}
 			
 			// Scroll the log view to the bottom.
-			DuelLog.MoveMark("scroll", DuelLog.EndIter);
-			duelLogView.ScrollMarkOnscreen(DuelLog.GetMark("scroll"));
+			duelLogView.Buffer.MoveMark("scroll", duelLogView.Buffer.EndIter);
+			duelLogView.ScrollMarkOnscreen(duelLogView.Buffer.GetMark("scroll"));
 			
 			// Save the current log.
 			this.SaveDuel();
@@ -733,7 +733,7 @@ namespace Arbiter
 			
 			// Open the file and write the contents of the buffer to it.
 			StreamWriter sw = new StreamWriter(path, false);
-			sw.Write(DuelLog.Text);
+			sw.Write(DuelLog);
 			sw.Close();
 		}
 		
@@ -759,7 +759,7 @@ namespace Arbiter
 			
 			// Open the file and write the contents of the buffer to it.
 			StreamWriter sw = new StreamWriter(path, false);
-			sw.Write(DuelLog.Text);
+			sw.Write(DuelLog);
 			sw.Close();
 		}
 		#endregion
