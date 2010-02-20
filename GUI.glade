@@ -1595,12 +1595,48 @@ Ring ThisRing</property>
             <property name="orientation">vertical</property>
             <property name="spacing">2</property>
             <child>
-              <widget class="GtkLabel" id="roundLabel">
-                <property name="width_request">128</property>
+              <widget class="GtkHBox" id="roundBox">
                 <property name="visible">True</property>
-                <property name="tooltip">This indicates the upcoming round.</property>
-                <property name="label">&lt;span size='xx-large' weight='bold'&gt;Round 1&lt;/span&gt;</property>
-                <property name="use_markup">True</property>
+                <child>
+                  <widget class="GtkLabel" id="roundLabel">
+                    <property name="width_request">128</property>
+                    <property name="visible">True</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip">This indicates the upcoming round.</property>
+                    <property name="xalign">1</property>
+                    <property name="label">&lt;span size='xx-large' weight='bold'&gt;Round &lt;/span&gt;</property>
+                    <property name="use_markup">True</property>
+                  </widget>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkSpinButton" id="roundSpin">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="max_length">2</property>
+                    <property name="invisible_char">&#x25CF;</property>
+                    <property name="width_chars">2</property>
+                    <property name="xalign">0.5</property>
+                    <property name="adjustment">1 0 99 1 1 1</property>
+                    <property name="snap_to_ticks">True</property>
+                    <property name="numeric">True</property>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkLabel" id="roundLabelPad">
+                    <property name="visible">True</property>
+                  </widget>
+                  <packing>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -1609,7 +1645,7 @@ Ring ThisRing</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkHBox" id="orderSumBox">
+              <widget class="GtkVBox" id="orderSumBox">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">2</property>
@@ -1712,14 +1748,40 @@ Ring ThisRing</property>
                 <property name="layout_style">center</property>
                 <child>
                   <widget class="GtkButton" id="cancelButton">
-                    <property name="label">gtk-cancel</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip">Cancels the brawl in progress and returns to the main dueling window.</property>
-                    <property name="use_stock">True</property>
                     <signal name="clicked" handler="CancelBrawl"/>
+                    <child>
+                      <widget class="GtkHBox" id="cancelBox">
+                        <property name="visible">True</property>
+                        <property name="spacing">2</property>
+                        <child>
+                          <widget class="GtkImage" id="cancelIcon">
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="stock">gtk-cancel</property>
+                          </widget>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkLabel" id="cancelLabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label">_Cancel</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">cancelButton</property>
+                          </widget>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </widget>
+                    </child>
                   </widget>
                   <packing>
                     <property name="expand">False</property>
@@ -1734,7 +1796,7 @@ Ring ThisRing</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip">Resolves the present round. Will only be enabled once each combatant has selected valid moves.</property>
+                    <property name="tooltip">Resolves the present round. Will only be enabled once each combatant has selected moves.</property>
                     <signal name="clicked" handler="ResolveRound"/>
                     <child>
                       <widget class="GtkHBox" id="resolveBox">
@@ -2060,7 +2122,7 @@ Magic</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkHButtonBox" id="actionBox">
+              <widget class="GtkVButtonBox" id="actionBox">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">2</property>
@@ -2107,13 +2169,39 @@ Magic</property>
                 </child>
                 <child>
                   <widget class="GtkButton" id="cancelButton">
-                    <property name="label">gtk-cancel</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip">Return to the main dueling window.</property>
-                    <property name="use_stock">True</property>
                     <signal name="clicked" handler="CancelBrawl"/>
+                    <child>
+                      <widget class="GtkHBox" id="cancelBox">
+                        <property name="visible">True</property>
+                        <property name="spacing">2</property>
+                        <child>
+                          <widget class="GtkImage" id="cancelIcon">
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="stock">gtk-cancel</property>
+                          </widget>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <widget class="GtkLabel" id="cancelLabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label">_Cancel</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">cancelButton</property>
+                          </widget>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </widget>
+                    </child>
                   </widget>
                   <packing>
                     <property name="expand">False</property>
@@ -2273,12 +2361,52 @@ Duck
 Stop Hit
 Slash
 Disengage</property>
-            <signal name="changed" handler="VerifyPrimary"/>
           </widget>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="position">8</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkCheckButton" id="priFancyCheck">
+            <property name="label">Fa</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="tooltip">Fancy modifier for the primary move.</property>
+            <property name="draw_indicator">True</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">9</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkCheckButton" id="priFeintCheck">
+            <property name="label">Fe</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="tooltip">Feint modifier for the primary move.</property>
+            <property name="draw_indicator">True</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">10</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkVSeparator" id="separator2">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">11</property>
           </packing>
         </child>
         <child>
@@ -2290,7 +2418,7 @@ Disengage</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">9</property>
+            <property name="position">12</property>
           </packing>
         </child>
         <child>
@@ -2310,42 +2438,11 @@ Barbatos
 Lloyd
 Zelos
 Mithos</property>
-            <signal name="changed" handler="VerifyTarget"/>
           </widget>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">10</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="GtkCheckButton" id="priFancyCheck">
-            <property name="label">Fa</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="tooltip">Fancy modifier for the primary move.</property>
-            <property name="draw_indicator">True</property>
-          </widget>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">11</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="GtkCheckButton" id="priFeintCheck">
-            <property name="label">Fe</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="tooltip">Feint modifier for the primary move.</property>
-            <property name="draw_indicator">True</property>
-          </widget>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">12</property>
+            <property name="position">13</property>
           </packing>
         </child>
         <child>
@@ -2360,18 +2457,18 @@ Mithos</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">13</property>
+            <property name="position">14</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkVSeparator" id="separator2">
+          <widget class="GtkVSeparator" id="separator3">
             <property name="visible">True</property>
             <property name="orientation">vertical</property>
           </widget>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">14</property>
+            <property name="position">15</property>
           </packing>
         </child>
         <child>
@@ -2383,7 +2480,7 @@ Mithos</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">15</property>
+            <property name="position">16</property>
           </packing>
         </child>
         <child>
@@ -2400,12 +2497,11 @@ Duck
 Stop Hit
 Slash
 Disengage</property>
-            <signal name="changed" handler="VerifySecondary"/>
           </widget>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">16</property>
+            <property name="position">17</property>
           </packing>
         </child>
         <child>
@@ -2420,7 +2516,7 @@ Disengage</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">17</property>
+            <property name="position">18</property>
           </packing>
         </child>
         <child>
@@ -2435,7 +2531,7 @@ Disengage</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">18</property>
+            <property name="position">19</property>
           </packing>
         </child>
       </widget>

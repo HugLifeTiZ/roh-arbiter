@@ -32,6 +32,18 @@ namespace Arbiter
 {
 	public class Combatant : Bin
 	{
+		#region Fields
+		private Sport sport;
+		private float hp;
+		private short mp;
+		private int lastPrimary;
+		private int lastSecondary;
+		private bool primaryChosen;
+		private bool secondaryChosen;
+		private bool targetChosen;
+		private bool finalTwo;
+		#endregion
+		
 		#region Widgets
 		[Widget] private HBox combatantWidget;
 		[Widget] private Label nameLabel;
@@ -46,17 +58,8 @@ namespace Arbiter
 		[Widget] private ComboBox primaryCombo;
 		[Widget] private ComboBox targetCombo;
 		[Widget] private ComboBox secondaryCombo;
-		#endregion
-		
-		#region Fields
-		private Sport sport;
-		private float hp;
-		private short mp;
-		private int lastPrimary;
-		private int lastSecondary;
-		private bool primaryValid;
-		private bool secondaryValid;
-		private bool targetValid;
+		[Widget] private Label targetLabel;
+		[Widget] private Label secondaryLabel;
 		#endregion
 		
 		#region Properties
@@ -82,13 +85,35 @@ namespace Arbiter
 			}
 		}
 		
+		// Checks to see if the primary move is valid.
+		private bool PrimaryValid
+		{
+			get
+			{
+				return (primaryCombo.ActiveText == "Disengage") ||
+					(Primary != lastPrimary && Primary != lastSecondary &&
+			    	 (Primary != Secondary || secondaryCombo.ActiveText != "Disengage"));
+			}
+		}
+		
+		// Checks to see if the secondary move is valid.
+		private bool SecondaryValid
+		{
+			get
+			{
+				return (secondaryCombo.ActiveText == "Disengage") ||
+					(Secondary != lastSecondary && 
+			    	 (Secondary != Primary || primaryCombo.ActiveText != "Disengage"));
+			}
+		}
+		
 		// Checks to see if the combatant's choices are valid.
 		public bool Valid
 		{ 
 			get
-				{ return primaryValid && secondaryValid && targetValid; }
+				{ return primaryChosen && ((secondaryChosen && targetChosen) || FinalTwo); }
 			set
-				{ primaryValid = secondaryValid = targetValid = value; }
+				{ primaryChosen = secondaryChosen = targetChosen = value; }
 		}
 		
 		// The combatant's name.
@@ -98,10 +123,13 @@ namespace Arbiter
 		// comboboxes into publically accessible ints.
 		public int Primary
 			{ get { return primaryCombo.Active; } }
-		public int Target
-			{ get { return targetCombo.Active; } }
 		public int Secondary
 			{ get { return secondaryCombo.Active; } }
+		public int Target
+		{
+			set { targetCombo.Active = value; }
+			get { return targetCombo.Active; }
+		}
 		
 		// These translate the active states of the
 		// checkboxes into publically accessible bools.
@@ -129,6 +157,29 @@ namespace Arbiter
 		// Determines if the special full fancy defense
 		// rule will take place.
 		public bool FullFancy { get; set; }
+		
+		// This will be activated when there are only
+		// two combatants remaining in the brawl.
+		// It desensitizes the target and secondary
+		// move widgets.
+		public bool FinalTwo
+		{
+			get { return finalTwo; }
+			set
+			{
+				finalTwo = value;
+				lastPrimary = -1;
+				lastSecondary = -1;
+				secondaryCombo.Active = -1;
+				targetLabel.Sensitive = !value;
+				targetCombo.Sensitive = !value;
+				sdCheck.Sensitive = !value;
+				secondaryLabel.Sensitive = !value;
+				secondaryCombo.Sensitive = !value;
+				secFancyCheck.Sensitive = !value;
+				secFeintCheck.Sensitive = !value;
+			}
+		}
 		#endregion
 		
 		// Constructor.
@@ -145,12 +196,6 @@ namespace Arbiter
 			// Set combatant's name.
 			CName = name;
 			nameLabel.Markup = "<b>" + name + "</b>";
-			
-			// Change appearance of the entryboxes.
-			/*hpEntry.ModifyBase(StateType.Normal, hpEntry.Style.Background(StateType.Normal));
-			mpEntry.ModifyBase(StateType.Normal, mpEntry.Style.Background(StateType.Normal));
-			hpEntry.Style.FontDescription.Weight = Pango.Weight.Bold;
-			mpEntry.Style.FontDescription.Weight = Pango.Weight.Bold;*/
 			
 			// Assign intial hp and mp, and set entries.
 			HP = hp;
@@ -174,10 +219,13 @@ namespace Arbiter
 			secondaryCombo.Model = sport.MoveLS;
 			targetCombo.Model = Brawl.Order;
 			
-			// Set last move selections and valid state.
+			// Set last move selections and bools.
 			lastPrimary = -1;
 			lastSecondary = -1;
-			Valid = false;
+			primaryChosen = false;
+			secondaryChosen = false;
+			targetChosen = false;
+			finalTwo = false;
 			
 			// Handle the checkboxes.
 			priFancyCheck.Toggled += delegate(object sender, EventArgs args)
@@ -189,6 +237,12 @@ namespace Arbiter
 			secFeintCheck.Toggled += delegate(object sender, EventArgs args)
 				{ secFancyCheck.Active = false; VerifyMod(secFeintCheck); };
 			
+			// Combobox event handlers. The changed event isn't emitted
+			// if the new item is the same as the old.
+			primaryCombo.AddNotification("active", VerifyPrimary);
+			secondaryCombo.AddNotification("active", VerifySecondary);
+			targetCombo.AddNotification("active", VerifyTarget);
+			
 			// Participate in size negotiation.
 			SizeRequested += delegate (object sender, SizeRequestedArgs args) 
 				{ args.Requisition = combatantWidget.SizeRequest(); };
@@ -196,26 +250,34 @@ namespace Arbiter
 				{ combatantWidget.Allocation = args.Allocation; };
 		}
 		
-		// Verifies primary move selection.
-		public void VerifyPrimary (object sender, EventArgs args)
+		// Verifies move selection.
+		public void VerifyPrimary (object sender, GLib.NotifyArgs args)
 		{
 			// Since there's no undoer, it's safer to just ensure
 			// that a move is chosen...
-			primaryValid = true;
+			primaryChosen = true;
 			
 			// But color the combobox text depending on validity.
-			if ((primaryCombo.ActiveText == "Disengage") ||
-				(Primary != lastPrimary && Primary != lastSecondary &&
-			     Primary != Secondary) ||
-			    Eliminate)
+			primaryCombo.Child.ModifyText(StateType.Normal, 
+			                              (PrimaryValid ?
+			                               new Gdk.Color(0, 128, 0) :
+			                               new Gdk.Color(192, 0, 0)));
+			primaryCombo.Child.ModifyText(StateType.Prelight, 
+			                              (PrimaryValid ?
+			                               new Gdk.Color(0, 128, 0) :
+			                               new Gdk.Color(192, 0, 0)));
+			
+			// Do the same for the other box if it's been chosen yet.
+			if (secondaryChosen)
 			{
-				primaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
-				primaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
-			}
-			else
-			{
-				primaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(192, 0, 0));
-				primaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(192, 0, 0));
+				secondaryCombo.Child.ModifyText(StateType.Normal, 
+				                                (SecondaryValid ?
+				                                 new Gdk.Color(0, 128, 0) :
+				                                 new Gdk.Color(192, 0, 0)));
+				secondaryCombo.Child.ModifyText(StateType.Prelight, 
+				                                (SecondaryValid ?
+				                                 new Gdk.Color(0, 128, 0) :
+				                                 new Gdk.Color(192, 0, 0)));
 			}
 			
 			// Check to see if the resolver can be enabled.
@@ -223,24 +285,33 @@ namespace Arbiter
 		}
 		
 		// Verifies secondary move selection.
-		public void VerifySecondary (object sender, EventArgs args)
+		public void VerifySecondary (object sender, GLib.NotifyArgs args)
 		{
 			// Since there's no undoer, it's safer to just
 			// ensure that a move is chosen...
-			secondaryValid = true;
+			secondaryChosen = true;
 			
 			// But color the combobox text depending on validity.
-			if ((secondaryCombo.ActiveText == "Disengage") ||
-				(Secondary != lastSecondary && Primary != Secondary) ||
-			    Eliminate)
+			secondaryCombo.Child.ModifyText(StateType.Normal, 
+			                                (SecondaryValid ?
+			                                 new Gdk.Color(0, 128, 0) :
+			                                 new Gdk.Color(192, 0, 0)));
+			secondaryCombo.Child.ModifyText(StateType.Prelight, 
+			                                (SecondaryValid ?
+			                                 new Gdk.Color(0, 128, 0) :
+			                                 new Gdk.Color(192, 0, 0)));
+			
+			// Do the same for the other box if it's been chosen yet.
+			if (primaryChosen)
 			{
-				secondaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
-				secondaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
-			}
-			else
-			{
-				secondaryCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(192, 0, 0));
-				secondaryCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(192, 0, 0));
+				primaryCombo.Child.ModifyText(StateType.Normal, 
+				                              (PrimaryValid ?
+				                               new Gdk.Color(0, 128, 0) :
+				                               new Gdk.Color(192, 0, 0)));
+				primaryCombo.Child.ModifyText(StateType.Prelight, 
+				                              (PrimaryValid ?
+				                               new Gdk.Color(0, 128, 0) :
+				                               new Gdk.Color(192, 0, 0)));
 			}
 			
 			// Check to see if the resolver can be enabled.
@@ -249,11 +320,20 @@ namespace Arbiter
 		
 		// Verifies target selection. Really, the only point
 		// of this one is to make sure a target is selected.
-		public void VerifyTarget (object sender, EventArgs args)
+		public void VerifyTarget (object sender, GLib.NotifyArgs args)
 		{
-			targetValid = true;
-			targetCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(0, 128, 0));
-			targetCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(0, 128, 0));
+			// Indeed, the target has been chosen.
+			targetChosen = true;
+			
+			// Inform the caller if the combatant is targeting self.
+			targetCombo.Child.ModifyText(StateType.Normal, 
+			                             (targetCombo.ActiveText != CName ?
+			                              new Gdk.Color(0, 128, 0) :
+			                              new Gdk.Color(192, 0, 0)));
+			targetCombo.Child.ModifyText(StateType.Prelight, 
+			                             (targetCombo.ActiveText != CName ?
+			                              new Gdk.Color(0, 128, 0) :
+			                              new Gdk.Color(192, 0, 0)));
 			
 			// Check to see if the resolver can be enabled.
 			Brawl.CheckResolve();
