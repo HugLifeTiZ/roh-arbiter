@@ -35,7 +35,22 @@ namespace Arbiter
 	// This class stores properties and methods that are used
 	// throughout the entire program.
 	static class Arbiter
-	{
+	{	
+		#region Fields
+		// List of duels.
+		private static List<string> fightNightSwords;
+		private static List<string> fightNightFists;
+		private static List<string> fightNightMagic;
+		private static List<string> normalDuelList;
+		
+		// Saves date when app was started.
+		private static DateTime today;
+		private static string currentDate;
+		
+		// Newline.
+		private static string n = Environment.NewLine;
+		#endregion
+		
 		#region Properties
 		// Sports.
 		public static Sport DuelOfSwords  { get; private set; }
@@ -74,26 +89,6 @@ namespace Arbiter
 		// in case two duelists fight multiple times in a night, e.g.
 		// challenges.
 		public static int NumDuels { get; set; }
-		
-		// The main window. This is so that duels can tell the main
-		// window to check sensitivity of menu items whenever stuff
-		// happens.
-		public static MainWindow MainWin { get; private set; }
-		#endregion
-		
-		#region Fields
-		// List of duels.
-		private static List<string> fightNightSwords;
-		private static List<string> fightNightFists;
-		private static List<string> fightNightMagic;
-		private static List<string> normalDuelList;
-		
-		// Saves date when app was started.
-		private static DateTime today;
-		private static string currentDate;
-		
-		// Newline.
-		private static string n = Environment.NewLine;
 		#endregion
 		
 		#region Methods
@@ -260,8 +255,8 @@ namespace Arbiter
 			DetectShiftReport();
 			
 			// Create the main window and go.
-			MainWin = new MainWindow();
-			MainWin.Show();
+			MainWindow mw = new MainWindow();
+			mw.Show();
 			Application.Run();
 		}
 		

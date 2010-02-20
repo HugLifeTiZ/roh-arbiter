@@ -34,6 +34,8 @@ namespace Arbiter
 	// The main window of the program.
 	public class MainWindow
 	{
+		private static MainWindow instance;
+		
 		#region Widgets
 		// Widgets to be attached by Glade#.
 		[Widget] private Window mainWin;
@@ -196,6 +198,9 @@ namespace Arbiter
 			// Initialize shift report.
 			if (Arbiter.NumDuels == 0) Arbiter.CreateShiftReport();
 			#endregion
+			
+			// Save instance.
+			instance = this;
 		}
 		
 		// Just for convenience.
@@ -283,10 +288,10 @@ namespace Arbiter
 			
 			#region Start Duel
 			// Make the tab.
-			Arbiter.NumDuels++;
-			Duel duel = new Duel(Arbiter.NumDuels, ringNameCEntry.ActiveText,
-								duelistANameCEntry.ActiveText, duelistBNameCEntry.ActiveText,
-								sport, overtime, madness);
+			Duel duel = new Duel(ringNameCEntry.ActiveText,
+			                     duelistANameCEntry.ActiveText,
+			                     duelistBNameCEntry.ActiveText,
+			                     sport, overtime, madness);
 			duelNotebook.InsertPage(duel, label, duelNotebook.NPages - 1);
 			duelNotebook.ShowAll();
 			duelNotebook.CurrentPage = duelNotebook.NPages - 2;
@@ -407,6 +412,8 @@ namespace Arbiter
 		
 		#region Duel Menu
 		// Toggles sensitivity of certain items in the menu.
+		public static void SCheckDuelMenu()
+			{ instance.CheckDuelMenu(); }
 		public void CheckDuelMenu ()
 		{
 			duelMenuItem.Sensitive = (duelNotebook.CurrentPage < duelNotebook.NPages - 1);
@@ -573,18 +580,18 @@ namespace Arbiter
 		#region Other Methods
 		// This replaces the main widget with a new one.
 		// Needed for the brawl tool.
-		public void ReplaceWidget(Widget widget)
+		public static void ReplaceWidget(Widget widget)
 		{
-			mainWin.Remove(mainWin.Child);
-			mainWin.Add(widget);
-			mainWin.WindowPosition = WindowPosition.Center;
+			instance.mainWin.Remove(instance.mainWin.Child);
+			instance.mainWin.Add(widget);
+			instance.mainWin.WindowPosition = WindowPosition.Center;
 		}
 		
 		// This resets the main widget back to normal.
-		public void ReturnToDuels()
+		public static void ReturnToDuels()
 		{
-			ReplaceWidget(mainWidget);
-			mainWin.Resize(Arbiter.WindowWidth, Arbiter.WindowHeight);
+			ReplaceWidget(instance.mainWidget);
+			instance.mainWin.Resize(Arbiter.WindowWidth, Arbiter.WindowHeight);
 		}
 		#endregion
 	}

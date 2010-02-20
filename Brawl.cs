@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Gtk;
 using Glade;
 
@@ -34,9 +35,11 @@ namespace Arbiter
 	public class Brawl : Bin
 	{
 		#region Fields
+		private int duelNum;
+		private Sport sport;
 		private List<Combatant> order;
 		private bool fullFancy;
-		private Sport sport;
+		private bool gainMod;
 		private string n = Environment.NewLine;
 		private static Brawl instance;
 		#endregion
@@ -67,10 +70,12 @@ namespace Arbiter
 		}
 		
 		public Brawl (List<string> order, Sport sport, float hp,
-		              short mp, bool fullFancy, bool sd) : base()
+		              short mp, bool sd, bool fullFancy, bool gainMod) : base()
 		{
 			// Save a couple parameters.
+			this.duelNum = Arbiter.NumDuels++;
 			this.fullFancy = fullFancy;
+			this.gainMod = gainMod;
 			this.sport = sport;
 			
 			// Create widgets.
@@ -93,8 +98,24 @@ namespace Arbiter
 				this.order.Add(c);
 				combatantBox.PackStart(c, false, false, 0u);
 				orderLabel.Text += order[i];
-				if (i < order.Count - 1) orderLabel.Text += ", ";
+				Summary += order[i];
+				if (i < order.Count - 1)
+				{
+					Summary += " .vs. ";
+					orderLabel.Text += ", ";
+				}
 			}
+			
+			// More preliminary summary stuff.
+			if (sport.ShortName == "DoS") Summary += n + "Duel of Swords";
+			if (sport.ShortName == "DoF") Summary += n + "Duel of Fists";
+			if (sport.ShortName == "DoM") Summary += n + "Duel of Magic";
+			Summary += n + "Initial HP: " + hp.ToString(sport.ScoreFormat);
+			if (sport.Fancies || sport.Feints)
+				Summary += n + "Initial Mods: " + mp.ToString();
+			if (sd) Summary += n +"Static Defenses enabled";
+			if (fullFancy) Summary += n + "Full Fancy Defenses enabled";
+			if (gainMod) Summary += n + "Knockout Mod Bonus enabled";
 			
 			// For automatic scrolling.
 			summaryView.Buffer.CreateMark("scroll", summaryView.Buffer.EndIter, true);
@@ -145,14 +166,14 @@ namespace Arbiter
 			// Otherwise, nullify the saved instance and
 			// reset to the main widget.
 			instance = null;
-			Arbiter.MainWin.ReturnToDuels();
+			MainWindow.ReturnToDuels();
 		}
 		
 		// Resolves the current round.
 		private void ResolveRound (object sender, EventArgs args)
 		{
 			// Line breaks for padding.
-			if (Round > 1) Summary += n + n;
+			Summary += n + n;
 			
 			// Print the round header into the summary.
 			Summary += "  ROUND " + Round.ToString() + n;
@@ -192,17 +213,31 @@ namespace Arbiter
 				}
 			}
 			
-			// Then, check for anyone exiting the ring.
+			// Then, check for anyone exiting the ring,
+			// and also anyone trying to SD themselves.
 			foreach (Combatant c in order)
-				if (c.Eliminate || c.HP <= 0)
 			{
-				// Set HP to zero, mark as having acted and defended
-				c.HP = 0;
-				c.Acted = true;
-				c.Defended = true;
-				
-				// Print what happened.
-				Summary += c.CName + " exits the ring." + n;
+				if (c.Eliminate || c.HP <= 0)
+				{
+					// Set HP to zero, mark as having acted and defended
+					c.HP = 0;
+					c.Acted = true;
+					c.Defended = true;
+					
+					// Print what happened.
+					Summary += c.CName + " exits the ring." + n;
+				}
+				else if (order[c.Target].CName == c.CName && c.SD)
+				{
+					// Mark them as having acted and defended.
+					// They don't get to do squat.
+					c.Acted = true;
+					c.Defended = true;
+					
+					// Make fun of them.
+					Summary += c.CName + " stands there with a finger " +
+						"lodged in a nostril. Too bad." + n;
+				}
 			}
 			
 			// Loop through each combatant.
@@ -258,7 +293,7 @@ namespace Arbiter
 							resultA.ToString(sport.ScoreFormat) + " )" + n;
 					}
 					// If the combatant and their target are targeting each other...
-					else if (order[t].Target == c && !order[t].Acted)
+					else if (order[t].Target == c && !order[t].Acted && !order[t].SD)
 					{
 						// Evaluate primary vs. primary.
 						Evaluate(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
@@ -282,6 +317,28 @@ namespace Arbiter
 						
 						// Mark the target as having acted.
 						order[t].Acted = true;
+						
+						// Check for eliminations and mod bonuses.
+						if (order[t].HP <= 0)
+						{
+							order[t].HP = 0;
+							order[t].Defended = true;
+							if (gainMod) order[c].MP++;
+							Summary += order[c].CName + " eliminates " +
+								order[t].CName + (gainMod ?
+								                  " and gains one mod!" :
+								                  "!") + n;
+						}
+						if (order[c].HP <= 0)
+						{
+							order[c].HP = 0;
+							order[c].Defended = true;
+							if (gainMod) order[t].MP++;
+							Summary += order[t].CName + " eliminates " +
+								order[c].CName + (gainMod ?
+								                  " and gains one mod!" :
+								                  "!") + n;
+						}
 					}
 					else
 					{
@@ -325,8 +382,27 @@ namespace Arbiter
 							// Mark the defender as having acted.
 							order[d].Acted = true;
 							
-							// Prevent less than zero values.
-							if (order[d].HP < 0) order[d].HP = 0;
+							// Check for eliminations and mod bonuses.
+							if (order[d].HP <= 0)
+							{
+								order[d].HP = 0;
+								order[d].Defended = true;
+								if (gainMod) order[c].MP++;
+								Summary += order[c].CName + " eliminates " +
+									order[d].CName + (gainMod ?
+									                  " and gains one mod!" :
+									                  "!") + n;
+							}
+							if (order[c].HP <= 0)
+							{
+								order[c].HP = 0;
+								order[c].Defended = true;
+								if (gainMod) order[d].MP++;
+								Summary += order[d].CName + " eliminates " +
+									order[c].CName + (gainMod ?
+									                  " and gains one mod!" :
+									                  "!") + n;
+							}
 						}
 						else if (!order[t].Defended)
 						{
@@ -335,8 +411,11 @@ namespace Arbiter
 							         order[t].Secondary, order[t].SecFancy, order[t].SecFeint,
 							         out resultA, out resultB);
 							
+							// Nullify any damage inflicted by a full fancy defender.
+							if (order[t].FullFancy) resultB = 0;
+							
 							// Inflict damage.
-							if (!order[t].FullFancy) order[c].HP -= resultB;
+							order[c].HP -= resultB;
 							order[t].HP -= resultA;
 							
 							// Print what just happened.
@@ -354,6 +433,29 @@ namespace Arbiter
 							// Mark the defender as having defended if
 							// a full fancy defense wasn't used.
 							order[t].Defended = true && !order[t].FullFancy;
+							
+							// Check for eliminations and mod bonuses.
+							if (order[t].HP <= 0)
+							{
+								order[t].HP = 0;
+								order[t].Acted = true;
+								order[t].Defended = true;
+								if (gainMod) order[c].MP++;
+								Summary += order[c].CName + " eliminates " +
+									order[t].CName + (gainMod ?
+									                  " and gains one mod!" :
+									                  "!") + n;
+							}
+							if (order[c].HP <= 0)
+							{
+								order[c].HP = 0;
+								order[c].Defended = true;
+								if (gainMod) order[t].MP++;
+								Summary += order[t].CName + " eliminates " +
+									order[c].CName + (gainMod ?
+									                  " and gains one mod!" :
+									                  "!") + n;
+							}
 						}
 						// The defender has already defended.
 						else
@@ -377,16 +479,20 @@ namespace Arbiter
 								sport.Moves[order[c].Primary] + ", which goes unhindered.  ( " +
 								resultA.ToString(sport.ScoreFormat) + " / " +
 								resultB.ToString(sport.ScoreFormat) + " )" + n;
+							
+							// Check for eliminations and mod bonuses.
+							if (gainMod && order[t].HP <= 0)
+							{
+								order[t].HP = 0;
+								order[t].Acted = true;
+								if (gainMod) order[c].MP++;
+								Summary += order[c].CName + " eliminates " +
+									order[t].CName + (gainMod ?
+									                  " and gains one mod!" :
+									                  "!") + n;
+							}
 						}
 					}
-					
-					// If the target's out of HP, mark it as having acted.
-					if (order[t].HP <= 0)
-					{
-						order[t].HP = 0;  // Prevent less than zero values.
-						order[t].Acted = true;
-					}
-					if (order[c].HP <= 0) order[c].HP = 0;  // Same as above.
 					
 					// Mark the current combatant as having acted.
 					order[c].Acted = true;
@@ -396,7 +502,7 @@ namespace Arbiter
 			// Check for any SDers that didn't get to defend.
 			foreach (Combatant c in order)
 				if (!c.Acted && c.SD)
-					Summary += c.CName + " was poised to defend " +
+					Summary += c.CName + " was poised to protect " +
 						order[c.Target].CName + " with " +
 						sport.Moves[c.Primary] +
 						", but no attack came that way." + n;
@@ -410,7 +516,9 @@ namespace Arbiter
 			for (int i = 0; i < order.Count; i++)
 			{
 				Summary += order[i].CName + ": " +
-					order[i].HP.ToString(sport.ScoreFormat);
+					(order[i].HP > 0 ?
+					 order[i].HP.ToString(sport.ScoreFormat) :
+					 "KO");
 				if (sport.Fancies || sport.Feints)
 					Summary += " / " + order[i].MP.ToString();
 				if (i < order.Count - 1) Summary += n;
@@ -456,9 +564,51 @@ namespace Arbiter
 				order[1].FinalTwo = true;
 			}
 			
+			// Check to see if the brawl's over.
+			if (order.Count == 1)
+			{
+				// Desensitize the final combatant.
+				order[0].Sensitive = false;
+				
+				// Print victory message!
+				Summary += n + n + order[0].CName +
+					" has won the brawl!" + n + n +
+					"(( " + order[0].CName + " .def. ";
+				
+				// Check to see if the victor is the last combatant
+				// in the original order.
+				int wLength = combatantBox.Children.Length;
+				if (((Combatant)combatantBox.Children[wLength - 1]).CName ==
+				    order[0].CName) wLength--;
+				
+				// Print all the duelists except the winner out into
+				// the final line.
+				for (int w = 0; w < wLength; w++)
+				{
+					Combatant c = (Combatant)combatantBox.Children[w];
+					if (c.CName != order[0].CName)
+						Summary += (w == wLength - 1 ? "and " : "") +
+							c.CName + (w < wLength - 1 ? ", " : "");
+				}
+				
+				Summary += " with " + order[0].HP.ToString(sport.ScoreFormat) +
+					" HP remaining, in " + Round.ToString() + " rounds ))";
+			}
+			
 			// Scroll the summary to the bottom.
 			summaryView.Buffer.MoveMark("scroll", summaryView.Buffer.EndIter);
 			summaryView.ScrollMarkOnscreen(summaryView.Buffer.GetMark("scroll"));
+			
+			// Save the brawl thus far to a file.
+			string fileName = duelNum.ToString("00") + ". Brawl";
+			if (Arbiter.FightNight) fileName += " (" + sport.ShortName + ")";
+			fileName += ".txt";
+			string path = System.IO.Path.Combine(Arbiter.CurrentDir, fileName);
+			
+			// Open the file and write the contents of the buffer to it.
+			StreamWriter sw = new StreamWriter(path, false);
+			sw.Write(Summary);
+			sw.Close();
 			
 			// Advance round number.
 			Round++;

@@ -41,6 +41,7 @@ namespace Arbiter
 		[Widget] private SpinButton mpSpin;
 		[Widget] private CheckButton staticDefenseCheck;
 		[Widget] private CheckButton fullFancyCheck;
+		[Widget] private CheckButton gainModCheck;
 		#endregion
 		
 		// Constructor.
@@ -67,7 +68,7 @@ namespace Arbiter
 		
 		// Cancels the brawl and returns to the main dueling window.
 		private void CancelBrawl (object sender, EventArgs args)
-			{ Arbiter.MainWin.ReturnToDuels(); }
+			{ MainWindow.ReturnToDuels(); }
 		
 		// Starts the brawl.
 		private void StartBrawl (object sender, EventArgs args)
@@ -88,11 +89,12 @@ namespace Arbiter
 			Brawl brawl = new Brawl(order, sport,
 			                        (float)hpSpin.Value,
 			                        (short)mpSpin.ValueAsInt,
+			                        staticDefenseCheck.Active,
 			                        fullFancyCheck.Active,
-			                        staticDefenseCheck.Active);
+			                        gainModCheck.Active);
 			
 			// Replace the main window widget with it.
-			Arbiter.MainWin.ReplaceWidget(brawl);
+			MainWindow.ReplaceWidget(brawl);
 			brawl.ShowAll();
 		}
 		

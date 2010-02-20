@@ -185,10 +185,121 @@ sure to keep the rings Styx, Pit, Fern, Can, and Pool, and if you
 call for Magic, make sure to keep Poseidon, Tartarus, Anemoi, Titan,
 and Olympus.
 
+== Brawler ==
+As of version 0.4, Arbiter includes a brawl tool. This tool is still
+in beta, because at the moment, the only sport it calls perfectly is
+swords, though it does have considerations for the other sports. Magic
+will need a mechanic for inputting and storing the advanced spells for
+each combatant, and I'm not entirely sure what Fists needs, though in
+the tool's current state, the entire advantages mechanic is absent.
+
+To use the brawl tool, select "Brawl..." from the shift menu. The main
+dueling window will disappear, though be assured that when you return
+to the main window, all current duels will remain intact, just as you
+left them. What it will be replaced with is a window for configuring
+the upcoming brawl.
+
+For the combatant box, you must insert each combatant on its own line,
+and short names must be used. Thus, you must do, for example,
+
+Xanth
+Matt
+Jake
+etc..
+
+The rules box includes various other options for the duel. Starting HP
+(stamina), starting MP (mods), static defenses, full fancy defenses,
+and knockout MP bonuses.
+
+A static defense allows a combatant to protect another one. Thus, any
+attack aimed for the protected combatant will be evaluated against the
+protector's primary move rather than the target's. However, a combatant
+can static defend only once per round. Mutiple static defenders are
+necessary to protect a combatant against multiple oncoming attacks.
+
+A full fancy defense, when enabled, is triggered automatically if a
+combatant's fancy secondary maneuver would beat multiple primary
+attacks. When this happens, attempts to block every oncoming attacker
+will be made, BUT, no damage will be inflicted upon the attackers.
+
+Currently, the tool makes no restrictions upon which moves can be used
+to static defend or full fancy. Thus, a thrust could be used to protect
+someone, or a fancy thrust could be used to fend off multiple cutting
+attackers.
+
+A knockout MP bonus, when enabled, gives an extra mod to a combatant
+that inflicts the knockout blow upon another combatant.
+
+When everything is ready, click start brawl to start the brawl. Or if
+you want to abort, click cancel and you will be returned to the regular
+window.
+
+All of the combatants will be displayed in an area to the right. When
+there are more combatants then what presently fits in the height of the
+window, a scrollbar will appear with which to scroll through the
+combatants. The window may be resized if desired, and if the new window
+height is enough to fit all the combatants, the scrollbar will disappear.
+The order of combatants for the current round is displayed in a frame on
+the right side of the window, above the summary box. The summary box will
+display the results of each round. The summary will also be saved into a
+text file in the log directory, like a regular duel. When all moves and
+targets are selected, the resolve button will become clickable. The brawl
+can be aborted at any time with the cancel button, which will ask for
+confirmation.
+
+Unlike in the regular dueling tool, restrictions are NOT made to which
+moves can be picked. The only thing the tool looks for is that moves
+and targets are selected. However, it will let you know if a move is
+invalid by coloring the text red. Valid moves will be colored green.
+The target box's text will always be green unless the combatant is
+targeting him/her/itself, in which case it will be red. If a combatant
+actually does wish to target itself, there is a resolution clause for
+it. Any combatant attempting to SD him/her/itself will be punished with
+an easter egg and a wasted turn. After resolution, all comboboxes' text
+are colored gray. Due to the way the tool is currently programmed, the
+target box will also be cleared.
+
+What determines the validity of the moves is these rules: The primary
+move may not be the same as the secondary move, or the last primary or
+last secondary move. The secondary move may not be the same as the
+primary move, or the last secondary move, but may be the same as the
+last primary move. The only exception is Disengage. The reason the tool
+won't block resolution when invalid moves are detected is because some
+brawls may choose to use different rules, or an error was made, and the
+combatant may wish to choose the move that was mistakenly entered in the
+last round.
+
+The tool will prevent toggling a modifier checkbox when the combatant
+doesn't have enough mods.
+
+Also, there is no undoer. To compensate for this, the HP, MP, and round
+numbers are user-adjustable, an invalid moves will not block resolution.
+An undoer would be complicated to implement, but if there is enough
+demand for it, I will see what I can do.
+
+Once there are only two combatants remaining, the target will be locked
+in, and the secondary move will be emptied and locked in. The SD check
+and the secondary mod checks will also be grayed out.
+
+When there is a winner, it will be printed to the summary, and all the
+combatant boxes will become insensitive. In case the last two opponents
+eliminate each other, the tool will not crash... however, the tool will
+still become completely insensitive except for the cancel button. Any
+caller entrusted with calling a brawl should be capable of settling a
+sudden death duel without the tool's help anyways.
+
+If a combatant needs to leave the ring, use the X checkbox or set the
+HP to zero. The combatant will "leave the ring" before any further
+resolution takes place.
+
 == Other Stuff ==
 If you have any trouble with this program, use the e-mail address
 at the top of this readme to let me know. This includes program
-bugs, matrix errors, etc.
+bugs, matrix errors, etc. You can also use the bug tracker at
+Arbiter's Google Code page. Feature requests can be submitted
+there too.
+
+htpp://roh-arbiter.googlecode.com
 
 This program is licensed under the MIT/X11 License, which means that
 it is free and open source. The source code can be downloaded from the
