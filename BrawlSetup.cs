@@ -64,7 +64,8 @@ namespace Arbiter
 		
 		// Makes various widgets insensitive if DoM is selected.
 		private void CheckSport (object sender, EventArgs args)
-			{ mpSpin.Sensitive = fullFancyCheck.Sensitive = sportCombo.ActiveText != "Magic"; }
+			{ mpSpin.Sensitive = fullFancyCheck.Sensitive =
+			  gainModCheck.Sensitive = sportCombo.ActiveText != "Magic"; }
 		
 		// Cancels the brawl and returns to the main dueling window.
 		private void CancelBrawl (object sender, EventArgs args)
