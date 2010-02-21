@@ -1,4 +1,4 @@
-Arbiter v0.3
+Arbiter v0.4
 by Trent McPheron (twilightinzero@gmail.com)
 =======================
 
