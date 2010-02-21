@@ -72,8 +72,8 @@ namespace Arbiter
 		public Brawl (List<string> order, Sport sport, float hp,
 		              short mp, bool sd, bool fullFancy, bool gainMod) : base()
 		{
-			// Save a couple parameters.
-			this.duelNum = Arbiter.NumDuels++;
+			// Save a few parameters.
+			this.duelNum = ++Arbiter.NumDuels;
 			this.fullFancy = fullFancy;
 			this.gainMod = gainMod;
 			this.sport = sport;

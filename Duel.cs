@@ -161,7 +161,7 @@ namespace Arbiter
 			this.Add(duelWidget);
 			
 			#region Copy Parameters
-			this.duelNum = Arbiter.NumDuels++;
+			this.duelNum = ++Arbiter.NumDuels;
 			this.duelistA = duelistA;
 			this.duelistB = duelistB;
 			this.sport = sport;
