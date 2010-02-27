@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <StartupObject>Arbiter.Arbiter</StartupObject>
     <CodePage>65001</CodePage>
-    <ReleaseVersion>0.4</ReleaseVersion>
+    <ReleaseVersion>0.5</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,12 +57,35 @@
     <EmbeddedResource Include="DoSChallenge.png" />
     <EmbeddedResource Include="DoSMadness.png" />
     <EmbeddedResource Include="DoSNormal.png" />
-    <EmbeddedResource Include="GUI.glade" />
     <EmbeddedResource Include="duelists.cfg" />
     <EmbeddedResource Include="rings.cfg" />
-    <EmbeddedResource Include="sport-swords.cfg" />
-    <EmbeddedResource Include="sport-fists.cfg" />
-    <EmbeddedResource Include="sport-magic.cfg" />
+    <EmbeddedResource Include="sport-swords.cfg">
+      <LogicalName>sport-swords.cfg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="sport-fists.cfg">
+      <LogicalName>sport-fists.cfg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="sport-magic.cfg">
+      <LogicalName>sport-magic.cfg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BrawlSetup.glade">
+      <LogicalName>BrawlSetup.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brawl.glade">
+      <LogicalName>Brawl.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Combatant.glade">
+      <LogicalName>Combatant.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Duel.glade">
+      <LogicalName>Duel.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditDialog.glade">
+      <LogicalName>EditDialog.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.glade">
+      <LogicalName>MainWindow.glade</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />

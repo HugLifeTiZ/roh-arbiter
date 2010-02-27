@@ -79,7 +79,7 @@ namespace Arbiter
 			this.sport = sport;
 			
 			// Create widgets.
-			XML xml = new XML("Arbiter.GUI.glade", "brawlWidget");
+			XML xml = new XML("Brawl.glade", "brawlWidget");
 			xml.Autoconnect(this);
 			this.Add(brawlWidget);
 			

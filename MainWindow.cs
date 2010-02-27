@@ -81,7 +81,7 @@ namespace Arbiter
 		public MainWindow()
 		{
 			// Load the Glade file.
-			XML xml = new XML("Arbiter.GUI.glade", "mainWin");
+			XML xml = new XML("MainWindow.glade", "mainWin");
 			xml.Autoconnect(this); 
 			
 			#region Settings
@@ -295,10 +295,12 @@ namespace Arbiter
 			duelNotebook.InsertPage(duel, label, duelNotebook.NPages - 1);
 			duelNotebook.ShowAll();
 			duelNotebook.CurrentPage = duelNotebook.NPages - 2;
-			duelNotebook.CurrentPageWidget.Name = duelistANameCEntry.ActiveText;
 			
 			// For the popup menu.
-			duelNotebook.SetMenuLabelText(duelNotebook.CurrentPageWidget, ringNameCEntry.ActiveText);
+			duelNotebook.SetMenuLabelText(duel, ringNameCEntry.ActiveText);
+			
+			// Enable drag-and-drop reordering.
+			duelNotebook.SetTabReorderable(duel, true);
 			
 			// Make the close button work.
 			closeButton.ButtonReleaseEvent += delegate { duelNotebook.Remove(duel); };
