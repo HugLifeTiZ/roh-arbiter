@@ -1,8 +1,11 @@
-Arbiter v0.4
+Arbiter v0.5
 by Trent McPheron (twilightinzero@gmail.com)
 =======================
 
 == Changelog ==
+-v0.5-
+ *The normal duel tool now uses the same move
+  coloring that the brawler does.
 -v0.4-
  *A brawl tool has been added! A new section in the
   readme has been added for how to use it. Do note

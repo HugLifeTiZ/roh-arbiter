@@ -45,6 +45,7 @@ namespace Arbiter
 		private string logHeader;
 		private bool overtime, madness;
 		private bool usedEFA, usedEFB;
+		private bool manual;
 		private float scoreA, scoreB;
 		private int duelNum, round;
 		private List<int> moveA, moveB;
@@ -91,19 +92,53 @@ namespace Arbiter
 		
 		#region Properties
 		// Convenience properties.
-		public string DuelLog
+		private int DuelistAMove
+			{ get { return duelistAMoveCombo.Active; } }
+		private int DuelistBMove
+			{ get { return duelistBMoveCombo.Active; } }
+		private bool DuelistAFancy
+			{ get { return duelistAFancyCheck.Active; } }
+		private bool DuelistBFancy
+			{ get { return duelistBFancyCheck.Active; } }
+		private bool DuelistAFeint
+			{ get { return duelistAFeintCheck.Active; } }
+		private bool DuelistBFeint
+			{ get { return duelistBFeintCheck.Active; } }
+		
+		// Makes it easier to manipulate the
+		// duel log buffer.
+		private string DuelLog
 		{
 			set { duelLogView.Buffer.Text = value; }
 			get { return duelLogView.Buffer.Text; }
 		}
-		public bool DuelistAFancy
-			{ get { return duelistAFancyCheck.Active; } }
-		public bool DuelistBFancy
-			{ get { return duelistBFancyCheck.Active; } }
-		public bool DuelistAFeint
-			{ get { return duelistAFeintCheck.Active; } }
-		public bool DuelistBFeint
-			{ get { return duelistBFeintCheck.Active; } }
+		
+		// Determines the validity of individual
+		// duelists' moves.
+		private bool DuelistAValid
+		{
+			get
+			{
+				return (round < 2 ? DuelistAMove > -1 : true) &&
+					(((DuelistAMove != moveA[round - 1]) ||
+					(sport.Moves[DuelistAMove] == "Disengage")) &&
+					!(usedEFA && DuelistAMove != 14) &&
+					!(moveA[round - 1] == 15 &&
+					sport.Moves[DuelistAMove] == "Reflection"));
+			}
+		}
+		private bool DuelistBValid
+		{
+			get
+			{
+				return (round < 2 ? DuelistBMove > -1 : true) &&
+					(((DuelistBMove != moveB[round - 1]) ||
+					(sport.Moves[DuelistBMove] == "Disengage")) &&
+					!(usedEFB && DuelistBMove != 14) &&
+					!(moveB[round - 1] == 15 &&
+					sport.Moves[DuelistBMove] == "Reflection"));
+			}
+		}
 		
 		// Used to hide the button box.
 		public bool HideButtons
@@ -120,7 +155,6 @@ namespace Arbiter
 		// and always enables the resolver. A manual property
 		// is used so that this property can enable the
 		// resolver.
-		private bool manual;
 		public bool Manual
 		{
 			get  { return manual; }
@@ -131,20 +165,19 @@ namespace Arbiter
 			}
 		}
 		
-		// Used to determine if the duel can be ended.
+		// Used to determine if the duel is over.
 		public bool End  { get; private set; }
 		
 		// Determines whether or not the round can be resolved.
-		public bool CanResolve {
-			get {
+		public bool CanResolve
+		{
+			get
+			{
 				return manual ||
-				((duelistAMoveCombo.Active != moveA[round - 1] || duelistAMoveCombo.ActiveText == "Disengage")
-				&& (duelistBMoveCombo.Active != moveB[round - 1] || duelistBMoveCombo.ActiveText == "Disengage")
-			    && !(moveA[round - 1] == 15 && duelistAMoveCombo.ActiveText == "Reflection")
-			    && !(moveB[round - 1] == 15 && duelistBMoveCombo.ActiveText == "Reflection")
-			    && !(usedEFA && duelistAMoveCombo.Active == 14)
-			    && !(usedEFB && duelistBMoveCombo.Active == 14)
-				&& !End); } }
+					(DuelistAValid && DuelistBValid)
+					&& !End;
+			}
+		}
 		
 		// Determines whether or not the last round can be undoed.
 		public bool CanUndo {
@@ -156,7 +189,7 @@ namespace Arbiter
 		            Sport sport, bool overtime, bool madness) : base()
 		{
 			// Load the Glade file.
-			XML xml = new XML("Arbiter.GUI.glade", "duelWidget");
+			XML xml = new XML("Duel.glade", "duelWidget");
 			xml.Autoconnect(this);
 			this.Add(duelWidget);
 			
@@ -167,27 +200,6 @@ namespace Arbiter
 			this.sport = sport;
 			this.overtime = overtime;
 			this.madness = madness;
-			#endregion
-			
-			#region Widget Properties	
-			// Set widget properties.
-			duelistAMoveCombo.Model = sport.MoveLS;
-			duelistBMoveCombo.Model = sport.MoveLS;
-			duelistAFancyCheck.NoShowAll = !(duelistAFancyCheck.Visible = sport.Fancies);
-			duelistAFancyPad.NoShowAll = !(duelistAFancyPad.Visible = sport.Fancies);
-			duelistAFeintCheck.NoShowAll = !(duelistAFeintCheck.Visible = sport.Feints);
-			duelistAFeintPad.NoShowAll = !(duelistAFeintPad.Visible = sport.Feints);
-			duelistBFancyCheck.NoShowAll = !(duelistBFancyCheck.Visible = sport.Fancies);
-			duelistBFancyPad.NoShowAll = !(duelistBFancyPad.Visible = sport.Fancies);
-			duelistBFeintCheck.NoShowAll = !(duelistBFeintCheck.Visible = sport.Feints);
-			duelistBFeintPad.NoShowAll = !(duelistBFeintPad.Visible = sport.Feints);
-			HideButtons = Arbiter.HideButtons;
-			
-			// Simple anonymous delegates for unchecking the opposite mod box.
-			duelistAFancyCheck.Toggled += delegate { duelistAFeintCheck.Active = false; };
-			duelistAFeintCheck.Toggled += delegate { duelistAFancyCheck.Active = false; };
-			duelistBFancyCheck.Toggled += delegate { duelistBFeintCheck.Active = false; };
-			duelistBFeintCheck.Toggled += delegate { duelistBFancyCheck.Active = false; };
 			#endregion
 			
 			#region Short Names
@@ -244,6 +256,36 @@ namespace Arbiter
 			roundScoreA.Add(0);
 			roundScoreB.Add(0);
 			UpdateLabels(0);
+			#endregion
+			
+			#region Widget Properties	
+			// Set widget properties.
+			ListStore ls = new ListStore(typeof(string));
+			foreach (string s in sport.Moves)
+				ls.AppendValues(s);
+			duelistAMoveCombo.Model = ls;
+			duelistBMoveCombo.Model = ls;
+			duelistAFancyCheck.NoShowAll = !(duelistAFancyCheck.Visible = sport.Fancies);
+			duelistAFancyPad.NoShowAll = !(duelistAFancyPad.Visible = sport.Fancies);
+			duelistAFeintCheck.NoShowAll = !(duelistAFeintCheck.Visible = sport.Feints);
+			duelistAFeintPad.NoShowAll = !(duelistAFeintPad.Visible = sport.Feints);
+			duelistBFancyCheck.NoShowAll = !(duelistBFancyCheck.Visible = sport.Fancies);
+			duelistBFancyPad.NoShowAll = !(duelistBFancyPad.Visible = sport.Fancies);
+			duelistBFeintCheck.NoShowAll = !(duelistBFeintCheck.Visible = sport.Feints);
+			duelistBFeintPad.NoShowAll = !(duelistBFeintPad.Visible = sport.Feints);
+			HideButtons = Arbiter.HideButtons;
+			
+			// Simple anonymous delegates for unchecking the opposite mod box.
+			duelistAFancyCheck.Toggled += delegate { duelistAFeintCheck.Active = false; };
+			duelistAFeintCheck.Toggled += delegate { duelistAFancyCheck.Active = false; };
+			duelistBFancyCheck.Toggled += delegate { duelistBFeintCheck.Active = false; };
+			duelistBFeintCheck.Toggled += delegate { duelistBFancyCheck.Active = false; };
+			
+			// Delegates to color the comboboxes based on move validity.
+			duelistAMoveCombo.AddNotification("active", VerifyMoveA);
+			duelistBMoveCombo.AddNotification("active", VerifyMoveB);
+			duelistAMoveCombo.AddNotification("popup-shown", VerifyMoveA);
+			duelistBMoveCombo.AddNotification("popup-shown", VerifyMoveB);
 			#endregion
 			
 			#region Start duel log
@@ -381,6 +423,12 @@ namespace Arbiter
 			duelistAFeintCheck.Active = false;
 			duelistBFeintCheck.Active = false;
 			
+			// Color the comboboxes.
+			duelistAMoveCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			duelistAMoveCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			duelistBMoveCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			duelistBMoveCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			
 			// Disable the resolver until new moves are picked,
 			// unless Manual Mode is enabled.
 			resolveButton.Sensitive = Manual || false;
@@ -456,6 +504,12 @@ namespace Arbiter
 			duelistAMoveCombo.Active = moveA[round - 1];
 			duelistBMoveCombo.Active = moveB[round - 1];
 			
+			// Color the comboboxes.
+			duelistAMoveCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			duelistAMoveCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			duelistBMoveCombo.Child.ModifyText(StateType.Normal, new Gdk.Color(128, 128, 128));
+			duelistBMoveCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
+			
 			// Update labels and logs.
 			UpdateLabels(round - 1);
 			UpdateDuelLog();
@@ -470,7 +524,7 @@ namespace Arbiter
 		public void EndDuel()
 		{
 			// Load the GUI.
-			XML xml = new XML("Arbiter.GUI.glade", "endDuelWin");
+			XML xml = new XML("Duel.glade", "endDuelWin");
 			xml.Autoconnect(this);
 			endDuelWin.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
 			
@@ -768,9 +822,36 @@ namespace Arbiter
 		#endregion
 		
 		#region Other Widgets
-		// Enables the resolver once new moves have been selected.
-		private void MoveChanged (object sender, EventArgs args)
+		// Colors the combobox text depending on move validity.
+		private void VerifyMoveA (object sender, GLib.NotifyArgs args)
 		{
+			duelistAMoveCombo.Child.ModifyText(StateType.Normal, 
+			                                   (DuelistAValid ?
+			                                    new Gdk.Color(0, 128, 0) :
+			                                    new Gdk.Color(192, 0, 0)));
+			duelistAMoveCombo.Child.ModifyText(StateType.Prelight, 
+			                                   (DuelistAValid ?
+			                                    new Gdk.Color(0, 128, 0) :
+			                                    new Gdk.Color(192, 0, 0)));
+			
+			// Possibly enable resolver.
+			resolveButton.Sensitive = CanResolve;
+			MainWindow.SCheckDuelMenu();
+		}
+		
+		// Colors the combobox text depending on move validity.
+		private void VerifyMoveB (object sender, GLib.NotifyArgs args)
+		{
+			duelistBMoveCombo.Child.ModifyText(StateType.Normal, 
+			                                   (DuelistBValid ?
+			                                    new Gdk.Color(0, 128, 0) :
+			                                    new Gdk.Color(192, 0, 0)));
+			duelistBMoveCombo.Child.ModifyText(StateType.Prelight, 
+			                                   (DuelistBValid ?
+			                                    new Gdk.Color(0, 128, 0) :
+			                                    new Gdk.Color(192, 0, 0)));
+			
+			// Possibly enable resolver.
 			resolveButton.Sensitive = CanResolve;
 			MainWindow.SCheckDuelMenu();
 		}

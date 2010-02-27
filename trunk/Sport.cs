@@ -44,16 +44,15 @@ namespace Arbiter
 		public char[,] Matrix     { get; set; }
 		public string[] Abbrev    { get; set; }
 		public string[] Moves     { get; set; }
-		public ListStore MoveLS   { get; set; }
 		#endregion
 		
 		// Load a sport from an embedded config.
-		public Sport (string sportName)
+		public Sport (string sportName) : this ()
 		{
 			// Load the embedded config for the sport.
 			StreamReader sr = new StreamReader(
 					Assembly.GetExecutingAssembly().GetManifestResourceStream(
-						"Arbiter.sport-" + sportName + ".cfg"));
+						"sport-" + sportName + ".cfg"));
 			
 			// Load the comma separated header.
 			string[] header = sr.ReadLine().Split(',');
@@ -96,23 +95,9 @@ namespace Arbiter
 			}
 			
 			if (error)
-			{
-				Dialog dialog = new Dialog("Matrix error", null,
-			                           DialogFlags.NoSeparator | DialogFlags.Modal,
-			                           new object[] {Stock.Ok, ResponseType.Ok});
-				dialog.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
-				Label dlabel = new Label();
-				dlabel.Text = "A consistency error was detected in the " + sportName +
+				Console.WriteLine("A consistency error was detected in the " + sportName +
 					" matrix\n at "+ errA.ToString() + "," + errB.ToString() + ". " +
-					"Please inform the author of this error immediately.";
-				dlabel.SetAlignment(0.5f, 0.5f);
-				dlabel.Justify = Justification.Center;
-				dialog.VBox.PackStart(dlabel);
-				dialog.Default = dialog.ActionArea.Children[0];
-				dialog.VBox.ShowAll();
-				dialog.Run();
-				dialog.Destroy();
-			}
+					"Please inform the author of this error immediately.");
 			
 			// Read the abbreviations.
 			Abbrev = sr.ReadLine().Split(',');
@@ -121,10 +106,6 @@ namespace Arbiter
 			Moves = new string[m];
 			for (int l = 0; l < m; l++)
 				Moves[l] = sr.ReadLine();
-			
-			MoveLS = new ListStore(typeof(string));
-			foreach (string s in Moves)
-				MoveLS.AppendValues(s);
 		}
 	}
 }

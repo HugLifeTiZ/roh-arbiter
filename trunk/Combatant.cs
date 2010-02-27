@@ -186,7 +186,7 @@ namespace Arbiter
 		public Combatant (string name, float hp, short mp, Sport sport, bool sd) : base()
 		{
 			// Load the widgets.
-			XML xml = new XML("Arbiter.GUI.glade", "combatantWidget");
+			XML xml = new XML("Combatant.glade", "combatantWidget");
 			xml.Autoconnect(this);
 			this.Add(combatantWidget);
 			
@@ -215,8 +215,11 @@ namespace Arbiter
 			sdCheck.NoShowAll = !(sdCheck.Visible = sd);
 			
 			// Assign combobox lists.
-			primaryCombo.Model = sport.MoveLS;
-			secondaryCombo.Model = sport.MoveLS;
+			ListStore ls = new ListStore(typeof(string));
+			foreach (string s in sport.Moves)
+				ls.AppendValues(s);
+			primaryCombo.Model = ls;
+			secondaryCombo.Model = ls;
 			targetCombo.Model = Brawl.Order;
 			
 			// Set last move selections and bools.

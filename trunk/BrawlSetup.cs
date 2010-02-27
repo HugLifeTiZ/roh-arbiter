@@ -48,7 +48,7 @@ namespace Arbiter
 		public BrawlSetup () : base()
 		{
 			// Load the widgets.
-			XML xml = new XML("Arbiter.GUI.glade", "brawlSetupWidget");
+			XML xml = new XML("BrawlSetup.glade", "brawlSetupWidget");
 			xml.Autoconnect(this);
 			this.Add(brawlSetupWidget);
 			
