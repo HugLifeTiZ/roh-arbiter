@@ -232,8 +232,8 @@ namespace Arbiter
 			
 			#region Initialization
 			// Set all the variables.
-			duelistANameLabel.Markup = @"<b>" + shortNameA + @"</b>";
-			duelistBNameLabel.Markup = @"<b>" + shortNameB + @"</b>";
+			duelistANameLabel.Markup = "<b>" + shortNameA + "</b>";
+			duelistBNameLabel.Markup = "<b>" + shortNameB + "</b>";
 			round = 1;
 			scoreA = 0;
 			scoreB = 0;
@@ -332,49 +332,24 @@ namespace Arbiter
 			#endregion
 			
 			#region Resolve
-			// Act according to the result indicated on the matrix.
-			switch (sport.Matrix[moveA[round], moveB[round]])
-			{
-			case 'A':  // A scores.
-				if (!DuelistAFeint) roundScoreA[round] = 1;
-				break;
-			case 'B':  // B scores.
-				if (!DuelistBFeint) roundScoreB[round] = 1;
-				break;
-			case 'a':  // A gets advantage.
-				if (DuelistBFeint) roundScoreB[round] = 1;
-				else if (DuelistAFancy) roundScoreA[round] = 1;
-				else if (sport.Advantages)
-				{
-					if (advA[round - 1])
-						roundScoreA[round] = 1;
-					else advA[round] = true;
-				}
-				else roundScoreA[round] = 0.5f;
-				break;
-			case 'b':  // B gets advantage.
-				if (DuelistAFeint) roundScoreA[round] = 1;
-				else if (DuelistBFancy) roundScoreB[round] = 1;
-				else if (sport.Advantages)
-				{
-					if (advB[round - 1])
-						roundScoreB[round] = 1;
-					else advB[round] = true;
-				}
-				else roundScoreB[round] = 0.5f;
-				break;
-			case '!':  // Dual RF, Magic only. Yay for C-style switch.
-			case '1':  // Both score.
-				if (!DuelistAFeint) roundScoreA[round] = 1;
-				if (!DuelistBFeint) roundScoreB[round] = 1;
-				break;
-			case '+':  // Magic only: dual advantage.
-				roundScoreA[round] = 0.5f;
-				roundScoreB[round] = 0.5f;
-				break;
-			case '0':  // Null round.
-				break;
-			}
+			// Resolve the moves and mods and store
+			// the results.
+			float resultA, resultB;
+			sport.Resolve(DuelistAMove, DuelistAFancy, DuelistAFeint,
+			              DuelistBMove, DuelistBFancy, DuelistBFeint,
+			              out resultA, out resultB);
+			roundScoreA[round] = resultA;
+			roundScoreB[round] = resultB;
+			
+			// Check for advantages.
+			if (sport.Advantages && roundScoreA[round] == 0.5)
+				roundScoreA[round] = 0; advA[round] = true;
+			if (sport.Advantages && roundScoreB[round] == 0.5)
+				roundScoreB[round] = 0; advB[round] = true;
+			if (advA[round] && advA[round - 1])
+				advA[round] = false; roundScoreA[round] = 1;
+			if (advB[round] && advB[round - 1])
+				advB[round] = false; roundScoreB[round] = 1;
 			
 			// Add the scores.
 			scoreA += roundScoreA[round];
@@ -385,6 +360,7 @@ namespace Arbiter
 			if (moveB[round] == 14) usedEFB = true;
 			#endregion
 			
+			#region Post-Resolve
 			// Add a line to the duel log.
 			UpdateDuelLog(moveA[round], moveB[round]);
 			
@@ -415,6 +391,7 @@ namespace Arbiter
 			
 			// Also self-explanatory.
 			if (!manual) CheckDuelEnd();
+			#endregion
 			
 			#region End of Resolve
 			// Uncheck mod boxes.
@@ -441,6 +418,7 @@ namespace Arbiter
 			#endregion
 		}
 		
+		#region Methods
 		// Undoes the round that just happened. Public for
 		// the same reason as ResolveRound.
 		public void UndoRound (object sender, EventArgs args)
@@ -521,12 +499,12 @@ namespace Arbiter
 		
 		// Ends the duel prematurely, presenting a dialog
 		// that asks what to do.
-		public void EndDuel()
+		public void EndDuel ()
 		{
 			// Load the GUI.
 			XML xml = new XML("Duel.glade", "endDuelWin");
 			xml.Autoconnect(this);
-			endDuelWin.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			endDuelWin.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 			
 			// Set the labels and entries.
 			duelistAWinRadio.Label = duelistA;
@@ -614,7 +592,6 @@ namespace Arbiter
 			duelistBMoveCombo.Sensitive = false;
 		}
 		
-		#region Methods
 		// Updates the labels.
 		private void UpdateLabels (int r)
 		{
@@ -623,29 +600,29 @@ namespace Arbiter
 			string roundSize = "14336";
 			if (Arbiter.SmallScore)
 			{
-				mainSize = "18432";
-				roundSize = "9216";
+				mainSize = "22528";
+				roundSize = "11264";
 			}
 			
 			// Create main score parts.
-			duelistAScoreLabel.Markup = @"<span size='" + mainSize +
-				@"'><b>" + scoreA.ToString(sport.ScoreFormat) + @"</b></span>";
-			duelistBScoreLabel.Markup = @"<span size='" + mainSize +
-				@"'><b>" + scoreB.ToString(sport.ScoreFormat) + @"</b></span>";
+			duelistAScoreLabel.Markup = "<span size='" + mainSize +
+				"'><b>" + scoreA.ToString(sport.ScoreFormat) + "</b></span>";
+			duelistBScoreLabel.Markup = "<span size='" + mainSize +
+				"'><b>" + scoreB.ToString(sport.ScoreFormat) + "</b></span>";
 			
 			// Create round score parts.
-			duelistARoundScoreLabel.Markup = @"<span size='" + roundSize + @"'>" +
-				roundScoreA[r].ToString(sport.ScoreFormat) + @"</span>";
-			duelistBRoundScoreLabel.Markup = @"<span size='" + roundSize + @"'>" +
-				roundScoreB[r].ToString(sport.ScoreFormat) + @"</span>";
+			duelistARoundScoreLabel.Markup = "<span size='" + roundSize + "'>" +
+				roundScoreA[r].ToString(sport.ScoreFormat) + "</span>";
+			duelistBRoundScoreLabel.Markup = "<span size='" + roundSize + "'>" +
+				roundScoreB[r].ToString(sport.ScoreFormat) + "</span>";
 			if (advA[r])
-				duelistARoundScoreLabel.Markup = @"<span size='" + roundSize + @"'>+</span>";
+				duelistARoundScoreLabel.Markup = "<span size='" + roundSize + "'>+</span>";
 			if (advB[r])
-				duelistBRoundScoreLabel.Markup = @"<span size='" + roundSize + @"'>+</span>";
+				duelistBRoundScoreLabel.Markup = "<span size='" + roundSize + "'>+</span>";
 			
 			// Update the round label.
 			roundLabel.Markup =
-				@"<span size='x-large'><b>Round " + (r + 1).ToString() + @"</b></span>";
+				"<span size='x-large'><b>Round " + (r + 1).ToString() + "</b></span>";
 		}
 		
 		// Public overload for the scoreboard size toggler.
@@ -708,7 +685,7 @@ namespace Arbiter
 		}
 		
 		// Checks for the end of the duel.
-		private void CheckDuelEnd()
+		private void CheckDuelEnd ()
 		{
 			// Create score strings.
 			string scoreStringA = scoreA.ToString(sport.ScoreFormat);
@@ -753,9 +730,15 @@ namespace Arbiter
 			{
 				//Add final line to log.
 				log.Add("");
-				string final = duelistA + " .ties. " + duelistB + ", " +
-					scoreStringA + " - " + scoreStringB +
-					" in " + (round - 1).ToString();
+				string final;
+				if (scoreA >= scoreB)
+					final = duelistA + " .ties. " + duelistB + ", " +
+						scoreStringA + " - " + scoreStringB +
+						" in " + (round - 1).ToString();
+				else
+					final = duelistB + " .ties. " + duelistA + ", " +
+						scoreStringB + " - " + scoreStringA +
+						" in " + (round - 1).ToString();
 				if (Arbiter.FightNight) final += ", " + sport.ShortName;
 				log.Add(final);
 				Arbiter.UpdateShiftReport(final, false);
@@ -780,7 +763,7 @@ namespace Arbiter
 		}
 		
 		// Logs the duel after each round.
-		private void SaveDuel()
+		private void SaveDuel ()
 		{
 			// Figure out the file name.
 			string fileName = duelNum.ToString("00") + ". " + duelistA + " .vs. " + duelistB;
@@ -795,7 +778,7 @@ namespace Arbiter
 		}
 		
 		// Saves the duel log to a specific file.
-		public void SaveDuelAs()
+		public void SaveDuelAs ()
 		{
 			// Prompt the user to pick a file.
 			FileChooserDialog fc = new FileChooserDialog(
@@ -803,7 +786,7 @@ namespace Arbiter
 									null, FileChooserAction.Save,
 									new object[] {Stock.Cancel, ResponseType.Cancel,
 									Stock.Save, ResponseType.Accept});
-			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			fc.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 			fc.Modal = true;
 			int r = fc.Run();
 			if (r != (int)ResponseType.Accept)

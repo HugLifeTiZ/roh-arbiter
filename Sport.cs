@@ -28,7 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Gtk;
 
 namespace Arbiter
 {
@@ -106,6 +105,49 @@ namespace Arbiter
 			Moves = new string[m];
 			for (int l = 0; l < m; l++)
 				Moves[l] = sr.ReadLine();
+		}
+		
+		// Evaluates a pair of moves and modifiers.
+		public void Resolve (int moveA, bool fancyA, bool feintA,
+		                     int moveB, bool fancyB, bool feintB,
+		                     out float resultA, out float resultB)
+		{
+			// Initialize the output vars.
+			resultA = 0;
+			resultB = 0;
+			
+			// The individual moves are used as
+			// coordinates on the matrix
+			switch (Matrix[moveA, moveB])
+			{
+			case 'A':  // A scores.
+				if (!feintA) resultA = 1;
+				break;
+			case 'B':  // B scores.
+				if (!feintB) resultB = 1;
+				break;
+			case 'a':  // A gets advantage.
+				if (feintB) resultB = 1;
+				else if (fancyA) resultA = 1;
+				else resultA = 0.5f;
+				break;
+			case 'b':  // B gets advantage.
+				if (feintA) resultA = 1;
+				else if (fancyB) resultB = 1;
+				else resultB = 0.5f;
+				break;
+			case '!':  // Dual RF, Magic only. Yay for C-style switch.
+			case '1':  // Both score.
+				if (!feintA) resultA = 1;
+				if (!feintB) resultB = 1;
+				break;
+			case '+':  // Magic only: dual advantage.
+				resultA = 0.5f;
+				resultB = 0.5f;
+				break;
+			case '0':  // Null round.
+				break;
+			}
 		}
 	}
 }

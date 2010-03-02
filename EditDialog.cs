@@ -46,7 +46,7 @@ namespace Arbiter
 			XML xml = new XML("Arbiter.GUI.glade", "editDialog");
 			xml.Autoconnect(this);
 			editDialog.Title = title;
-			editDialog.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			editDialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 			
 			// Create the TreeView.
 			listView = new TreeView();
@@ -84,7 +84,7 @@ namespace Arbiter
 			                           DialogFlags.NoSeparator | DialogFlags.Modal,
 			                           new object[] {Stock.Cancel, ResponseType.Cancel,
 										Stock.Ok, ResponseType.Ok});
-			dialog.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			dialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 			dialog.WindowPosition = WindowPosition.Center;
 			Label label = new Label("Enter a name:");
 			label.SetAlignment(0.0f, 0.5f);

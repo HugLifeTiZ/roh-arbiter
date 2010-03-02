@@ -157,14 +157,6 @@
           <widget class="GtkHBox" id="moveBox">
             <property name="visible">True</property>
             <child>
-              <widget class="GtkLabel" id="moveBoxLeftPad">
-                <property name="visible">True</property>
-              </widget>
-              <packing>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
               <widget class="GtkVBox" id="duelistAMoveBox">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
@@ -254,18 +246,19 @@ Disengage</property>
                 </child>
               </widget>
               <packing>
-                <property name="position">1</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="moveBoxCenterPad">
-                <property name="width_request">20</property>
+              <widget class="GtkVSeparator" id="vseparator">
                 <property name="visible">True</property>
+                <property name="orientation">vertical</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -358,15 +351,8 @@ Disengage</property>
                 </child>
               </widget>
               <packing>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="moveBoxRightPad">
-                <property name="visible">True</property>
-              </widget>
-              <packing>
-                <property name="position">4</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </widget>

@@ -150,7 +150,7 @@ namespace Arbiter
 			                        DialogFlags.NoSeparator | DialogFlags.Modal,
 			                        new object[] {Stock.No, ResponseType.No,
 									Stock.Yes, ResponseType.Yes});
-			dialog.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			dialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 			Label label = new Label("If you cancel this brawl, all current progress\n" +
 			                        "in the brawl will be lost. Are you sure you\n" +
 			                        "want to cancel?");
@@ -201,9 +201,9 @@ namespace Arbiter
 							if (order[t].Target == c &&
 							    order[c].Target != t && !order[t].SD)
 							{
-								Evaluate(order[c].Secondary, order[c].SecFancy, order[c].SecFeint,
-								         order[t].Primary, order[t].PriFancy, order[t].PriFeint,
-								         out resultA, out resultB);
+								sport.Resolve(order[c].Secondary, order[c].SecFancy, order[c].SecFeint,
+								              order[t].Primary, order[t].PriFancy, order[t].PriFeint,
+								              out resultA, out resultB);
 								if (resultA == 1) defended++;
 							}
 						}
@@ -296,9 +296,9 @@ namespace Arbiter
 					else if (order[t].Target == c && !order[t].Acted && !order[t].SD)
 					{
 						// Evaluate primary vs. primary.
-						Evaluate(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
-						         order[t].Primary, order[t].PriFancy, order[t].PriFeint,
-						         out resultA, out resultB);
+						sport.Resolve(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
+						              order[t].Primary, order[t].PriFancy, order[t].PriFeint,
+						              out resultA, out resultB);
 						
 						// Inflict damage.
 						order[c].HP -= resultB;
@@ -359,9 +359,9 @@ namespace Arbiter
 							d = sder;
 							
 							// Evaluate primary vs. primary.
-							Evaluate(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
-							         order[d].Primary, order[d].PriFancy, order[d].PriFeint,
-							         out resultA, out resultB);
+							sport.Resolve(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
+							              order[d].Primary, order[d].PriFancy, order[d].PriFeint,
+							              out resultA, out resultB);
 							
 							// Inflict damage.
 							order[c].HP -= resultB;
@@ -407,9 +407,9 @@ namespace Arbiter
 						else if (!order[t].Defended)
 						{
 							// Evaluate primary vs. secondary.
-							Evaluate(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
-							         order[t].Secondary, order[t].SecFancy, order[t].SecFeint,
-							         out resultA, out resultB);
+							sport.Resolve(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
+							              order[t].Secondary, order[t].SecFancy, order[t].SecFeint,
+							              out resultA, out resultB);
 							
 							// Nullify any damage inflicted by a full fancy defender.
 							if (order[t].FullFancy) resultB = 0;
@@ -615,49 +615,6 @@ namespace Arbiter
 			
 			// Make the resolver insensitive.
 			resolveButton.Sensitive = false;
-		}
-		
-		// Evaluates one set of moves against another.
-		// This may get refactored to a system-wide method.
-		private void Evaluate (int moveA, bool fancyA, bool feintA,
-		                       int moveB, bool fancyB, bool feintB,
-		                       out float resultA, out float resultB)
-		{
-			// Initialize the output variables.
-			resultA = 0;
-			resultB = 0;
-			
-			// Does this look familiar? Because it should.
-			switch (sport.Matrix[moveA, moveB])
-			{
-			case 'A':  // A scores.
-				if (!feintA) resultA = 1;
-				break;
-			case 'B':  // B scores.
-				if (!feintB) resultB = 1;
-				break;
-			case 'a':  // A gets advantage.
-				if (feintB) resultB = 1;
-				else if (fancyA) resultA = 1;
-				else resultA = 0.5f;
-				break;
-			case 'b':  // B gets advantage.
-				if (feintA) resultA = 1;
-				else if (fancyB) resultB = 1;
-				else resultB = 0.5f;
-				break;
-			case '!':  // Dual RF, Magic only. Yay for C-style switch.
-			case '1':  // Both score.
-				if (!feintA) resultA = 1;
-				if (!feintB) resultB = 1;
-				break;
-			case '+':  // Magic only: dual advantage.
-				resultA = 0.5f;
-				resultB = 0.5f;
-				break;
-			case '0':  // Null round.
-				break;
-			}
 		}
 	}
 }

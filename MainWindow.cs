@@ -32,13 +32,13 @@ using Glade;
 namespace Arbiter
 {
 	// The main window of the program.
-	public class MainWindow
+	public class MainWindow : Window
 	{
 		private static MainWindow instance;
 		
 		#region Widgets
 		// Widgets to be attached by Glade#.
-		[Widget] private Window mainWin;
+		//[Widget] private Window mainWin;
 		[Widget] private VBox mainWidget;
 		[Widget] private Notebook duelNotebook;
 		[Widget] private ComboBoxEntry duelistANameCEntry;
@@ -46,12 +46,10 @@ namespace Arbiter
 		[Widget] private ComboBoxEntry ringNameCEntry;
 		[Widget] private ComboBox sportCombo;
 		[Widget] private ComboBox typeCombo;
-		[Widget] private CheckButton fightNightCheck;
-		[Widget] private Image newDuelTabIcon;
+		[Widget] private CheckMenuItem fightNightCheckMenuItem;
 		[Widget] private Image duelistAEditImage;
 		[Widget] private Image duelistBEditImage;
 		[Widget] private Image ringEditImage;
-		[Widget] private HBox newDuelTab;
 		[Widget] private TextView shiftReportView;
 		[Widget] private MenuItem duelMenuItem;
 		[Widget] private ImageMenuItem saveReportMenuItem;
@@ -63,6 +61,8 @@ namespace Arbiter
 		[Widget] private ImageMenuItem endDuelMenuItem;
 		[Widget] private ImageMenuItem closeMenuItem;
 		[Widget] private ImageMenuItem logDirectoryMenuItem;
+		[Widget] private RadioMenuItem leftVertTabMenuItem;
+		[Widget] private RadioMenuItem rightVertTabMenuItem;
 		[Widget] private RadioMenuItem leftTabMenuItem;
 		[Widget] private RadioMenuItem rightTabMenuItem;
 		[Widget] private RadioMenuItem topTabMenuItem;
@@ -78,20 +78,98 @@ namespace Arbiter
 			{ get { return (Duel)duelNotebook.CurrentPageWidget; } }
 		
 		// Constructor.
-		public MainWindow()
+		public MainWindow() : base("Arbiter")
 		{
 			// Load the Glade file.
-			XML xml = new XML("MainWindow.glade", "mainWin");
-			xml.Autoconnect(this); 
+			XML xml = new XML("MainWindow.glade", "mainWidget");
+			xml.Autoconnect(this);
+			Add(mainWidget);
 			
 			#region Settings
-			// Set default size.
-			mainWin.DefaultWidth = Arbiter.WindowWidth;
-			mainWin.DefaultHeight = Arbiter.WindowHeight;
+			// Set default window properties.
+			DefaultWidth = Arbiter.WindowWidth;
+			DefaultHeight = Arbiter.WindowHeight;
+			WindowPosition = WindowPosition.Center;
+			
+			// Connect signals.
+			SizeAllocated += SaveSize;
+			DeleteEvent += QuitArbiter;
+			
+			// Anonymous reordering delegate.
+			duelNotebook.PageReordered += delegate(object sender, PageReorderedArgs args) {
+				if (args.P1 == duelNotebook.NPages - 1)
+					duelNotebook.ReorderChild(args.P0, duelNotebook.NPages - 2);
+			};
+			
+			// Use settings to determine tab orientation.
+			switch (Arbiter.TabPosition)
+			{
+			case "LeftVert":
+			case "RightVert":
+				Arbiter.VertTabs = true;
+				break;
+			default:
+				Arbiter.VertTabs = false;
+				break;
+			}
+			
+			// Create tab label.
+			Box newDuelTab;
+			if (Arbiter.VertTabs) newDuelTab = new VBox();
+			else newDuelTab = new HBox();
+			newDuelTab.Spacing = 2;
+			Label newDuelTabLabel = new Label("New");
+			EventBox dummyBox = new EventBox();
+			dummyBox.VisibleWindow = false;
+			dummyBox.AboveChild = true;
+			
+			// Packing type depends on orientation.
+			if (Arbiter.VertTabs)
+			{
+				newDuelTab.PackEnd(new Image(Gdk.Pixbuf.LoadFromResource("RoH.png")),
+			                       false, false, 0);
+				newDuelTab.PackEnd(newDuelTabLabel, true, true, 0);
+				newDuelTab.PackEnd(dummyBox, false, false, 0);
+				newDuelTabLabel.Angle = 90.0;
+			}
+			else
+			{
+				newDuelTab.PackStart(new Image(Gdk.Pixbuf.LoadFromResource("RoH.png")),
+			                       false, false, 0);
+				newDuelTab.PackStart(newDuelTabLabel, true, true, 0);
+				newDuelTab.PackStart(dummyBox, false, false, 0);
+				newDuelTabLabel.Angle = 0.0;
+			}
+			newDuelTab.ShowAll();
+			duelNotebook.SetTabLabel(duelNotebook.CurrentPageWidget, newDuelTab);
+			
+			// Hide parts of the new duel tab label depending on settings.
+			if (Arbiter.VertTabs)
+			{
+				newDuelTab.Children[2].Visible = !Arbiter.HideIcons;
+				newDuelTab.Children[2].NoShowAll = Arbiter.HideIcons;
+				newDuelTab.Children[0].Visible = !Arbiter.HideClose;
+				newDuelTab.Children[0].NoShowAll = Arbiter.HideClose;
+			}
+			else
+			{
+				newDuelTab.Children[0].Visible = !Arbiter.HideIcons;
+				newDuelTab.Children[0].NoShowAll = Arbiter.HideIcons;
+				newDuelTab.Children[2].Visible = !Arbiter.HideClose;
+				newDuelTab.Children[2].NoShowAll = Arbiter.HideClose;
+			}
 			
 			// Use settings to determine tab location.
 			switch (Arbiter.TabPosition)
 			{
+			case "LeftVert":
+				leftVertTabMenuItem.Active = true;
+				duelNotebook.TabPos = PositionType.Left;
+				break;
+			case "RightVert":
+				rightVertTabMenuItem.Active = true;
+				duelNotebook.TabPos = PositionType.Right;
+				break;
 			case "Left":
 				leftTabMenuItem.Active = true;
 				duelNotebook.TabPos = PositionType.Left;
@@ -118,15 +196,8 @@ namespace Arbiter
 			#endregion
 			
 			#region Widgets
-			// Set the window and new duel tab icon.
-			mainWin.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
-			newDuelTabIcon.Pixbuf = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
-			
-			// Hide parts of the new duel tab label depending on settings.
-			newDuelTab.Children[0].Visible = !Arbiter.HideIcons;
-			newDuelTab.Children[0].NoShowAll = Arbiter.HideIcons;
-			newDuelTab.Children[2].Visible = !Arbiter.HideClose;
-			newDuelTab.Children[2].NoShowAll = Arbiter.HideClose;
+			// Set window icon.
+			this.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 			
 			// For the popup menu.
 			duelNotebook.SetMenuLabelText(duelNotebook.CurrentPageWidget, "New Duel");
@@ -169,11 +240,11 @@ namespace Arbiter
 			typeCombo.Active = 0;
 			
 			// We may have restored from a fight night shift report.
-			fightNightCheck.Active = Arbiter.FightNight;
+			fightNightCheckMenuItem.Active = Arbiter.FightNight;
 			
 			// Create accelerators for the menu items.
 			AccelGroup ag = new AccelGroup();
-			mainWin.AddAccelGroup(ag);
+			this.AddAccelGroup(ag);
 			saveReportMenuItem.AddAccelerator("activate", ag,
 					(uint)Gdk.Key.S, Gdk.ModifierType.ControlMask |
 							Gdk.ModifierType.ShiftMask, AccelFlags.Visible);
@@ -203,10 +274,6 @@ namespace Arbiter
 			instance = this;
 		}
 		
-		// Just for convenience.
-		public void Show ()
-			{ mainWin.ShowAll(); }
-		
 		// Starts a duel according to the provided settings.
 		private void StartDuel (object sender, EventArgs args)
 		{	
@@ -219,10 +286,10 @@ namespace Arbiter
 			   ringNameCEntry.ActiveText == "")
 			{
 				// Let the user know they messed up.
-				Dialog dialog = new Dialog("Superman will--", mainWin,
+				Dialog dialog = new Dialog("Superman will--", this,
 			                           DialogFlags.NoSeparator | DialogFlags.Modal,
 			                           new object[] {Stock.Ok, ResponseType.Ok});
-				dialog.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+				dialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 				Label dlabel = new Label();
 				dlabel.Markup = "<span size='32768'><b>WRONG!!!</b></span>";
 				dlabel.SetAlignment(0.5f, 0.5f);
@@ -259,8 +326,20 @@ namespace Arbiter
 			#endregion
 			
 			#region Tab Label
-			HBox label = new HBox();
-			label.Spacing = 2;
+			// Determine orientation of label.
+			Box tabLabel;
+			if (Arbiter.VertTabs) tabLabel = new VBox();
+			else tabLabel = new HBox();
+			tabLabel.Spacing = 2;
+			
+			// Tab icon.
+			Gdk.Pixbuf icon = Gdk.Pixbuf.LoadFromResource(
+					"Arbiter." + sport.ShortName + typeCombo.ActiveText + ".png");
+			icon = icon.ScaleSimple(16, 16, Gdk.InterpType.Hyper);
+			
+			// Label.
+			Label label = new Label(ringNameCEntry.ActiveText);
+			if (Arbiter.VertTabs) label.Angle = 90.0;
 			
 			// Close button.
 			EventBox closeButton = new EventBox();
@@ -268,22 +347,36 @@ namespace Arbiter
 			closeButton.Add(new Image(pb.ScaleSimple(12, 12, Gdk.InterpType.Hyper)));
 			closeButton.VisibleWindow = false;
 			
-			// Tab icon.
-			Gdk.Pixbuf icon = Gdk.Pixbuf.LoadFromResource(
-					"Arbiter." + sport.ShortName + typeCombo.ActiveText + ".png");
-			icon = icon.ScaleSimple(16, 16, Gdk.InterpType.Hyper);
-			
-			// Pack the hbox and show it.
-			label.PackStart(new Image(icon), false, false, 0);
-			label.PackStart(new Label(ringNameCEntry.ActiveText), true, true, 0);
-			label.PackEnd(closeButton, false, false, 0);
-			label.ShowAll();
+			// Pack the box and show it.
+			if (Arbiter.VertTabs)
+			{
+				tabLabel.PackEnd(new Image(icon), false, false, 0);
+				tabLabel.PackEnd(label, true, true, 0);
+				tabLabel.PackEnd(closeButton, false, false, 0);
+			}
+			else
+			{
+				tabLabel.PackStart(new Image(icon), false, false, 0);
+				tabLabel.PackStart(label, true, true, 0);
+				tabLabel.PackStart(closeButton, false, false, 0);
+			}
+			tabLabel.ShowAll();
 			
 			// Hide parts of the label depending on settings.
-			label.Children[0].Visible = !Arbiter.HideIcons;
-			label.Children[0].NoShowAll = Arbiter.HideIcons;
-			label.Children[2].Visible = !Arbiter.HideClose;
-			label.Children[2].NoShowAll = Arbiter.HideClose;
+			if (Arbiter.VertTabs)
+			{
+				tabLabel.Children[2].Visible = !Arbiter.HideIcons;
+				tabLabel.Children[2].NoShowAll = Arbiter.HideIcons;
+				tabLabel.Children[0].Visible = !Arbiter.HideClose;
+				tabLabel.Children[0].NoShowAll = Arbiter.HideClose;
+			}
+			else
+			{
+				tabLabel.Children[0].Visible = !Arbiter.HideIcons;
+				tabLabel.Children[0].NoShowAll = Arbiter.HideIcons;
+				tabLabel.Children[2].Visible = !Arbiter.HideClose;
+				tabLabel.Children[2].NoShowAll = Arbiter.HideClose;
+			}
 			#endregion
 			
 			#region Start Duel
@@ -292,7 +385,7 @@ namespace Arbiter
 			                     duelistANameCEntry.ActiveText,
 			                     duelistBNameCEntry.ActiveText,
 			                     sport, overtime, madness);
-			duelNotebook.InsertPage(duel, label, duelNotebook.NPages - 1);
+			duelNotebook.InsertPage(duel, tabLabel, duelNotebook.NPages - 1);
 			duelNotebook.ShowAll();
 			duelNotebook.CurrentPage = duelNotebook.NPages - 2;
 			
@@ -334,7 +427,7 @@ namespace Arbiter
 		#region Other Widgets
 		// Toggle the Fight Night switch.
 		private void FightNightToggled (object sender, EventArgs args)
-			{ Arbiter.FightNight = fightNightCheck.Active; }
+			{ Arbiter.FightNight = fightNightCheckMenuItem.Active; }
 		
 		// Create a window to edit saved duelists.
 		private void EditDuelists (object sender, EventArgs args)
@@ -353,10 +446,10 @@ namespace Arbiter
 		// Store the size setting.
 		private void SaveSize (object sender, SizeAllocatedArgs args)
 		{
-			if (mainWin.Child == mainWidget)
+			if (this.Child == mainWidget)
 			{
 				int width, height;
-				mainWin.GetSize(out width, out height);
+				this.GetSize(out width, out height);
 				Arbiter.WindowWidth = width;
 				Arbiter.WindowHeight = height;
 			}
@@ -373,7 +466,7 @@ namespace Arbiter
 										null, FileChooserAction.Save,
 										new object[] {Stock.Cancel, ResponseType.Cancel,
 													Stock.SaveAs, ResponseType.Accept});
-			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			fc.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 			fc.Modal = true;
 			int r = fc.Run();
 			if (r != (int)ResponseType.Accept)
@@ -474,7 +567,7 @@ namespace Arbiter
 										null, FileChooserAction.SelectFolder,
 										new object[] {Stock.Cancel, ResponseType.Cancel,
 													Stock.Save, ResponseType.Accept});
-			fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+			fc.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 			fc.Modal = true;
 			int r = fc.Run();
 			if (r != (int)ResponseType.Accept)
@@ -499,26 +592,94 @@ namespace Arbiter
 		// Update tab position and store the setting.
 		private void SetTabPosition (object sender, EventArgs args)
 		{
-			if (leftTabMenuItem.Active)
+			bool newVertTabs = false;
+			
+			// Update settings.
+			if (leftVertTabMenuItem.Active)
+			{
+				Arbiter.TabPosition = "LeftVert";
+				duelNotebook.TabPos = PositionType.Left;
+				newVertTabs = true;
+			}
+			else if (rightVertTabMenuItem.Active)
+			{
+				Arbiter.TabPosition = "RightVert";
+				duelNotebook.TabPos = PositionType.Left;
+				newVertTabs = true;
+			}
+			else if (leftTabMenuItem.Active)
 			{
 				Arbiter.TabPosition = "Left";
 				duelNotebook.TabPos = PositionType.Left;
+				newVertTabs = false;
 			}
 			else if (rightTabMenuItem.Active)
 			{
 				Arbiter.TabPosition = "Right";
 				duelNotebook.TabPos = PositionType.Right;
+				newVertTabs = false;
 			}
 			else if (topTabMenuItem.Active)
 			{
 				Arbiter.TabPosition = "Top";
 				duelNotebook.TabPos = PositionType.Top;
+				newVertTabs = false;
 			}
 			else if (bottomTabMenuItem.Active)
 			{
 				Arbiter.TabPosition = "Bottom";
 				duelNotebook.TabPos = PositionType.Bottom;
+				newVertTabs = false;
 			}
+			
+			// If the tab orientation is changed, recreate labels.
+			if (newVertTabs != Arbiter.VertTabs)
+			for (int i = 0; i < duelNotebook.NPages; i++)
+			{
+				// Create the new label.
+				Box newLabel;
+				if (newVertTabs) newLabel = new VBox();
+				else newLabel = new HBox();
+				newLabel.Spacing = 2;
+				
+				// Get the old label.
+				Box oldLabel = (Box)duelNotebook.GetTabLabel(duelNotebook.Children[i]);
+				
+				// Store the children.
+				Widget child0 = oldLabel.Children[0];
+				Label child1 = (Label)oldLabel.Children[1];
+				Widget child2 = oldLabel.Children[2];
+				
+				// Remove them from the old label.
+				oldLabel.Remove(child0);
+				oldLabel.Remove(child1);
+				oldLabel.Remove(child2);
+				
+				// Add them to the new label. Always pack end
+				// because they go in the opposite order from
+				// before.
+				if (newVertTabs)
+				{
+					newLabel.PackEnd(child0, false, false, 0);
+					newLabel.PackEnd(child1, true, true, 0);
+					newLabel.PackEnd(child2, false, false, 0);
+					child1.Angle = 90.0;
+				}
+				else
+				{
+					newLabel.PackEnd(child0, false, false, 0);
+					newLabel.PackEnd(child1, true, true, 0);
+					newLabel.PackEnd(child2, false, false, 0);
+					child1.Angle = 0;
+				}
+				
+				// Show the tab label and set it.
+				newLabel.ShowAll();
+				duelNotebook.SetTabLabel(duelNotebook.Children[i], newLabel);
+			}
+			
+			// Save new orientation.
+			Arbiter.VertTabs = newVertTabs;
 		}
 		
 		// Toggle the icon hiding option, and loop through
@@ -531,9 +692,17 @@ namespace Arbiter
 			// Loop through each tab and hide the icon.
 			foreach (Widget tab in duelNotebook.Children)
 			{
-				HBox box = (HBox)duelNotebook.GetTabLabel(tab);
-				box.Children[0].Visible = !Arbiter.HideIcons;
-				box.Children[0].NoShowAll = Arbiter.HideIcons;
+				Box box = (Box)duelNotebook.GetTabLabel(tab);
+				if (Arbiter.VertTabs)
+				{
+					box.Children[2].Visible = !Arbiter.HideIcons;
+					box.Children[2].NoShowAll = Arbiter.HideIcons;
+				}
+				else
+				{
+					box.Children[0].Visible = !Arbiter.HideIcons;
+					box.Children[0].NoShowAll = Arbiter.HideIcons;
+				}
 			}
 		}
 		
@@ -547,9 +716,17 @@ namespace Arbiter
 			// Loop through each tab and hide the icon.
 			foreach (Widget tab in duelNotebook.Children)
 			{
-				HBox box = (HBox)duelNotebook.GetTabLabel(tab);
-				box.Children[2].Visible = !Arbiter.HideClose;
-				box.Children[2].NoShowAll = Arbiter.HideIcons;
+				Box box = (Box)duelNotebook.GetTabLabel(tab);
+				if (Arbiter.VertTabs)
+				{
+					box.Children[0].Visible = !Arbiter.HideClose;
+					box.Children[0].NoShowAll = Arbiter.HideIcons;
+				}
+				else
+				{
+					box.Children[2].Visible = !Arbiter.HideClose;
+					box.Children[2].NoShowAll = Arbiter.HideIcons;
+				}
 			}
 		}
 		
@@ -584,16 +761,16 @@ namespace Arbiter
 		// Needed for the brawl tool.
 		public static void ReplaceWidget(Widget widget)
 		{
-			instance.mainWin.Remove(instance.mainWin.Child);
-			instance.mainWin.Add(widget);
-			instance.mainWin.WindowPosition = WindowPosition.Center;
+			instance.Remove(instance.Child);
+			instance.Add(widget);
+			instance.WindowPosition = WindowPosition.Center;
 		}
 		
 		// This resets the main widget back to normal.
 		public static void ReturnToDuels()
 		{
 			ReplaceWidget(instance.mainWidget);
-			instance.mainWin.Resize(Arbiter.WindowWidth, Arbiter.WindowHeight);
+			instance.Resize(Arbiter.WindowWidth, Arbiter.WindowHeight);
 		}
 		#endregion
 	}
