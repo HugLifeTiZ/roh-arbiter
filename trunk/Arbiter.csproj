@@ -47,6 +47,7 @@
     <EmbeddedResource Include="RoH.png">
       <DeployService-Deploy>true</DeployService-Deploy>
       <DeployService-RelativeDeployPath>roh.png</DeployService-RelativeDeployPath>
+      <LogicalName>RoH.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="DoFChallenge.png" />
     <EmbeddedResource Include="DoFMadness.png" />

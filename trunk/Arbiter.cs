@@ -66,6 +66,7 @@ namespace Arbiter
 		public static bool HideClose      { get; set; }
 		public static bool HideButtons    { get; set; }
 		public static bool SmallScore     { get; set; }
+		public static bool VertTabs       { get; set; }
 		
 		// Lists of duelists and rings.
 		public static ListStore Duelists  { get; set; }
@@ -121,7 +122,7 @@ namespace Arbiter
 			Duelists.SetSortColumnId(0, SortType.Ascending);
 			
 			// Defaults.
-			TabPosition = "Left";
+			TabPosition = "LeftVert";
 			LogDirectory = "";
 			WindowWidth = 360;
 			WindowHeight = 360;
@@ -162,7 +163,7 @@ namespace Arbiter
 										"Select Log Directory",
 										null, FileChooserAction.SelectFolder,
 										new object[] {Stock.Open, ResponseType.Accept});
-				fc.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+				fc.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 				
 				// Keep running the dialog until we get OK.
 				int r = 0;
@@ -256,7 +257,7 @@ namespace Arbiter
 			
 			// Create the main window and go.
 			MainWindow mw = new MainWindow();
-			mw.Show();
+			mw.ShowAll();
 			Application.Run();
 		}
 		
@@ -411,7 +412,7 @@ namespace Arbiter
 			                           DialogFlags.NoSeparator | DialogFlags.Modal,
 			                           new object[] {Stock.No, ResponseType.No,
 										Stock.Yes, ResponseType.Yes});
-				dialog.Icon = Gdk.Pixbuf.LoadFromResource("Arbiter.RoH.png");
+				dialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
 				Label label = new Label("An existing shift report for today has\n" +
 				                        "been detected. Would you like to load it?\n" +
 				                        "if not, it will be overwritten when you\n" +

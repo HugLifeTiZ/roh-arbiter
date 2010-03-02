@@ -5,6 +5,7 @@
   <widget class="GtkWindow" id="mainWin">
     <property name="title">Arbiter</property>
     <property name="window_position">center</property>
+    <signal name="size_allocate" handler="SaveSize"/>
     <signal name="delete_event" handler="QuitArbiter"/>
     <child>
       <widget class="GtkVBox" id="mainWidget">
@@ -22,6 +23,30 @@
                   <widget class="GtkMenu" id="shiftMenu">
                     <property name="visible">True</property>
                     <child>
+                      <widget class="GtkCheckMenuItem" id="fightNightCheckMenuItem">
+                        <property name="visible">True</property>
+                        <property name="tooltip">If checked, the shift report will be grouped by sport, and the sport will be included in the duel logs.</property>
+                        <property name="label" translatable="yes">_Fight Night</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="FightNightToggled"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="brawlMenuItem">
+                        <property name="visible">True</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip" translatable="yes">Starts a brawl.</property>
+                        <property name="label" translatable="yes">_Brawl...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="StartBrawl"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkSeparatorMenuItem" id="separatormenuitem1">
+                        <property name="visible">True</property>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkImageMenuItem" id="saveReportMenuItem">
                         <property name="label">_Save Report As...</property>
                         <property name="visible">True</property>
@@ -37,16 +62,6 @@
                             <property name="icon-size">1</property>
                           </widget>
                         </child>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkMenuItem" id="brawlMenuItem">
-                        <property name="visible">True</property>
-                        <property name="has_tooltip">True</property>
-                        <property name="tooltip" translatable="yes">Starts a brawl.</property>
-                        <property name="label" translatable="yes">_Brawl...</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="StartBrawl"/>
                       </widget>
                     </child>
                     <child>
@@ -230,13 +245,32 @@
                           <widget class="GtkMenu" id="tabPositionMenu">
                             <property name="visible">True</property>
                             <child>
+                              <widget class="GtkRadioMenuItem" id="leftVertTabMenuItem">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">Left _Vertical</property>
+                                <property name="use_underline">True</property>
+                                <property name="active">True</property>
+                                <signal name="toggled" handler="SetTabPosition"/>
+                              </widget>
+                            </child>
+                            <child>
+                              <widget class="GtkRadioMenuItem" id="rightVertTabMenuItem">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">Right V_ertical</property>
+                                <property name="use_underline">True</property>
+                                <property name="draw_as_radio">True</property>
+                                <property name="group">leftVertTabMenuItem</property>
+                                <signal name="toggled" handler="SetTabPosition"/>
+                              </widget>
+                            </child>
+                            <child>
                               <widget class="GtkRadioMenuItem" id="leftTabMenuItem">
                                 <property name="visible">True</property>
                                 <property name="label" translatable="yes">_Left</property>
                                 <property name="use_underline">True</property>
-                                <property name="active">True</property>
                                 <property name="draw_as_radio">True</property>
-                                <signal name="group_changed" handler="SetTabPosition"/>
+                                <property name="group">leftVertTabMenuItem</property>
+                                <signal name="toggled" handler="SetTabPosition"/>
                               </widget>
                             </child>
                             <child>
@@ -245,8 +279,8 @@
                                 <property name="label">_Right</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
-                                <property name="group">leftTabMenuItem</property>
-                                <signal name="group_changed" handler="SetTabPosition"/>
+                                <property name="group">leftVertTabMenuItem</property>
+                                <signal name="toggled" handler="SetTabPosition"/>
                               </widget>
                             </child>
                             <child>
@@ -255,8 +289,8 @@
                                 <property name="label">_Top</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
-                                <property name="group">leftTabMenuItem</property>
-                                <signal name="group_changed" handler="SetTabPosition"/>
+                                <property name="group">leftVertTabMenuItem</property>
+                                <signal name="toggled" handler="SetTabPosition"/>
                               </widget>
                             </child>
                             <child>
@@ -265,8 +299,8 @@
                                 <property name="label">_Bottom</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
-                                <property name="group">leftTabMenuItem</property>
-                                <signal name="group_changed" handler="SetTabPosition"/>
+                                <property name="group">leftVertTabMenuItem</property>
+                                <signal name="toggled" handler="SetTabPosition"/>
                               </widget>
                             </child>
                           </widget>
@@ -400,9 +434,11 @@
                     </child>
                     <child>
                       <widget class="GtkComboBoxEntry" id="duelistANameCEntry">
+                        <property name="width_request">48</property>
                         <property name="visible">True</property>
                         <property name="has_tooltip">True</property>
                         <property name="tooltip">Duelist A's screen name.</property>
+                        <property name="text_column">0</property>
                       </widget>
                       <packing>
                         <property name="left_attach">1</property>
@@ -412,9 +448,11 @@
                     </child>
                     <child>
                       <widget class="GtkComboBoxEntry" id="duelistBNameCEntry">
+                        <property name="width_request">48</property>
                         <property name="visible">True</property>
                         <property name="has_tooltip">True</property>
                         <property name="tooltip">Duelist B's screen name.</property>
+                        <property name="text_column">0</property>
                       </widget>
                       <packing>
                         <property name="left_attach">1</property>
@@ -498,9 +536,11 @@
                     </child>
                     <child>
                       <widget class="GtkComboBoxEntry" id="ringNameCEntry">
+                        <property name="width_request">48</property>
                         <property name="visible">True</property>
                         <property name="has_tooltip">True</property>
                         <property name="tooltip">The name of the ring that the duel will take place in.</property>
+                        <property name="text_column">0</property>
                       </widget>
                       <packing>
                         <property name="left_attach">1</property>
@@ -515,24 +555,6 @@
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkCheckButton" id="fightNightCheck">
-                    <property name="label">_Fight Night</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="has_tooltip">True</property>
-                    <property name="tooltip">If checked, the shift report will be grouped by sport, and the sport will be included in the duel logs.</property>
-                    <property name="use_underline">True</property>
-                    <property name="draw_indicator">True</property>
-                    <signal name="toggled" handler="FightNightToggled"/>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -605,7 +627,7 @@ Madness</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">2</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -661,7 +683,7 @@ Madness</property>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="padding">2</property>
-                    <property name="position">3</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -684,7 +706,7 @@ Madness</property>
                     </child>
                   </widget>
                   <packing>
-                    <property name="position">4</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </widget>
@@ -715,8 +737,17 @@ Madness</property>
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkLabel" id="dummy">
+                  <widget class="GtkEventBox" id="eventbox1">
                     <property name="visible">True</property>
+                    <property name="visible_window">False</property>
+                    <property name="above_child">True</property>
+                    <child>
+                      <widget class="GtkImage" id="image2">
+                        <property name="visible">True</property>
+                        <property name="stock">gtk-stop</property>
+                        <property name="icon-size">0</property>
+                      </widget>
+                    </child>
                   </widget>
                   <packing>
                     <property name="position">2</property>
