@@ -4,6 +4,11 @@ by Trent McPheron (twilightinzero@gmail.com)
 
 == Changelog ==
 -v0.5-
+ *Various code refactoring.
+ *The duel widget has been rearranged a bit.
+ *The Fight Night checkbox is now in the menubar.
+ *Vertical tabs, like in the flash chat tool.
+ *Tabs can now be reordered, via drag and drop.
  *The normal duel tool now uses the same move
   coloring that the brawler does.
 -v0.4-
