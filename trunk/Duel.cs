@@ -332,8 +332,7 @@ namespace Arbiter
 			#endregion
 			
 			#region Resolve
-			// Resolve the moves and mods and store
-			// the results.
+			// Resolve the moves and mods and store the results.
 			float resultA, resultB;
 			sport.Resolve(DuelistAMove, DuelistAFancy, DuelistAFeint,
 			              DuelistBMove, DuelistBFancy, DuelistBFeint,
@@ -343,13 +342,13 @@ namespace Arbiter
 			
 			// Check for advantages.
 			if (sport.Advantages && roundScoreA[round] == 0.5)
-				roundScoreA[round] = 0; advA[round] = true;
+				{ roundScoreA[round] = 0; advA[round] = true; }
 			if (sport.Advantages && roundScoreB[round] == 0.5)
-				roundScoreB[round] = 0; advB[round] = true;
+				{ roundScoreB[round] = 0; advB[round] = true; }
 			if (advA[round] && advA[round - 1])
-				advA[round] = false; roundScoreA[round] = 1;
+				{ advA[round] = false; roundScoreA[round] = 1; }
 			if (advB[round] && advB[round - 1])
-				advB[round] = false; roundScoreB[round] = 1;
+				{ advB[round] = false; roundScoreB[round] = 1; }
 			
 			// Add the scores.
 			scoreA += roundScoreA[round];
