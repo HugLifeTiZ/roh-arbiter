@@ -421,6 +421,11 @@ namespace Arbiter
 			ringNameCEntry.Entry.Text = "";
 			if (Arbiter.FightNight) sportCombo.Active = 0;
 			typeCombo.Active = 0;
+			
+			// And now that we're running a duel, disable Fight Night
+			// toggle. This keeps our internal duel lists from getting
+			// mixed up.
+			fightNightCheckMenuItem.Sensitive = false;
 			#endregion
 		}
 		
