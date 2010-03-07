@@ -1,16 +1,24 @@
 Arbiter v0.5
-by Trent McPheron (twilightinzero@gmail.com)
+by Trent McPheron <twilightinzero@gmail.com>
 =======================
 
 == Changelog ==
 -v0.5-
  *Various code refactoring.
  *The duel widget has been rearranged a bit.
- *The Fight Night checkbox is now in the menubar.
- *Vertical tabs, like in the flash chat tool.
- *Tabs can now be reordered, via drag and drop.
  *The normal duel tool now uses the same move
   coloring that the brawler does.
+ *Vertical tabs, like in the flash chat tool.
+ *Tabs can now be reordered, via drag and drop.
+ *The Fight Night checkbox is now in the menubar.
+ *The Fight Night checkbox will be disabled when the
+  first duel is started. This is so that the internal
+  list of duels don't get mixed up.
+ *Proper Madness support. This means that Madness
+  duels will be marked on the shift report, and when
+  a Madness duel goes over round 15, it will be
+  marked as a tie in the shift report, and the
+  Madness result will be indicated in parenthesis.
 -v0.4-
  *A brawl tool has been added! A new section in the
   readme has been added for how to use it. Do note
