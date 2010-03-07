@@ -468,7 +468,6 @@ Disengage</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="has_tooltip">True</property>
-            <property name="tooltip">I hope you don't think this scrollbar's any different from the one in the New Duel tab. Because it's not.</property>
             <property name="hscrollbar_policy">never</property>
             <property name="window_placement">bottom-left</property>
             <property name="shadow_type">etched-in</property>

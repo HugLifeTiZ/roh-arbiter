@@ -22,7 +22,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip">This scrollbar is just like every other scrollbar in the program.</property>
                     <property name="hscrollbar_policy">automatic</property>
                     <property name="shadow_type">etched-in</property>
                     <child>

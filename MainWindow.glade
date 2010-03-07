@@ -691,7 +691,6 @@ Madness</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip">Yup, it's a scrollbar. Don't you have some work to do?</property>
                     <property name="hscrollbar_policy">never</property>
                     <property name="shadow_type">etched-in</property>
                     <child>
