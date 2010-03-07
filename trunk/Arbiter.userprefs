@@ -3,22 +3,24 @@
   <MonoDevelop.Ide.DebuggingService>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Duel.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Sport.cs" ctype="Workbench">
     <Files>
       <File FileName="Arbiter.cs" Line="1" Column="1" />
       <File FileName="MainWindow.cs" Line="1" Column="1" />
-      <File FileName="Duel.cs" Line="348" Column="21" />
-      <File FileName="Sport.cs" Line="1" Column="1" />
+      <File FileName="Duel.cs" Line="1" Column="1" />
+      <File FileName="Sport.cs" Line="72" Column="32" />
       <File FileName="Combatant.cs" Line="1" Column="1" />
       <File FileName="BrawlSetup.cs" Line="1" Column="1" />
       <File FileName="Brawl.cs" Line="1" Column="1" />
-      <File FileName="README.txt" Line="7" Column="28" />
+      <File FileName="README.txt" Line="21" Column="51" />
       <File FileName="duelists.cfg" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True" selected="True">
-          <Node name="Arbiter" expanded="True" />
+        <State expanded="True">
+          <Node name="Arbiter" expanded="True">
+            <Node name="Sport.cs" selected="True" />
+          </Node>
           <Node name="Packages" expanded="True" />
         </State>
       </Pad>

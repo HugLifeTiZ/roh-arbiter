@@ -68,7 +68,8 @@ namespace Arbiter
 			{
 				for (int b = 0; b < m; b++)
 					Matrix[a,b] = (char)sr.Read();
-				sr.Read();  // Reads the newline character.
+				sr.Read();  // Reads the CR
+				sr.Read();  // then the LF.
 			}
 			
 			// Verify the matrix.
