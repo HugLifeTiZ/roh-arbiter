@@ -1,13 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|x86" ctype="Workspace" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
   <MonoDevelop.Ide.DebuggingService>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService>
-  <MonoDevelop.Ide.Workbench ActiveDocument="README.txt" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Duel.cs" ctype="Workbench">
     <Files>
       <File FileName="Arbiter.cs" Line="1" Column="1" />
       <File FileName="MainWindow.cs" Line="1" Column="1" />
-      <File FileName="Duel.cs" Line="1" Column="1" />
+      <File FileName="Duel.cs" Line="348" Column="21" />
       <File FileName="Sport.cs" Line="1" Column="1" />
       <File FileName="Combatant.cs" Line="1" Column="1" />
       <File FileName="BrawlSetup.cs" Line="1" Column="1" />

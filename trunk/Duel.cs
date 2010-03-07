@@ -48,6 +48,9 @@ namespace Arbiter
 		private bool manual;
 		private float scoreA, scoreB;
 		private int duelNum, round;
+		private bool madnessTie;
+		private float tieScoreA, tieScoreB;
+		private int tieRound;
 		private List<int> moveA, moveB;
 		private List<float> roundScoreA, roundScoreB;
 		private List<bool> advA, advB;
@@ -237,6 +240,9 @@ namespace Arbiter
 			round = 1;
 			scoreA = 0;
 			scoreB = 0;
+			tieRound = 0;
+			tieScoreA = 0;
+			tieScoreB = 0;
 			usedEFA = false;
 			usedEFB = false;
 			End = false;
@@ -255,7 +261,7 @@ namespace Arbiter
 			advB.Add(false);
 			roundScoreA.Add(0);
 			roundScoreB.Add(0);
-			UpdateLabels(0);
+			UpdateLabels();
 			#endregion
 			
 			#region Widget Properties	
@@ -382,14 +388,14 @@ namespace Arbiter
 				UpdateDuelLog(15, 15);
 			}
 			
-			// Self-explanatory.
-			UpdateLabels(round);
-			
-			// Increment round.
-			round++;
-			
 			// Also self-explanatory.
 			if (!manual) CheckDuelEnd();
+			
+			// Increment round.
+			if (!End) round++;
+			
+			// Self-explanatory.
+			UpdateLabels();
 			#endregion
 			
 			#region End of Resolve
@@ -488,7 +494,7 @@ namespace Arbiter
 			duelistBMoveCombo.Child.ModifyText(StateType.Prelight, new Gdk.Color(128, 128, 128));
 			
 			// Update labels and logs.
-			UpdateLabels(round - 1);
+			UpdateLabels();
 			UpdateDuelLog();
 			
 			// Disable the undoer if it's round 1 now.
@@ -592,7 +598,7 @@ namespace Arbiter
 		}
 		
 		// Updates the labels.
-		private void UpdateLabels (int r)
+		public void UpdateLabels ()
 		{
 			// Determine scoreboard size.
 			string mainSize = "28672";
@@ -611,22 +617,18 @@ namespace Arbiter
 			
 			// Create round score parts.
 			duelistARoundScoreLabel.Markup = "<span size='" + roundSize + "'>" +
-				roundScoreA[r].ToString(sport.ScoreFormat) + "</span>";
+				roundScoreA[round - 1].ToString(sport.ScoreFormat) + "</span>";
 			duelistBRoundScoreLabel.Markup = "<span size='" + roundSize + "'>" +
-				roundScoreB[r].ToString(sport.ScoreFormat) + "</span>";
-			if (advA[r])
+				roundScoreB[round - 1].ToString(sport.ScoreFormat) + "</span>";
+			if (advA[round - 1])
 				duelistARoundScoreLabel.Markup = "<span size='" + roundSize + "'>+</span>";
-			if (advB[r])
+			if (advB[round - 1])
 				duelistBRoundScoreLabel.Markup = "<span size='" + roundSize + "'>+</span>";
 			
 			// Update the round label.
 			roundLabel.Markup =
-				"<span size='x-large'><b>Round " + (r + 1).ToString() + "</b></span>";
+				"<span size='x-large'><b>Round " + round.ToString() + "</b></span>";
 		}
-		
-		// Public overload for the scoreboard size toggler.
-		public void UpdateLabels ()
-			{ UpdateLabels(round - 1); }
 		
 		// Updates the duel log.
 		private void UpdateDuelLog ()
@@ -685,46 +687,94 @@ namespace Arbiter
 		
 		// Checks for the end of the duel.
 		private void CheckDuelEnd ()
-		{
+		{	
+			// Check for the end of the duel. This is going to get really complicated.
+			// It could probably be done better, and any changes are welcome.
+			bool duelistAwin = ((scoreA >= 5.0f || (overtime ? false : round > 14)) &&
+				scoreA > scoreB && scoreA - scoreB >= 1.0f) ||
+				((overtime ? false : round > 14) && madness &&
+				 scoreA > scoreB && scoreA - scoreB >= 1.0f);
+			bool duelistBwin = ((scoreB >= 5.0f || (overtime ? false : round > 14)) &&
+				scoreB > scoreA && scoreB - scoreA >= 1.0f) ||
+				((overtime ? false : round > 14) && madness &&
+				 scoreB > scoreA && scoreB - scoreA >= 1.0f);
+			bool tie = (overtime ? false : round > 14) && !duelistAwin && !duelistBwin;
+			
+			End = duelistAwin || duelistBwin || tie;
+			
+			// If we've already determined that we're over r15 in madness,
+			// we don't want to mess with anything.
+			if (!madnessTie)
+			{
+				madnessTie = madness && (round > 14) && !End;
+				
+				// Save the scores so we can make the modified final line.
+				if (madnessTie)
+				{
+					tieScoreA = scoreA;
+					tieScoreB = scoreB;
+					tieRound = round;
+				}
+			}
+			
+			// If the duel's not over, we're done here.
+			if (!End) return;
+			
 			// Create score strings.
 			string scoreStringA = scoreA.ToString(sport.ScoreFormat);
 			string scoreStringB = scoreB.ToString(sport.ScoreFormat);
+			string tieScoreStringA = tieScoreA.ToString(sport.ScoreFormat);
+			string tieScoreStringB = tieScoreB.ToString(sport.ScoreFormat);
 			
-			// Check for the end of the duel. This is going to get really complicated.
-			// It could probably be done better, and any changes are welcome.
-			bool duelistAwin = ((scoreA >= 5.0f || (overtime ? false : round > 15)) &&
-				scoreA > scoreB && scoreA - scoreB >= 1.0f) ||
-				((overtime ? false : round > 15) && madness &&
-				 scoreA > scoreB && scoreA - scoreB >= 1.0f);
-			bool duelistBwin = ((scoreB >= 5.0f || (overtime ? false : round > 15)) &&
-				scoreB > scoreA && scoreB - scoreA >= 1.0f) ||
-				((overtime ? false : round > 15) && madness &&
-				 scoreB > scoreA && scoreB - scoreA >= 1.0f);
-			bool tie = (overtime ? false : round > 15) && !duelistAwin && !duelistBwin;
-			End = duelistAwin || duelistBwin || tie;
-			
+			// Duelist A wins.
 			if (duelistAwin)
 			{
 				//Add final line to log and shift report.
 				log.Add("");
-				string final = duelistA + " .def. " + duelistB + ", " +
-					scoreStringA + " - " + scoreStringB +
-					" in " + (round - 1).ToString();
+				string final;
+				if (madnessTie)
+					final = duelistA + " .ties. " + duelistB + ", " +
+						tieScoreStringA + " - " + tieScoreStringB +
+						" in " + tieRound.ToString();
+				else
+					final = duelistA + " .def. " + duelistB + ", " +
+						scoreStringA + " - " + scoreStringB +
+						" in " + round.ToString();
 				if (Arbiter.FightNight) final += ", " + sport.ShortName;
+				if (madnessTie)
+					final += " (Madness: " + shortNameA + " .def. " +
+						shortNameB + ", " + scoreStringA + " - " +
+						scoreStringB + " in " + round.ToString() + ")";
+				else if (madness) final += " (Madness)";
 				log.Add(final);
 				Arbiter.UpdateShiftReport(final, false);
 			}
+			
+			// Duelist B wins.
 			if (duelistBwin)
 			{
 				//Add final line to log.
 				log.Add("");
-				string final = duelistB + " .def. " + duelistA + ", " +
-					scoreStringB + " - " + scoreStringA +
-					" in " + (round - 1).ToString();
+				string final;
+				if (madnessTie)
+					final = duelistB + " .ties. " + duelistA + ", " +
+						tieScoreStringB + " - " + tieScoreStringA +
+						" in " + tieRound.ToString();
+				else
+					final = duelistB + " .def. " + duelistA + ", " +
+						scoreStringB + " - " + scoreStringA +
+						" in " + round.ToString();
 				if (Arbiter.FightNight) final += ", " + sport.ShortName;
+				if (madnessTie)
+					final += " (Madness: " + shortNameB + " .def. " +
+						shortNameA + ", " + scoreStringB + " - " +
+						scoreStringA + " in " + round.ToString() + ")";
+				else if (madness) final += " (Madness)";
 				log.Add(final);
 				Arbiter.UpdateShiftReport(final, false);
 			}
+			
+			//Tie.
 			if (tie)
 			{
 				//Add final line to log.
@@ -733,32 +783,26 @@ namespace Arbiter
 				if (scoreA >= scoreB)
 					final = duelistA + " .ties. " + duelistB + ", " +
 						scoreStringA + " - " + scoreStringB +
-						" in " + (round - 1).ToString();
+						" in " + round.ToString();
 				else
 					final = duelistB + " .ties. " + duelistA + ", " +
 						scoreStringB + " - " + scoreStringA +
-						" in " + (round - 1).ToString();
+						" in " + round.ToString();
 				if (Arbiter.FightNight) final += ", " + sport.ShortName;
 				log.Add(final);
 				Arbiter.UpdateShiftReport(final, false);
 			}
-			if (End)
-			{
-				// Refresh the duel log.
-				UpdateDuelLog();
-				
-				// Set the round label back.
-				roundLabel.Markup =
-					@"<span size='x-large'><b>Round " + (round - 1).ToString() + @"</b></span>";
-				
-				// Disable all the widgets.
-				duelistAFancyCheck.Sensitive = false;
-				duelistAFeintCheck.Sensitive = false;
-				duelistAMoveCombo.Sensitive = false;
-				duelistBFancyCheck.Sensitive = false;
-				duelistBFeintCheck.Sensitive = false;
-				duelistBMoveCombo.Sensitive = false;
-			}
+			
+			// Refresh the duel log.
+			UpdateDuelLog();
+			
+			// Disable all the widgets.
+			duelistAFancyCheck.Sensitive = false;
+			duelistAFeintCheck.Sensitive = false;
+			duelistAMoveCombo.Sensitive = false;
+			duelistBFancyCheck.Sensitive = false;
+			duelistBFeintCheck.Sensitive = false;
+			duelistBMoveCombo.Sensitive = false;
 		}
 		
 		// Logs the duel after each round.
