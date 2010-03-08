@@ -432,7 +432,7 @@ namespace Arbiter
 		
 		#region Other Widgets
 		// Custom entry completion match function.
-		private static bool DuelistMatchFunc (EntryCompletion comp, string key, TreeIter iter)
+		private bool DuelistMatchFunc (EntryCompletion comp, string key, TreeIter iter)
 			{ return ((string)comp.Model.GetValue(iter, 0)).ToLower().Contains(key.ToLower()); }
 		
 		// Toggle the Fight Night switch.
