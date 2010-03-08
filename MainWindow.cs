@@ -228,7 +228,8 @@ namespace Arbiter
 				c[n].TextColumn = 0;
 				c[n].InlineCompletion = true;
 				c[n].InlineSelection = true;
-				c[n].PopupSingleMatch = false;
+				c[n].PopupSingleMatch = true;
+				if (n < 2) c[n].MatchFunc = DuelistMatchFunc;
 				e[n].Entry.Completion = c[n];
 			}
 			
@@ -430,6 +431,10 @@ namespace Arbiter
 		}
 		
 		#region Other Widgets
+		// Custom entry completion match function.
+		private static bool DuelistMatchFunc (EntryCompletion comp, string key, TreeIter iter)
+			{ return ((string)comp.Model.GetValue(iter, 0)).ToLower().Contains(key.ToLower()); }
+		
 		// Toggle the Fight Night switch.
 		private void FightNightToggled (object sender, EventArgs args)
 			{ Arbiter.FightNight = fightNightCheckMenuItem.Active; }
