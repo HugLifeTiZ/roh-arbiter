@@ -6,19 +6,30 @@ by Trent McPheron <twilightinzero@gmail.com>
 -v0.5-
  *Various code refactoring.
  *The duel widget has been rearranged a bit.
- *The normal duel tool now uses the same move
-  coloring that the brawler does.
+ *The normal duel tool now uses the same combobox
+  text coloring that the brawler does.
  *Vertical tabs, like in the flash chat tool.
  *Tabs can now be reordered, via drag and drop.
  *The Fight Night checkbox is now in the menubar.
  *The Fight Night checkbox will be disabled when the
   first duel is started. This is so that the internal
   list of duels don't get mixed up.
+ *The completion for the two duelist comboboxes is
+  now case-insensitive and matches any duelist whose
+  name contains what is typed in the combobox. For
+  example, typing "snor" will now return
+  "giantsnoringbear/Snorlax" as a candidate.
  *Proper Madness support. This means that Madness
   duels will be marked on the shift report, and when
   a Madness duel goes over round 15, it will be
   marked as a tie in the shift report, and the
   Madness result will be indicated in parenthesis.
+ *Ran unix2dos on the whole project. Now the source
+  code, and more importantly, the readme file, should
+  be readable on Windows! The sport loader has also
+  been adjusted to compensate; DOS line endings are
+  actually two characters, where Unix line endings are
+  just one.
 -v0.4-
  *A brawl tool has been added! A new section in the
   readme has been added for how to use it. Do note
