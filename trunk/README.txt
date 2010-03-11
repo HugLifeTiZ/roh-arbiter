@@ -13,7 +13,7 @@ by Trent McPheron <twilightinzero@gmail.com>
  *The Fight Night checkbox is now in the menubar.
  *The Fight Night checkbox will be disabled when the
   first duel is started. This is so that the internal
-  list of duels don't get mixed up.
+  lists of duels don't get mixed up.
  *The completion for the two duelist comboboxes is
   now case-insensitive and matches any duelist whose
   name contains what is typed in the combobox. For
