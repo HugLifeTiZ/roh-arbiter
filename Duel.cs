@@ -124,9 +124,10 @@ namespace Arbiter
 			{
 				return (round < 2 ? DuelistAMove > -1 : true) &&
 					(((DuelistAMove != moveA[round - 1]) ||
-					(sport.Moves[DuelistAMove] == "Disengage")) &&
+					(sport.Moves[DuelistAMove] == "Disengage") ||
+					(sport.Moves[DuelistAMove] == "(null)")) &&
 					!(usedEFA && DuelistAMove != 14) &&
-					!(moveA[round - 1] == 15 &&
+					!(moveA[round - 1] == 16 &&
 					sport.Moves[DuelistAMove] == "Reflection"));
 			}
 		}
@@ -136,9 +137,10 @@ namespace Arbiter
 			{
 				return (round < 2 ? DuelistBMove > -1 : true) &&
 					(((DuelistBMove != moveB[round - 1]) ||
-					(sport.Moves[DuelistBMove] == "Disengage")) &&
+					(sport.Moves[DuelistBMove] == "Disengage") ||
+					(sport.Moves[DuelistBMove] == "(null)")) &&
 					!(usedEFB && DuelistBMove != 14) &&
-					!(moveB[round - 1] == 15 &&
+					!(moveB[round - 1] == 16 &&
 					sport.Moves[DuelistBMove] == "Reflection"));
 			}
 		}
@@ -374,8 +376,8 @@ namespace Arbiter
 			if (sport.Matrix[moveA[round], moveB[round]] == '!')
 			{
 				// Add stuff to the lists.
-				moveA.Add(15);
-				moveB.Add(15);
+				moveA.Add(16);
+				moveB.Add(16);
 				roundScoreA.Add(1);
 				roundScoreB.Add(1);
 				advA.Add(false);
@@ -385,14 +387,14 @@ namespace Arbiter
 				round++;
 				
 				// Add the special reflected round.
-				UpdateDuelLog(15, 15);
+				UpdateDuelLog(16, 16);
 			}
 			
 			// Also self-explanatory.
 			if (!manual) CheckDuelEnd();
 			
 			// Increment round.
-			if (!End) round++;
+			round++;
 			
 			// Self-explanatory.
 			UpdateLabels();
@@ -450,7 +452,7 @@ namespace Arbiter
 			}
 			
 			// Check for RFx2
-			if (moveA[round - 1] == 15)
+			if (moveA[round - 1] == 16)
 			{
 				round--;
 				
@@ -627,7 +629,8 @@ namespace Arbiter
 			
 			// Update the round label.
 			roundLabel.Markup =
-				"<span size='x-large'><b>Round " + round.ToString() + "</b></span>";
+				"<span size='x-large'><b>Round " + (End ? round - 1 : round)
+					.ToString() + "</b></span>";
 		}
 		
 		// Updates the duel log.
