@@ -1,9 +1,25 @@
-Arbiter v0.5
+Arbiter v0.5.1
 by Trent McPheron <twilightinzero@gmail.com>
 =======================
 
 == Changelog ==
+-v0.5.1-
+ *Added (null) moves to each sport, even Swords.
+  It causes the other move to automatically score
+  the most it can. This is mostly going to be used
+  in Fists and Magic, where the policy is to use a
+  null move like that in case there is severe
+  difficulty with getting a player's move. In DoS,
+  the policy is to Disengage. But it's still there
+  anyways in case it's ever needed for any reason.
+ *Fixed the cosmetic bug in the duel tool that
+  occcured at the end of a duel; the round scores
+  from the round before the one that is supposed
+  to be used were displayed in the score boxes.
+  This is now fixed.
 -v0.5-
+ *Duelist roster update. We're now at 241 duelists.
+  May need to clean out stagnant duelists soon.
  *Various code refactoring.
  *The duel widget has been rearranged a bit.
  *The normal duel tool now uses the same combobox

@@ -276,7 +276,7 @@ namespace Arbiter
 						// Loop through each candidate in attacks and see if
 						// the combatant is using any of them.
 						string attacks = "TH,HC,LC,SL,JA,CH,UC,HO,SN,JK,SP,FL," +
-						                 "MB,MW,WB,FT,FF,MS,AB,RF,NR,IM,EF";
+						                 "MB,MW,WB,FT,FF,MS,AB,NR,IM,EF";
 						foreach (string a in attacks.Split(','))
 							if (sport.Abbrev[order[c].Primary] == a &&
 							    !order[c].PriFeint)
@@ -463,7 +463,7 @@ namespace Arbiter
 							// Loop through each candidate in attacks and see if
 							// the combatant is using any of them.
 							string attacks = "TH,HC,LC,SL,JA,CH,UC,HO,SN,JK,SP,FL," +
-							                 "MB,MW,WB,FT,FF,MS,AB,RF,NR,IM,EF";
+							                 "MB,MW,WB,FT,FF,MS,AB,NR,IM,EF";
 							foreach (string a in attacks.Split(','))
 								if (sport.Abbrev[order[c].Primary] == a &&
 								    !order[c].PriFeint)
