@@ -8,7 +8,7 @@
     <Packages>
       <Packages>
         <Package name="src: MSBuild">
-          <Builder targetFile="0.5\arbiter-0.5-msbuild.zip" format="MonoDevelop.Projects.FileFormat" ctype="SourcesZipPackageBuilder">
+          <Builder targetFile="0.5.1\arbiter-0.5.1-msbuild.zip" format="MonoDevelop.Projects.FileFormat" ctype="SourcesZipPackageBuilder">
             <ChildEntries>
               <SolutionItemReference path="..\Arbiter.csproj" />
             </ChildEntries>
@@ -16,7 +16,7 @@
           </Builder>
         </Package>
         <Package name="bin: Linux">
-          <Builder targetFile="0.5\arbiter-0.5-linux.tar.gz" platform="Linux" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
+          <Builder targetFile="0.5.1\arbiter-0.5.1-linux.tar.gz" platform="Linux" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
             <ChildEntries>
               <SolutionItemReference path="..\Arbiter.csproj" />
             </ChildEntries>
@@ -24,7 +24,7 @@
           </Builder>
         </Package>
         <Package name="bin: Windows">
-          <Builder targetFile="0.5\arbiter-0.5-win.zip" platform="Windows" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
+          <Builder targetFile="0.5.1\arbiter-0.5.1-win.zip" platform="Windows" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
             <ChildEntries>
               <SolutionItemReference path="..\Arbiter.csproj" />
             </ChildEntries>
@@ -37,7 +37,7 @@
           </Builder>
         </Package>
         <Package name="src: Make">
-          <Builder TargetDirectory="0.5" DefaultConfiguration="Debug|x86" GenerateAutotools="false" ctype="TarballDeployTarget">
+          <Builder TargetDirectory="0.5.1" DefaultConfiguration="Debug|x86" GenerateAutotools="false" ctype="TarballDeployTarget">
             <ChildEntries>
               <SolutionItemReference path="..\Arbiter.csproj" />
             </ChildEntries>
@@ -45,7 +45,7 @@
           </Builder>
         </Package>
         <Package name="bin: Mac OS">
-          <Builder targetFile="0.5\arbiter-0.5-mac.tar.gz" platform="Linux" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
+          <Builder targetFile="0.5.1\arbiter-0.5.1-mac.tar.gz" platform="Linux" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
             <ChildEntries>
               <SolutionItemReference path="..\Arbiter.csproj" />
             </ChildEntries>
@@ -58,6 +58,6 @@
         </Package>
       </Packages>
     </Packages>
-    <ReleaseVersion>0.5</ReleaseVersion>
+    <ReleaseVersion>0.5.1</ReleaseVersion>
   </PropertyGroup>
 </Project>
