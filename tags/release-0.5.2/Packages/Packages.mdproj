@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ItemType>PackagingProject</ItemType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4F218E21-72F7-4812-BA76-E22352F87810}</ProjectGuid>
+    <Packages>
+      <Packages>
+        <Package name="src: MSBuild">
+          <Builder targetFile="0.5.2\arbiter-0.5.2-msbuild.zip" format="MonoDevelop.Projects.FileFormat" ctype="SourcesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="..\Arbiter.csproj" />
+            </ChildEntries>
+            <RootEntry path="..\Arbiter.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="bin: Linux">
+          <Builder targetFile="0.5.2\arbiter-0.5.2-linux.tar.gz" platform="Linux" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="..\Arbiter.csproj" />
+            </ChildEntries>
+            <RootEntry path="..\Arbiter.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="bin: Windows">
+          <Builder targetFile="0.5.2\arbiter-0.5.2-win.zip" platform="Windows" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="..\Arbiter.csproj" />
+            </ChildEntries>
+            <ExcludedFiles>
+              <File>Arbiter,ProgramFiles,rohct.desktop</File>
+              <File>Arbiter,ProgramFiles,roh.png</File>
+              <File>Arbiter,ProgramFiles,arbiter.desktop</File>
+            </ExcludedFiles>
+            <RootEntry path="..\Arbiter.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="src: Make">
+          <Builder TargetDirectory="0.5.2" DefaultConfiguration="Debug|x86" GenerateAutotools="false" ctype="TarballDeployTarget">
+            <ChildEntries>
+              <SolutionItemReference path="..\Arbiter.csproj" />
+            </ChildEntries>
+            <RootEntry path="..\Arbiter.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="bin: Mac OS">
+          <Builder targetFile="0.5.2\arbiter-0.5.2-mac.tar.gz" platform="Linux" configuration="Release|x86" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="..\Arbiter.csproj" />
+            </ChildEntries>
+            <ExcludedFiles>
+              <File>Arbiter,ProgramFiles,arbiter.desktop</File>
+              <File>Arbiter,ProgramFiles,roh.png</File>
+            </ExcludedFiles>
+            <RootEntry path="..\Arbiter.sln" id=":root:" />
+          </Builder>
+        </Package>
+      </Packages>
+    </Packages>
+    <ReleaseVersion>0.5.2</ReleaseVersion>
+  </PropertyGroup>
+</Project>
