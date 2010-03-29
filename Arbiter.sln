@@ -37,6 +37,6 @@ Global
 		$6.LineAlign = 0
 		$5.inheritsSet = Mono
 		description = A tool to assist Rings of Honor officials in calling duels.
-		version = 0.5.1
+		version = 0.5.2
 	EndGlobalSection
 EndGlobal
