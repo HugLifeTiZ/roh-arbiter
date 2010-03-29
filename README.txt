@@ -1,8 +1,13 @@
-Arbiter v0.5.1
+Arbiter v0.5.2
 by Trent McPheron <twilightinzero@gmail.com>
 =======================
 
 == Changelog ==
+-v0.5.2-
+ *Fixed a bug that crashed Arbiter when the edit
+  dialog was opened.
+ *Fixed a bug that crashed Arbiter when new
+  duelists were automatically added.
 -v0.5.1-
  *Added (null) moves to each sport, even Swords.
   It causes the other move to automatically score
