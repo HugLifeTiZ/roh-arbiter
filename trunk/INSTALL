@@ -1,0 +1,19 @@
+Installation instructions
+-------------------------
+
+Arbiter uses the waf build system, and has the following dependencies:
+
+ - MCS >= 2.6.4
+ - GLib# >= 2.12
+ - GTK# >= 2.12
+ - Glade# >= 2.12
+ 
+To configure and build Arbiter, use these commands:
+
+ ./waf configure
+ ./waf build
+
+You can't "install" it in traditional terms, but you can create redistributable binary archives for all three platforms at once using the bindist command:
+
+ ./waf bindist
+
