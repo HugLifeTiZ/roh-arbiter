@@ -192,8 +192,8 @@ namespace Arbiter
 			{
 				// Load embedded list of duelists.
 				StreamReader sr = new StreamReader(
-					Assembly.GetExecutingAssembly().GetManifestResourceStream(
-						"Arbiter.duelists.cfg"));
+					Assembly.GetExecutingAssembly().
+						GetManifestResourceStream("duelists.cfg"));
 				while (!sr.EndOfStream)
 					Duelists.AppendValues(sr.ReadLine());
 				sr.Close();
@@ -219,8 +219,8 @@ namespace Arbiter
 			{
 				// Load embedded list of rings.
 				StreamReader sr = new StreamReader(
-					Assembly.GetExecutingAssembly().GetManifestResourceStream(
-						"Arbiter.rings.cfg"));
+					Assembly.GetExecutingAssembly().
+						GetManifestResourceStream("rings.cfg"));
 				while (!sr.EndOfStream)
 					Rings.AppendValues(sr.ReadLine());
 				sr.Close();
