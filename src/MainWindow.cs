@@ -401,6 +401,11 @@ namespace Arbiter
 			#endregion
 			
 			#region List Update
+			// This is a really hacky way to prevent null reference exceptions
+			// that seem to be occurring in the match function for some reason.
+			duelistANameCEntry.Entry.Completion.MatchFunc = null;
+			duelistBNameCEntry.Entry.Completion.MatchFunc = null;
+			
 			// This will automatically add new duelists to the duelist list.
 			bool presentA = false;
 			bool presentB = false;
@@ -413,6 +418,10 @@ namespace Arbiter
 										duelistANameCEntry.ActiveText);
 			if (!presentB) Arbiter.Duelists.AppendValues(
 										duelistBNameCEntry.ActiveText);
+			
+			// Reconnect the match function.
+			duelistANameCEntry.Entry.Completion.MatchFunc = DuelistMatchFunc;
+			duelistBNameCEntry.Entry.Completion.MatchFunc = DuelistMatchFunc;
 			#endregion
 			
 			#region Cleanup

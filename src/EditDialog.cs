@@ -43,7 +43,7 @@ namespace Arbiter
 		public EditDialog (string title, ListStore list, bool reorderable)
 		{
 			// Load the GUI.
-			XML xml = new XML("Arbiter.GUI.glade", "editDialog");
+			XML xml = new XML("GUI.glade", "editDialog");
 			xml.Autoconnect(this);
 			editDialog.Title = title;
 			editDialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
