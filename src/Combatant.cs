@@ -47,6 +47,7 @@ namespace Arbiter
 		#region Widgets
 		[Widget] private HBox combatantWidget;
 		[Widget] private Label nameLabel;
+		[Widget] private Label mpLabel;
 		[Widget] private Entry hpEntry;
 		[Widget] private Entry mpEntry;
 		[Widget] private CheckButton priFancyCheck;
@@ -207,7 +208,9 @@ namespace Arbiter
 			hpEntry.Activated += delegate { HP = Single.Parse(hpEntry.Text); };
 			mpEntry.Activated += delegate { MP = Int16.Parse(mpEntry.Text); };
 			
-			// Determine checkbutton visiblity.
+			// Determine widget visiblity.
+			mpEntry.NoShowAll = !(mpEntry.Visible = (sport.Fancies || sport.Feints));
+			mpLabel.NoShowAll = !(mpEntry.Visible = (sport.Fancies || sport.Feints));
 			priFancyCheck.NoShowAll = !(priFancyCheck.Visible = sport.Fancies);
 			priFeintCheck.NoShowAll = !(priFeintCheck.Visible = sport.Feints);
 			secFancyCheck.NoShowAll = !(secFancyCheck.Visible = sport.Fancies);

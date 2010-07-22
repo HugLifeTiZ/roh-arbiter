@@ -204,6 +204,7 @@ This modifier will steal a defensive advantage from an opponent and turn it into
                         <property name="visible">True</property>
                       </widget>
                       <packing>
+                        <property name="left_attach">1</property>
                         <property name="right_attach">2</property>
                       </packing>
                     </child>
@@ -212,6 +213,7 @@ This modifier will steal a defensive advantage from an opponent and turn it into
                         <property name="visible">True</property>
                       </widget>
                       <packing>
+                        <property name="left_attach">1</property>
                         <property name="right_attach">2</property>
                         <property name="top_attach">1</property>
                         <property name="bottom_attach">2</property>
