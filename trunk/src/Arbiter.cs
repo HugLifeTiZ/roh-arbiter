@@ -124,8 +124,8 @@ namespace Arbiter
 			// Defaults.
 			TabPosition = "LeftVert";
 			LogDirectory = "";
-			WindowWidth = 360;
-			WindowHeight = 360;
+			WindowWidth = 300;
+			WindowHeight = 300;
 			HideIcons = false;
 			HideClose = false;
 			HideButtons = false;

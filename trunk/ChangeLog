@@ -3,6 +3,10 @@ Change Log
 
 v0.6:
  -Switched build system to waf.
+ -Fixed a little cosmetic bug in the duel glade.
+ -Fixed a cosmetic bug that caused the MP column to still be shown during magic brawls.
+ -Fixed a bug in brawls where mod bonuses are off that caused combatants that are attacked unhindered and eliminated to not be marked as having acted. This bug also prevented the KO notification from being displayed.
+ -The program's UI has really slimmed down, so the default size has been reduced.
 v0.5.2:
  -Fixed a bug that crashed Arbiter when the edit dialog was opened.
  -Fixed a bug that crashed Arbiter when new duelists were automatically added.

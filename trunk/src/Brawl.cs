@@ -219,7 +219,7 @@ namespace Arbiter
 			{
 				if (c.Eliminate || c.HP <= 0)
 				{
-					// Set HP to zero, mark as having acted and defended
+					// Set HP to zero, mark as having acted and defended.
 					c.HP = 0;
 					c.Acted = true;
 					c.Defended = true;
@@ -481,7 +481,7 @@ namespace Arbiter
 								resultB.ToString(sport.ScoreFormat) + " )" + n;
 							
 							// Check for eliminations and mod bonuses.
-							if (gainMod && order[t].HP <= 0)
+							if (order[t].HP <= 0)
 							{
 								order[t].HP = 0;
 								order[t].Acted = true;
