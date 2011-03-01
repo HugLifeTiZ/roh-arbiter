@@ -126,7 +126,7 @@ namespace Arbiter
 					(((DuelistAMove != moveA[round - 1]) ||
 					(sport.Moves[DuelistAMove] == "Disengage") ||
 					(sport.Moves[DuelistAMove] == "(null)")) &&
-					!(usedEFA && DuelistAMove != 14) &&
+					!(usedEFA && DuelistAMove == 14) &&
 					!(moveA[round - 1] == 16 &&
 					sport.Moves[DuelistAMove] == "Reflection"));
 			}
@@ -139,7 +139,7 @@ namespace Arbiter
 					(((DuelistBMove != moveB[round - 1]) ||
 					(sport.Moves[DuelistBMove] == "Disengage") ||
 					(sport.Moves[DuelistBMove] == "(null)")) &&
-					!(usedEFB && DuelistBMove != 14) &&
+					!(usedEFB && DuelistBMove == 14) &&
 					!(moveB[round - 1] == 16 &&
 					sport.Moves[DuelistBMove] == "Reflection"));
 			}
