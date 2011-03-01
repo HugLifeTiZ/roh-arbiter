@@ -7,6 +7,9 @@ v0.6:
  -Fixed a cosmetic bug that caused the MP column to still be shown during magic brawls.
  -Fixed a bug in brawls where mod bonuses are off that caused combatants that are attacked unhindered and eliminated to not be marked as having acted. This bug also prevented the KO notification from being displayed.
  -The program's UI has really slimmed down, so the default size has been reduced.
+ -Added Lumen and Tenebrae, the DoM Light and Darkness rings, to the default rings list.
+ -Fixed a stupid logic error that caused all moves after Elemental Fury to be invalid.
+ -Updated duelist list, or rather, redid it. Started from scratch and added all duelists since January. 108 duelists.
 v0.5.2:
  -Fixed a bug that crashed Arbiter when the edit dialog was opened.
  -Fixed a bug that crashed Arbiter when new duelists were automatically added.
