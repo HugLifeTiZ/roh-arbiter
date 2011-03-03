@@ -529,11 +529,16 @@ namespace Arbiter
 			
 			// Run the dialog.
 			endDuelWin.Run();
-			endDuelWin.Destroy();
 			
 			// Abort if any button other than OK is pressed.
-			if (!End) return;
+			if (!End)
+			{
+				endDuelWin.Run();
+				endDuelWin.Destroy();
+				return;
+			}
 			
+			// End the duel depending on selections.
 			if (duelistAWinRadio.Active)
 			{
 				//Add final line to log and shift report.
@@ -546,7 +551,7 @@ namespace Arbiter
 				log.Add(final);
 				Arbiter.UpdateShiftReport(final, false);
 			}
-			if (duelistBWinRadio.Active)
+			else if (duelistBWinRadio.Active)
 			{
 				//Add final line to log.
 				log.Add("");
@@ -558,7 +563,7 @@ namespace Arbiter
 				log.Add(final);
 				Arbiter.UpdateShiftReport(final, false);
 			}
-			if (tieRadio.Active)
+			else if (tieRadio.Active)
 			{
 				if ( Single.Parse(duelistAScoreEntry.Text) >=
 				    	Single.Parse(duelistBScoreEntry.Text) )
@@ -586,6 +591,9 @@ namespace Arbiter
 					Arbiter.UpdateShiftReport(final, false);
 				}
 			}
+			
+			// Close the dialog.
+			endDuelWin.Destroy();
 			
 			// Refresh the duel log.
 			UpdateDuelLog();
