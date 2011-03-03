@@ -10,6 +10,7 @@ v0.6:
  -Added Lumen and Tenebrae, the DoM Light and Darkness rings, to the default rings list.
  -Fixed a stupid logic error that caused all moves after Elemental Fury to be invalid.
  -Updated duelist list, or rather, redid it. Started from scratch and added all duelists since January. 108 duelists.
+ -Fixed a couple bugs related to manual duel ending caused by prematurely destroying the dialog.
 v0.5.2:
  -Fixed a bug that crashed Arbiter when the edit dialog was opened.
  -Fixed a bug that crashed Arbiter when new duelists were automatically added.
