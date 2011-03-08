@@ -7,4 +7,4 @@ GenericName=cedran
 Comment=A tool to assist Rings of Honor officials.
 Icon=RoH.png
 Categories=Network;
-Exec=cedran
+Exec=arbiter

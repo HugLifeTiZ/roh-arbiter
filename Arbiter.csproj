@@ -122,5 +122,11 @@
     <None Include="README" />
     <None Include="waf" />
     <None Include="wscript" />
+    <None Include="data\arbiter" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data\arbiter.desktop">
+      <DeployService-TargetDirectoryId>Linux.DesktopApplications</DeployService-TargetDirectoryId>
+    </Content>
   </ItemGroup>
 </Project>
