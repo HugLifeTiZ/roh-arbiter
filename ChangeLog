@@ -2,7 +2,7 @@ Change Log
 ----------
 
 v0.5.3:
- -Switched build system to waf.
+ -Switched build system to waf to replace makefiles. The project directory is now nice and tidy too.
  -Fixed a little cosmetic bug in the duel glade.
  -Fixed a cosmetic bug that caused the MP column to still be shown during magic brawls.
  -Fixed a bug in brawls where mod bonuses are off that caused combatants that are attacked unhindered and eliminated to not be marked as having acted. This bug also prevented the KO notification from being displayed.

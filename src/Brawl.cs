@@ -49,7 +49,6 @@ namespace Arbiter
 		[Widget] private VBox combatantBox;
 		[Widget] private SpinButton roundSpin;
 		[Widget] private Label orderLabel;
-		[Widget] private ScrolledWindow summaryScroll;
 		[Widget] private TextView summaryView;
 		[Widget] private Button resolveButton;
 		#endregion
