@@ -11,7 +11,7 @@ If you're on Windows, download and install the GTK# runtime from the Google Code
 http://ftp.novell.com/pub/mono/gtk-sharp/gtk-sharp-2.12.9-2.win32.msi
 
 If you're on Mac OS, download Mono and the GTK# runtime here:
-http://ftp.novell.com/pub/mono/archive/2.4.2.3/macos-10-universal/6/MonoFramework-2.4.2.3_6.macos10.novell.universal.dmg
+http://ftp.novell.com/pub/mono/archive/2.10.1/macos-10-universal/3/MonoFramework-2.10.1_3.macos10.novell.universal.dmg
 
 If you're on Linux, use your package manager to get the required software.
 
