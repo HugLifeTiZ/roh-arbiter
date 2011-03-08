@@ -24,7 +24,7 @@ import Options
 
 # For creating a source archive.
 APPNAME = 'arbiter'
-VERSION = '0.6'
+VERSION = '0.5.3'
 
 # Required waf stuff.
 top = '.'
