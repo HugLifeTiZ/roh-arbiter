@@ -11,7 +11,7 @@ v0.5.3:
  -The program's UI has really slimmed down, so the default size has been reduced.
  -Added Lumen and Tenebrae, the DoM Light and Darkness rings, to the default rings list.
  -Updated duelist list, or rather, redid it. Started from scratch and added all duelists since January. 115 duelists.
- -We have our first Mac user using Arbiter, so this allowed me to learn how to make actual Mac OS app packages. The Mac zips will be released this way from now on.
+ -We have our first Mac user, so this allowed me to learn how to make actual Mac OS app packages. The Mac zips will be released this way from now on.
 v0.5.2:
  -Fixed a bug that crashed Arbiter when the edit dialog was opened.
  -Fixed a bug that crashed Arbiter when new duelists were automatically added.

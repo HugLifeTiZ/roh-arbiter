@@ -53,5 +53,5 @@ def build (ctx):
 		csflags  = '-pkg:glade-sharp-2.0 /platform:x86 /nowarn:0169')
 
 def dist (ctx):
-	ctx.algo = 'zip'
+	ctx.algo = 'tar.gz'
 	ctx.excl = '**/.* **/*~ **/build* **/Packages* **/*.pidb **/*.userprefs'
