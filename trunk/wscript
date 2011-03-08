@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2010 Trent McPheron <twilightinzero@gmail.com>
+# Copyright (c) 2010-2011 Trent McPheron <twilightinzero@gmail.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import Options
-
 # For creating a source archive.
 APPNAME = 'arbiter'
 VERSION = '0.5.3'
@@ -30,27 +28,30 @@ VERSION = '0.5.3'
 top = '.'
 out = 'build'
 
-def configure (conf):
+def configure (ctx):
 	# Check for required stuff.
-	conf.check_tool('cs config_c misc')
+	ctx.load('cs c_config misc')
 	args = '--cflags --libs'
-	conf.check_cfg(package = 'glade-sharp-2.0', atleast_version = '2.12',
+	ctx.check_cfg(package = 'glade-sharp-2.0', atleast_version = '2.12',
 	               uselib_store = 'GLADE', mandatory = True, args = args)
 
-def build (bld):
+def build (ctx):
 	# Prepare files.
-	src_files = bld.path.ant_glob('src/*.cs')
+	src_files = ctx.path.ant_glob('src/*.cs')
 	data_files = ''
-	for n in bld.path.ant_glob('data/*.glade data/*.png ' +
+	for n in ctx.path.ant_glob('data/*.glade data/*.png ' +
 	                           'data/*.cfg', flat = False):
 		data_files += n.abspath() + ' '
 	
 	# Compile the program.
-	src = bld(
+	ctx.program(
 		features = 'cs',
 		source   = src_files,
 		type     = 'exe',
-		target   = 'arbiter.exe',
+		gen      = 'arbiter.exe',
 		resources = data_files,
-		flags    = '-pkg:glade-sharp-2.0 /platform:x86 /nowarn:0169')
+		csflags  = '-pkg:glade-sharp-2.0 /platform:x86 /nowarn:0169')
 
+def dist (ctx):
+	ctx.algo = 'zip'
+	ctx.excl = '**/.* **/*~ **/build* **/Packages* **/*.pidb **/*.userprefs'
