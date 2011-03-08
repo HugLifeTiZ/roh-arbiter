@@ -13,7 +13,4 @@ To configure and build Arbiter, use these commands:
  ./waf configure
  ./waf build
 
-You can't "install" it in traditional terms, but you can create redistributable binary archives for all three platforms at once using the bindist command:
-
- ./waf bindist
-
+You can't "install" it in traditional terms yet; this functionality will be available next release.
