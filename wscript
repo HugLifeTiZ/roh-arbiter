@@ -50,8 +50,10 @@ def build (ctx):
 		type     = 'exe',
 		gen      = 'arbiter.exe',
 		resources = data_files,
-		csflags  = '-pkg:glade-sharp-2.0 /platform:x86 /nowarn:0169')
+		csflags  = '-pkg:glade-sharp-2.0 ' +
+		           '/platform:x86 /nologo /optimize- ' +
+		           '/codepage:utf8 /main:Arbiter.Arbiter')
 
 def dist (ctx):
-	ctx.algo = 'zip'
+	ctx.algo = 'tar.gz'
 	ctx.excl = '**/.* **/*~ **/build* **/Packages* **/*.pidb **/*.userprefs'
