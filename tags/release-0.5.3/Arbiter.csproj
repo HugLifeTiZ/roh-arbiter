@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3B43C4F4-EFE0-4F16-A7EC-18D506F26BE1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Arbiter</RootNamespace>
+    <AssemblyName>arbiter</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <ReleaseVersion>0.5.3</ReleaseVersion>
+    <StartupObject>Arbiter.Arbiter</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>build</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>build</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="System" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\Arbiter.cs" />
+    <Compile Include="src\Brawl.cs" />
+    <Compile Include="src\BrawlSetup.cs" />
+    <Compile Include="src\Combatant.cs" />
+    <Compile Include="src\Duel.cs" />
+    <Compile Include="src\EditDialog.cs" />
+    <Compile Include="src\MainWindow.cs" />
+    <Compile Include="src\Sport.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\Brawl.glade">
+      <LogicalName>Brawl.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\BrawlSetup.glade">
+      <LogicalName>BrawlSetup.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\Combatant.glade">
+      <LogicalName>Combatant.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\DoFChallenge.png">
+      <LogicalName>DoFChallenge.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\DoFMadness.png">
+      <LogicalName>DoFMadness.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\DoFNormal.png">
+      <LogicalName>DoFNormal.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\DoMChallenge.png">
+      <LogicalName>DoMChallenge.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\DoMMadness.png">
+      <LogicalName>DoMMadness.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\DoMNormal.png">
+      <LogicalName>DoMNormal.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\DoSChallenge.png">
+      <LogicalName>DoSChallenge.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\DoSMadness.png">
+      <LogicalName>DoSMadness.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\DoSNormal.png">
+      <LogicalName>DoSNormal.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\Duel.glade">
+      <LogicalName>Duel.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\duelists.cfg">
+      <LogicalName>duelists.cfg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\EditDialog.glade">
+      <LogicalName>EditDialog.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\MainWindow.glade">
+      <LogicalName>MainWindow.glade</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\rings.cfg">
+      <LogicalName>rings.cfg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\RoH.png">
+      <LogicalName>RoH.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\sport-fists.cfg">
+      <LogicalName>sport-fists.cfg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\sport-magic.cfg">
+      <LogicalName>sport-magic.cfg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\sport-swords.cfg">
+      <LogicalName>sport-swords.cfg</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AUTHORS" />
+    <None Include="ChangeLog" />
+    <None Include="COPYING" />
+    <None Include="INSTALL" />
+    <None Include="README" />
+    <None Include="waf" />
+    <None Include="wscript" />
+    <None Include="data\arbiter" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data\arbiter.desktop">
+      <DeployService-TargetDirectoryId>Linux.DesktopApplications</DeployService-TargetDirectoryId>
+    </Content>
+  </ItemGroup>
+</Project>
