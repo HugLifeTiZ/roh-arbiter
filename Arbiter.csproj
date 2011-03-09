@@ -8,7 +8,7 @@
     <ProjectGuid>{3B43C4F4-EFE0-4F16-A7EC-18D506F26BE1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Arbiter</RootNamespace>
-    <AssemblyName>Arbiter</AssemblyName>
+    <AssemblyName>arbiter</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <ReleaseVersion>0.5.3</ReleaseVersion>
     <StartupObject>Arbiter.Arbiter</StartupObject>
