@@ -1,4 +1,0 @@
-#!/bin/bash
-# Barebones launcher script for Linux.
-
-mono arbiter.exe $@
