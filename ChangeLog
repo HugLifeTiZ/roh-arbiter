@@ -1,6 +1,9 @@
 Change Log
 ----------
 
+v0.5.4:
+ -Somehow I managed to break the edit dialog again. Bugfix release!
+ -And a duelist roster update while we're at it.
 v0.5.3:
  -Switched build system to waf to replace makefiles. The project directory is now nice and tidy too.
  -Fixed a little cosmetic bug in the duel glade.
