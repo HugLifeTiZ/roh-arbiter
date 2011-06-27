@@ -200,8 +200,8 @@ namespace Arbiter
 							if (order[t].Target == c &&
 							    order[c].Target != t && !order[t].SD)
 							{
-								sport.Resolve(order[c].Secondary, order[c].SecFancy, order[c].SecFeint,
-								              order[t].Primary, order[t].PriFancy, order[t].PriFeint,
+								sport.Resolve(order[c].Secondary, order[c].SecFancy, order[c].SecFeint, false,
+								              order[t].Primary, order[t].PriFancy, order[t].PriFeint, false,
 								              out resultA, out resultB);
 								if (resultA == 1) defended++;
 							}
@@ -295,8 +295,8 @@ namespace Arbiter
 					else if (order[t].Target == c && !order[t].Acted && !order[t].SD)
 					{
 						// Evaluate primary vs. primary.
-						sport.Resolve(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
-						              order[t].Primary, order[t].PriFancy, order[t].PriFeint,
+						sport.Resolve(order[c].Primary, order[c].PriFancy, order[c].PriFeint, false,
+						              order[t].Primary, order[t].PriFancy, order[t].PriFeint, false,
 						              out resultA, out resultB);
 						
 						// Inflict damage.
@@ -358,8 +358,8 @@ namespace Arbiter
 							d = sder;
 							
 							// Evaluate primary vs. primary.
-							sport.Resolve(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
-							              order[d].Primary, order[d].PriFancy, order[d].PriFeint,
+							sport.Resolve(order[c].Primary, order[c].PriFancy, order[c].PriFeint, false,
+							              order[d].Primary, order[d].PriFancy, order[d].PriFeint, false,
 							              out resultA, out resultB);
 							
 							// Inflict damage.
@@ -406,8 +406,8 @@ namespace Arbiter
 						else if (!order[t].Defended)
 						{
 							// Evaluate primary vs. secondary.
-							sport.Resolve(order[c].Primary, order[c].PriFancy, order[c].PriFeint,
-							              order[t].Secondary, order[t].SecFancy, order[t].SecFeint,
+							sport.Resolve(order[c].Primary, order[c].PriFancy, order[c].PriFeint, false,
+							              order[t].Secondary, order[t].SecFancy, order[t].SecFeint, false,
 							              out resultA, out resultB);
 							
 							// Nullify any damage inflicted by a full fancy defender.

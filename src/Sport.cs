@@ -38,6 +38,7 @@ namespace Arbiter
 		public string ShortName   { get; set; }
 		public bool Fancies       { get; set; }
 		public bool Feints        { get; set; }
+		public bool Focuses       { get; set; }
 		public bool Advantages    { get; set; }
 		public string ScoreFormat { get; set; }
 		public char[,] Matrix     { get; set; }
@@ -58,9 +59,10 @@ namespace Arbiter
 			ShortName = header[0];
 			Fancies = Boolean.Parse(header[1]);
 			Feints = Boolean.Parse(header[2]);
-			Advantages = Boolean.Parse(header[3]);
-			ScoreFormat = header[4];
-			int m = Int32.Parse(header[5]); // Number of moves.
+			Focuses = Boolean.Parse(header[3]);
+			Advantages = Boolean.Parse(header[4]);
+			ScoreFormat = header[5];
+			int m = Int32.Parse(header[6]); // Number of moves.
 			
 			// Read the matrix.
 			Matrix = new char[m,m];
@@ -109,8 +111,8 @@ namespace Arbiter
 		}
 		
 		// Evaluates a pair of moves and modifiers.
-		public void Resolve (int moveA, bool fancyA, bool feintA,
-		                     int moveB, bool fancyB, bool feintB,
+		public void Resolve (int moveA, bool fancyA, bool feintA, bool focusA,
+		                     int moveB, bool fancyB, bool feintB, bool focusB,
 		                     out float resultA, out float resultB)
 		{
 			// Initialize the output vars.
@@ -122,29 +124,27 @@ namespace Arbiter
 			switch (Matrix[moveA, moveB])
 			{
 			case 'A':  // A scores.
-				if (!feintA) resultA = 1;
+				if (!feintA) resultA = focusA ? 1.5f : 1;
 				break;
 			case 'B':  // B scores.
-				if (!feintB) resultB = 1;
+				if (!feintB) resultB = focusB ? 1.5f : 1;
 				break;
 			case 'a':  // A gets advantage.
 				if (feintB) resultB = 1;
-				else if (fancyA) resultA = 1;
-				else resultA = 0.5f;
+				else resultA = (fancyA || focusA) ? 1 : 0.5f;
 				break;
 			case 'b':  // B gets advantage.
 				if (feintA) resultA = 1;
-				else if (fancyB) resultB = 1;
-				else resultB = 0.5f;
+				else resultB = (fancyB || focusB) ? 1 : 0.5f;
 				break;
 			case '!':  // Dual RF, Magic only. Yay for C-style switch.
 			case '1':  // Both score.
-				if (!feintA) resultA = 1;
-				if (!feintB) resultB = 1;
+				if (!feintA) resultA = focusA ? 1.5f : 1;
+				if (!feintB) resultB = focusB ? 1.5f : 1;
 				break;
 			case '+':  // Magic only: dual advantage.
-				resultA = 0.5f;
-				resultB = 0.5f;
+				resultA = focusA ? 1 : 0.5f;
+				resultB = focusB ? 1 : 0.5f;
 				break;
 			case '0':  // Null round.
 				break;

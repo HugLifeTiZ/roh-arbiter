@@ -22,7 +22,7 @@
 
 # For creating a source archive.
 APPNAME = 'arbiter'
-VERSION = '0.5.4'
+VERSION = '0.6'
 
 # Required waf stuff.
 top = '.'
