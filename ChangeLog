@@ -3,6 +3,7 @@ Change Log
 v0.6:
  -Updated DoM to add Focuses. The brawler doesn't yet support them.
  -Made fancy, feint, and focus abbreviation smarter, as DoF has both Fancies and Feints.
+ -Updated duelist roster.
 v0.5.4:
  -Somehow I managed to break the edit dialog again. Bugfix release!
  -And a duelist roster update while we're at it.
