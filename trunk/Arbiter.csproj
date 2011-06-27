@@ -10,7 +10,7 @@
     <RootNamespace>Arbiter</RootNamespace>
     <AssemblyName>arbiter</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <ReleaseVersion>0.5.4</ReleaseVersion>
+    <ReleaseVersion>0.6</ReleaseVersion>
     <StartupObject>Arbiter.Arbiter</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
