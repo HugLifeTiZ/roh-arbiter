@@ -1,0 +1,79 @@
+Change Log
+----------
+v0.6.1:
+ -Removed RFx2 specific logic; RFx2 is now gone.
+ -Redone duelist roster. Duelists in the past two months who fought more than once, dueists who have recently challenged or are currently challenging, and current title holders and coordinators are in the roster. Didn't add Winterborn because of his profile; it's no good if I can't figure out the actual character name.
+ -Updated ring list. Since I always model it after my own rings, I added Gaius, and removed Lumen and Tenebrae.
+v0.6:
+ -Updated DoM to add Focuses. The brawler doesn't yet support them.
+ -Made fancy, feint, and focus abbreviation smarter, as DoF has both Fancies and Feints.
+ -Updated duelist roster.
+v0.5.4:
+ -Somehow I managed to break the edit dialog again. Bugfix release!
+ -And a duelist roster update while we're at it.
+v0.5.3:
+ -Switched build system to waf to replace makefiles. The project directory is now nice and tidy too.
+ -Fixed a little cosmetic bug in the duel glade.
+ -Fixed a cosmetic bug that caused the MP column to still be shown during magic brawls.
+ -Fixed a bug in brawls where mod bonuses are off that caused combatants that are attacked unhindered and eliminated to not be marked as having acted. This bug also prevented the KO notification from being displayed.
+ -Fixed a stupid logic error that caused all moves after Elemental Fury to be invalid.
+ -Fixed a couple bugs related to manual duel ending caused by prematurely destroying the dialog.
+ -The program's UI has really slimmed down, so the default size has been reduced.
+ -Added Lumen and Tenebrae, the DoM Light and Darkness rings, to the default rings list.
+ -Updated duelist list, or rather, redid it. Started from scratch and added all duelists since January. 115 duelists.
+ -We have our first Mac user, so this allowed me to learn how to make actual Mac OS app packages. The Mac zips will be released this way from now on.
+v0.5.2:
+ -Fixed a bug that crashed Arbiter when the edit dialog was opened.
+ -Fixed a bug that crashed Arbiter when new duelists were automatically added.
+v0.5.1:
+ -Added (null) moves to each sport, even Swords. It causes the other move to automatically score the most it can. This is mostly going to be used in Fists and Magic, where the policy is to use a null move like that in case there is severe difficulty with getting a player's move. In DoS, the policy is to Disengage. But it's still there anyways in case it's ever needed for any reason.
+ -Fixed the cosmetic bug in the duel tool that occcured at the end of a duel; the round scores from the round before the one that is supposed to be used were displayed in the score boxes. This is now fixed.
+v0.5:
+ -Duelist roster update. We're now at 241 duelists. May need to clean out stagnant duelists soon.
+ -Various code refactoring.
+ -The duel widget has been rearranged a bit.
+ -The normal duel tool now uses the same combobox text coloring that the brawler does.
+ -Vertical tabs, like in the flash chat tool.
+ -Tabs can now be reordered, via drag and drop.
+ -The Fight Night checkbox is now in the menubar.
+ -The Fight Night checkbox will be disabled when the first duel is started. This is so that the internal lists of duels don't get mixed up.
+ -The completion for the two duelist comboboxes is now case-insensitive and matches any duelist whose name contains what is typed in the combobox. For example, typing "snor" will now return "giantsnoringbear/Snorlax" as a candidate.
+ -Proper Madness support. This means that Madness duels will be marked on the shift report, and when a Madness duel goes over round 15, it will be marked as a tie in the shift report, and the Madness result will be indicated in parenthesis.
+ -Ran unix2dos on the whole project. Now the source code, and more importantly, the readme file, should be readable on Windows! The sport loader has also been adjusted to compensate; DOS line endings are actually two characters, where Unix line endings are just one.
+v0.4:
+ -A brawl tool has been added! A new section in the readme has been added for how to use it. Do note that Fists is NOT properly implemented yet.
+  -The fancy and feint checks are now hidden depending on the sport.
+v0.3:
+ -Switched to MIT/X11 license. It's more permissive. Besides, I don't like GNU's fanaticism. :P
+ -Made the program look less foreign on Windows with a special gtkrc that will be used only on Windows.
+ -Separated settings file into three files: One for basic settings, one for the duelist list, and one for the ring list.
+ -Created a shift report viewer in the new duel tab.
+ -Rearranged the swords and fists moves a little.
+ -Changed the swords icons.
+ -This isn't anything an end user will notice, but it's important none the less: the icons for the duel tabs were formerly embedded pre-scaled. Now the icons are embedded at original size and scaled by the program. This is probably safer from a legal standpoint, 'cos the icon pack says "free to use", but not "free to modify". There is no visual difference between the two methods.
+ -Replaced "venue" with "sport" throughout the entire project. This is more correct terminology. "Sport" refers to DoS, DoF, and DoM, and "venue" refers to the primary settings of each.
+ -Added a menu bar, complete with accelerators (shortcut keys). Its functions all work completely as expected. It also includes new functions, detailed below. The options section has been moved from the new duel tab into the menu bar.
+ -The shift report can now be saved to its own file, as well as duel logs.
+ -Duels can be ended prematurely, in case of punts or other things.
+ -There is a "Manual Mode", which always enables the resolver, and prevents the duel from ending. It can be toggled on a per-duel basis.
+ -There are various "Compact Mode" options to save up on screen space. You can hide the sport icons, the close buttons, the resolve and undo buttons, and reduce the font size for the scoreboards. Due to GTK's eccentrities and general lack of planning, the last option doesn't actually help that much. A better replacement for that option will be added later.
+ -When the log directory is changed, Arbiter will move the current subdirectory from the old one to the new one.
+ -Updated duelist list, except for Yejix alts and Jewell (deceased character). Note that Scotty and MontgomeryScott are indeed two different characters, even though they're fandoms for the same character.
+v0.2.1:
+ -First release with a proper name. I was incredibly indecisive with this. First, it was Cedran, named after Brig. Then it was Sparky, the name that Dris came up with for Jaycy's autocaller. I finally settled with Arbiter. It's more or less a synonym for judge or referee. It also refers to someone who oversees some kind of interaction.
+ -Corrected some errors in the DoM matrix, and one in the DoS Matrix.
+ -Added a check in the venue loader that makes sure the matrix is at least consistent. E.g.: MW-IM and IM-MW won't give .5 to B no matter which way it's put in. This is actually the very error that Tass reported to me, and in so doing, it revealed more errors.
+ -Updated the default duelist list. We've broken 100! The default list has 107 duelists! :D For the time being, though, in order to get in on that, you'll have to nuke your settings file. v0.3 will rectify this.
+ -This is mostly a bug-fix release. No real features have been added. It's an important bug-fix release, though.
+-v0.2-
+ -GUI source switched from Stetic to Glade. This makes the source code more accessible to developers without MonoDevelop. Plus, it's easier to use and maintain; Stetic was rather unstable.
+ -Along with that, a huge GUI revamp.
+ -The undo feature! Reverse any round, even RFx2, and and even un-end duels.
+ -A list of duelists and rings, as well as a simple dialog to edit them. You can use the drop down box to pick duelists and rings, or suggestions will be made as you type.
+ -If an existing shift report is found in the day's folder, the program will offer to load it.
+ -Fixed the newline bug.
+ -If it's earlier than 3 AM and the program is started, the correct day will still be used.
+ -Now loads the close icon from the theme and resizes it, so that one does not need to be included anymore.
+ -Big code refactoring, more for my benefit.
+-v0.1-
+ -Initial release.
