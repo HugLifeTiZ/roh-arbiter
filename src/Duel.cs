@@ -383,25 +383,6 @@ namespace Arbiter
 			// Add a line to the duel log.
 			UpdateDuelLog(moveA[round], moveB[round]);
 			
-			// Check for RFx2 and take care of it. It could probably be done
-			// without duplicating the above, but I don't care right now. :P
-			if (sport.Matrix[moveA[round], moveB[round]] == '!')
-			{
-				// Add stuff to the lists.
-				moveA.Add(16);
-				moveB.Add(16);
-				roundScoreA.Add(1);
-				roundScoreB.Add(1);
-				advA.Add(false);
-				advB.Add(false);
-				
-				// Increment round.
-				round++;
-				
-				// Add the special reflected round.
-				UpdateDuelLog(16, 16);
-			}
-			
 			// Also self-explanatory.
 			if (!manual) CheckDuelEnd();
 			
@@ -465,21 +446,6 @@ namespace Arbiter
 				
 				// Set end switch to false.
 				End = false;
-			}
-			
-			// Check for RFx2
-			if (moveA[round - 1] == 16)
-			{
-				round--;
-				
-				// Remove the last round from all the lists.
-				moveA.RemoveAt(round);
-				moveB.RemoveAt(round);
-				roundScoreA.RemoveAt(round);
-				roundScoreB.RemoveAt(round);
-				advA.RemoveAt(round);
-				advB.RemoveAt(round);
-				log.RemoveAt(log.Count - 1);
 			}
 			
 			round--;

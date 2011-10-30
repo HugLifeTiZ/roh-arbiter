@@ -90,7 +90,6 @@ namespace Arbiter
 					case '1': e = Matrix[b,a] != '1'; break;
 					case '+': e = Matrix[b,a] != '+'; break;
 					case '0': e = Matrix[b,a] != '0'; break;
-					case '!': e = Matrix[b,a] != '!'; break;
 				}
 				if (e) errA = a; errB = b;
 				error = error || e;
@@ -137,7 +136,6 @@ namespace Arbiter
 				if (feintA) resultA = 1;
 				else resultB = (fancyB || focusB) ? 1 : 0.5f;
 				break;
-			case '!':  // Dual RF, Magic only. Yay for C-style switch.
 			case '1':  // Both score.
 				if (!feintA) resultA = focusA ? 1.5f : 1;
 				if (!feintB) resultB = focusB ? 1.5f : 1;

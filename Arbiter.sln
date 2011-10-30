@@ -28,7 +28,7 @@ Global
 		$4.DirectoryNamespaceAssociation = None
 		$4.ResourceNamePolicy = FileName
 		description = A program to assist Rings of Honor officials in calling duels in settings in which the flash chat caller tool is unavailable.
-		version = 0.6
+		version = 0.6.1
 		outputpath = build
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,9 @@
 Change Log
 ----------
+v0.6.1:
+ -Removed RFx2 specific logic; RFx2 is now gone.
+ -Redone duelist roster. Duelists in the past two months who fought more than once, dueists who have recently challenged or are currently challenging, and current title holders and coordinators are in the roster. Didn't add Winterborn because of his profile; it's no good if I can't figure out the actual character name.
+ -Updated ring list. Since I always model it after my own rings, I added Gaius, and removed Lumen and Tenebrae.
 v0.6:
  -Updated DoM to add Focuses. The brawler doesn't yet support them.
  -Made fancy, feint, and focus abbreviation smarter, as DoF has both Fancies and Feints.
