@@ -28,97 +28,105 @@ using System;
 using Gtk;
 using Glade;
 
-namespace Arbiter
-{
-	// This is a dialog for editing the lists of
-	// Duelists and Rings. It's actually pretty simple.
-	public class EditDialog
-	{
-		[Widget] private Dialog editDialog;
-		[Widget] private ScrolledWindow listScroll;
-		private TreeView listView;
-		private ListStore list;
-		
-		// Constructor.
-		public EditDialog (string title, ListStore list, bool reorderable)
-		{
-			// Load the GUI.
-			XML xml = new XML("EditDialog.glade", "editDialog");
-			xml.Autoconnect(this);
-			editDialog.Title = title;
-			editDialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
-			
-			// Create the TreeView.
-			listView = new TreeView();
-			listScroll.Add(listView);
-			listView.Reorderable = reorderable;
-			listView.HeadersVisible = false;
-			listView.SearchColumn = 0;
-			
-			CellRendererText cell = new CellRendererText();
-			cell.Editable = true;
-			cell.Edited += CellEdited;
-			listView.AppendColumn("Name", cell, "text", 0);
-			
-			listView.Selection.Mode = SelectionMode.Browse;
-			
-			this.list = list;
-			listView.Model = list;
-			
-			// Appear!
-			editDialog.ShowAll();
-		}
-		
-		// Convenience.
-		public void Run ()
-			{ editDialog.Run(); }
-		
-		// Closes the dialog.
-		private void OkClicked (object sender, System.EventArgs e)
-			{ editDialog.Destroy(); }
-		
-		// Adds a new item to the list.
-		private void AddToList (object sender, System.EventArgs e)
-		{
-			Dialog dialog = new Dialog("Enter name:", editDialog,
-			                           DialogFlags.NoSeparator | DialogFlags.Modal,
-			                           new object[] {Stock.Cancel, ResponseType.Cancel,
-										Stock.Ok, ResponseType.Ok});
-			dialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
-			dialog.WindowPosition = WindowPosition.Center;
-			Label label = new Label("Enter a name:");
-			label.SetAlignment(0.0f, 0.5f);
-			dialog.VBox.PackStart(label);
-			Entry entry = new Entry();
-			entry.ActivatesDefault = true;
-			dialog.VBox.PackStart(entry);
-			dialog.Default = dialog.ActionArea.Children[0];
-			dialog.VBox.ShowAll();
-			int res = dialog.Run();
-			
-			if (res == (int)ResponseType.Ok)
-			{
-				TreeIter iter = list.InsertWithValues(0, entry.Text);
-				listView.ScrollToCell(list.GetPath(iter), listView.Columns[0],
-				                      true, 0.5f, 0.5f);
-			}
-			dialog.Destroy();
-		}
-		
-		// Deletes an item from the list.
-		private void DeleteFromList (object sender, System.EventArgs e)
-		{
-			TreeIter iter;
-			listView.Selection.GetSelected(out iter);
-			list.Remove(ref iter);
-		}
-		
-		// Updates the list when a cell is edited.
-		private void CellEdited (object o, EditedArgs args)
-		{
-			TreeIter iter;
-			list.GetIter(out iter, new TreePath(args.Path));
-			list.SetValues(iter, args.NewText);
-		}
-	}
+namespace Arbiter {
+
+public class EditDialog {
+    
+    ///////////////////
+    // Fields
+    ///////////////////
+    
+    [Widget] private Dialog         editDialog;
+    [Widget] private ScrolledWindow listScroll;
+    private TreeView                listView;
+    private ListStore               list;
+    
+    
+    ///////////////////
+    // Constructor
+    ///////////////////
+    
+    public EditDialog (string title, ListStore list, bool reorderable) {
+        // Load the GUI.
+        XML xml = new XML("EditDialog.glade", "editDialog");
+        xml.Autoconnect(this);
+        editDialog.Title = title;
+        editDialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
+        
+        // This TreeView holds the items to edit.
+        listView = new TreeView();
+        listScroll.Add(listView);
+        listView.Reorderable = reorderable;
+        listView.HeadersVisible = false;
+        listView.SearchColumn = 0;
+        
+        CellRendererText cell = new CellRendererText();
+        cell.Editable = true;
+        cell.Edited += CellEdited;
+        listView.AppendColumn("Name", cell, "text", 0);
+        
+        listView.Selection.Mode = SelectionMode.Browse;
+        
+        this.list = list;
+        listView.Model = list;
+        
+        editDialog.ShowAll();
+    }
+    
+    
+    ///////////////////
+    // Methods
+    ///////////////////
+    
+    // Convenience.
+    public void Run () {
+        editDialog.Run();
+    }
+    
+    // Closes the dialog.
+    private void OkClicked (object sender, System.EventArgs e) {
+        editDialog.Destroy();
+    }
+    
+    // Adds a new item to the list.
+    private void AddToList (object sender, System.EventArgs e) {
+        Dialog dialog = new Dialog("Enter name:", editDialog,
+         DialogFlags.NoSeparator | DialogFlags.Modal, new object[]
+         {Stock.Cancel, ResponseType.Cancel, Stock.Ok, ResponseType.Ok});
+        dialog.Icon = Gdk.Pixbuf.LoadFromResource("RoH.png");
+        dialog.WindowPosition = WindowPosition.Center;
+        Label label = new Label("Enter a name:");
+        label.SetAlignment(0.0f, 0.5f);
+        dialog.VBox.PackStart(label);
+        Entry entry = new Entry();
+        entry.ActivatesDefault = true;
+        dialog.VBox.PackStart(entry);
+        dialog.Default = dialog.ActionArea.Children[0];
+        dialog.VBox.ShowAll();
+        int res = dialog.Run();
+        
+        if (res == (int)ResponseType.Ok) {
+            TreeIter iter = list.InsertWithValues(0, entry.Text);
+            listView.ScrollToCell(list.GetPath(iter), listView.Columns[0],
+             true, 0.5f, 0.5f);
+        }
+        dialog.Destroy();
+    }
+    
+    // Deletes an item from the list.
+    private void DeleteFromList (object sender, System.EventArgs e) {
+        TreeIter iter;
+        listView.Selection.GetSelected(out iter);
+        list.Remove(ref iter);
+    }
+    
+    // Updates the list when a cell is edited.
+    private void CellEdited (object o, EditedArgs args) {
+        TreeIter iter;
+        list.GetIter(out iter, new TreePath(args.Path));
+        list.SetValues(iter, args.NewText);
+    }
+    
+}
+
 }
